@@ -1,0 +1,8 @@
+.env
+.venv
+backend\backend\settings.py
+notarius\venv
+notarius\jsconfig.json
+notarius\package.json
+notarius\vite.config.js
+notarius\node_modules
