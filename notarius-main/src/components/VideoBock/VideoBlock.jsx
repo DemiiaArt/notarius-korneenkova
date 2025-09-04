@@ -1,33 +1,15 @@
 import "./VideoBlock.scss";
+import videoTest from "@media/video_test.mov";
 import { useState, useRef } from "react";
 import { useIsPC } from "@hooks/isPC";
-import { useBackgroundVideos } from "@hooks/useBackgroundVideos";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const VideoBlock = ({ title, description }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const videoRef = useRef(null);
-  
-  // Получаем видео из бэкенда
-  const { videos, loading, getVideoUrl } = useBackgroundVideos();
-  
-  // Определяем источник видео: из бэкенда или fallback
-  const getVideoSource = () => {
-    if (videos.length > 0) {
-      const firstVideo = videos[0];
-      return getVideoUrl(firstVideo.video);
-    }
-    return null; // Если нет видео из бэкенда, не показываем видео
-  };
 
   const handlePlay = () => {
-    const videoSource = getVideoSource();
-    if (!videoSource) {
-      console.warn('Нет доступного видео для воспроизведения');
-      return;
-    }
-    
     setIsPlaying(true);
     setTimeout(() => {
       setShowVideo(true);
@@ -48,39 +30,7 @@ export const VideoBlock = ({ title, description }) => {
   };
 
   const isPC = useIsPC();
-  const videoSource = getVideoSource();
-
-  // Если загружается или нет видео, показываем только контент без кнопки воспроизведения
-  if (loading || !videoSource) {
-    return (
-      <div className="video-block">
-        <div className="video-block-preview" />
-        <div className="video-block-content container">
-          <div className="video-block-text">
-            <h2
-              className={` uppercase fw-bold ${isPC ? "fs-h2--32px" : "fs-h2--20px"}`}
-            >
-              {title}
-            </h2>
-            <p className={` ${isPC ? "fs-p--24px" : "fs-p--16px"} lh-150`}>
-              {description}
-            </p>
-          </div>
-          {loading && (
-            <div className="video-loading-message">
-              Загрузка видео...
-            </div>
-          )}
-          {!loading && !videoSource && (
-            <div className="video-no-video-message">
-              Видео не найдено
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
+  
   return (
     <div className="video-block">
       {/* Превью */}
@@ -103,7 +53,7 @@ export const VideoBlock = ({ title, description }) => {
           <motion.video
             key="video"
             ref={videoRef}
-            src={videoSource}
+            src={videoTest}
             autoPlay
             controls
             className="video-block-video"
@@ -111,10 +61,6 @@ export const VideoBlock = ({ title, description }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onEnded={handleStop}
-            onError={(e) => {
-              console.error('Ошибка загрузки видео:', e);
-              handleStop();
-            }}
           />
         )}
       </AnimatePresence>

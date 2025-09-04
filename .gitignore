@@ -33,3 +33,10 @@ notarius\*.ntvs*
 notarius\*.njsproj
 notarius\*.sln
 notarius\*.sw?
+
+# Video files
+*.mov
+*.mp4
+*.avi
+*.mkv
+notarius-main/src/assets/media/video_test.mov
