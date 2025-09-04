@@ -8,6 +8,7 @@ import { Link, useLocation } from "react-router-dom";
 import "./Header.scss";
 import { useIsPC } from "@hooks/isPC";
 import { useModal } from "@components/ModalProvider/ModalProvider";
+import { useHeaderContacts } from "@hooks/useHeaderContacts";
 
 const whiteHeaderPaths = {
   ua: new Set([
@@ -100,6 +101,8 @@ export const Header = () => {
 
   const isPC = useIsPC();
 
+  const { contacts, loading, getAddressByLanguage } = useHeaderContacts();
+
   useEffect(() => {
     if (isPC) {
       setMenuOpen(false);
@@ -131,18 +134,18 @@ export const Header = () => {
               className={`header-info-content fs-p--16px lh-150 text-decoration--none ${isGreenInfo ? "c1" : "c3"}`}
             >
               <a className="header-info-email" href="#">
-                nknotary.dnipro@gmail.com
+                {contacts.email}
               </a>
               <div className="header-info-phones-wrap">
                 <a className="header-info-phones" href="#">
-                  + 38 067 820 07 00
+                  {contacts.phone_number}
                 </a>
                 <a className="header-info-phones" href="#">
-                  + 38 067 544 07 00
+                  {contacts.phone_number_2}
                 </a>
               </div>
               <a className="header-info-address " href="#">
-                м. Дніпро, бул. Слави, 2-Б, 49100 
+                {getAddressByLanguage(lang)}
               </a>
             </div>
           </div>
