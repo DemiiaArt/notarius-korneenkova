@@ -1,0 +1,170 @@
+@use 'sass:map';
+
+@media(min-width: 375px) {
+  .comments {
+    padding: 50px 0;
+
+    &-title {
+      margin: 0 0 20px 0;
+    }
+
+    &-carousel {
+      position: relative;
+      z-index: 1;
+
+      &-next,
+      &-prev {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background-color: #0000001a;
+        z-index: 2;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #000000B2;
+        }
+      }
+
+      &-next {
+        top: 70%;
+        right: 0;
+        transform: translate(0, -70%);
+      }
+
+      &-prev {
+        top: 70%;
+        left: 0%;
+        transform: translate(0%, -70%);
+
+        & img {
+          rotate: 180deg;
+        }
+      }
+
+      &-card {
+        position: relative;
+        width: 100%;
+
+        &-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        &-text-wrap {
+          width: 65%;
+          display: flex;
+          flex-direction: column;
+          align-items: baseline;
+          justify-content: space-between;
+        }
+
+        &-image {
+          display: block;
+          width: 62px;
+          height: 62px;
+          margin: 0 8px 0 0;
+          border-radius: 50%;
+        }
+
+        &-text {
+          margin: 10px 0 0 0;
+        }
+      }
+    }
+
+    .comments-carousel {
+      .swiper-pagination {
+        display: none
+      }
+    }
+  }
+}
+
+@media(min-width: 768px) {
+  .comments {
+    padding: 70px 0 0 0;
+
+    &-title {
+      margin: 0 0 40px 0;
+    }
+
+    &-carousel {
+      &-card {
+        &-text-wrap {
+          gap: 8px;
+        }
+
+        &-text {
+          margin: 20px 0 0 0;
+        }
+      }
+
+      &-next,
+      &-prev {
+        top: 50%;
+        width: 60px;
+        height: 60px;
+
+        & img {
+          width: 28px;
+          height: 24px;
+        }
+
+        &-next {
+          transform: translate(0, -50%);
+        }
+
+        &-prev {
+          transform: translate(0%, -50%);
+        }
+      }
+    }
+  }
+
+  .comments-carousel {
+    .swiper-pagination {
+      display: block !important;
+      margin-top: 60px;
+      text-align: center;
+
+      .swiper-pagination-bullet {
+        width: 12px;
+        height: 12px;
+        background-color: map.get($colors, 11);
+        opacity: 1;
+        margin: 0 4px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+    }
+  }
+
+  .comments-carousel .swiper-pagination-bullet-active {
+    background-color: map.get($colors, 4) !important;
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media(min-width: 1200px) {
+  .comments {
+    padding: 100px 0 0 0;
+
+    &-title {
+      margin: 0 0 60px 0;
+    }
+
+    &-card {
+      &-image {
+        width: 80px;
+        height: 80px;
+        margin: 0 32px 0 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,140 @@
+@use "sass:map";
+
+@media (min-width: 375px) {
+  .hero {
+    &-img {
+      width: 100vw;
+      padding: 197px 0 0 0;
+      height: calc(100vh - 197px);
+      max-height: 600px;
+      background-image: url("../../assets/media/ApostilleHero.png");
+      background-repeat: no-repeat;
+      background-position: 37% 20%;
+      background-size: 400%;
+
+      &-shadow {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: 600px;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+        z-index: 2;
+      }
+    }
+
+    h1 {
+      display: block;
+      position: relative;
+      padding: 45vh 0 0 0;
+      z-index: 3;
+    }
+  }
+
+  .img-question {
+    display: block;
+  }
+
+  .apostille-img {
+    box-sizing: border-box;
+    min-height: 260px;
+    width: 100%;
+    background-size: contain;
+    margin: 20px 0;
+    display: block;
+  }
+
+  .question-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 0 20px 0;
+
+    & > li {
+      position: relative;
+      padding-left: 20px;
+    }
+
+    & li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translate(0, -50%);
+      width: 12px;
+      height: 12px;
+      background-color: map.get($colors, 4);
+      border-radius: 0;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-img {
+    max-height: none;
+    background-size: cover;
+
+    &-shadow {
+      background: linear-gradient(
+        270deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.85) 100%
+      );
+      max-height: none;
+    }
+  }
+
+  .img-question {
+    display: grid;
+    grid-template-columns: 50% 1fr;
+    grid-template-areas:
+      "title title"
+      "img content";
+    column-gap: 24px;
+
+    h2 {
+      grid-area: title;
+    }
+  }
+
+  .apostille-img {
+    grid-area: img;
+    margin: 0;
+    align-self: start;
+    margin: 0 20px 0 0;
+    height: 100%;
+    max-height: 460px;
+  }
+
+  .apostille-content {
+    grid-area: content;
+  }
+
+  .content-pass {
+    padding-top: 15vh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .content-pass {
+    padding-top: 20vh;
+  }
+
+  .hero-img {
+    h1 {
+      padding: 35vh 0 0 0;
+    }
+  }
+
+  .question-list {
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .content-pass {
+    padding-top: 16vh;
+  }
+}

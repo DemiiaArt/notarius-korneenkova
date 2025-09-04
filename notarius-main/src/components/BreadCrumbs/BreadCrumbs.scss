@@ -1,0 +1,15 @@
+@use "sass:map";
+
+.breadcrumbs {
+  margin: 0 0 100px 0;
+  &-link {
+    text-decoration: none;
+    transition: color 0.3s ease;
+    &:hover {
+      color: map.get($colors, 4);
+    }
+  }
+  & span {
+    margin: 0 5px;
+  }
+}

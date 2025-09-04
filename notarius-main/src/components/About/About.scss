@@ -1,0 +1,130 @@
+@use 'sass:map';
+
+// винести окремо
+// .main .btn-secondary {
+//   display: block;
+//   @media (min-width: 375px) {
+//     margin: 24px 0 30px 0;
+//     padding: 0 0 6px 0;
+//     border-bottom: 1px solid map.get($colors, 1);
+//     cursor: pointer;
+
+//     &:hover,
+//     &:active {
+//       color: map.get($colors, 4);
+//       border-bottom-color: map.get($colors, 4);
+//     }
+//   }
+
+//   @media (min-width: 768px) {
+//     margin: 40px 0 30px 0;
+//   }
+
+//   @media (min-width: 1024px) {
+//     margin: 48px 0 50px 0;
+//     padding: 14px 83px;
+//     border: 1px solid map.get($colors, 1);
+
+//     &:hover,
+//     &:active {
+//       background-color: map.get($colors, 3);
+//       border: 1px solid map.get($colors, 3);
+//     }
+
+//     &:focus {
+//       background-color: map.get($colors, 3);
+//     }
+//   }
+// }
+
+// .main .about-block-btn {
+//   display: none;
+//   padding: 14px 30px;
+// }
+
+
+@media (min-width: 375px) {
+  .about-block {
+    position: relative;
+    width: 100vw;
+    height: 65vh;
+    max-height: 400px;
+    background-image: url("../../assets/media/NadiiaHeroImgMain.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 20%;
+    z-index: 1;
+
+    &-shadow {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 41.75vh;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.32) 40%, rgba(0, 0, 0, 0.4) 100%);
+      z-index: 2;
+    }
+
+    &-content {
+      padding: 160px 0 0 0;
+      position: relative;
+      z-index: 3;
+    }
+
+    &-greetings {
+      margin: 0 0 10px 0;
+    }
+
+    &-title {
+      margin: 24px 0;
+    }
+  }
+
+  .about-block-content {
+    max-width: 335px;
+  }
+}
+
+@media (min-width: 420px) {
+  .about-block {
+    background-position: 10% 0%;
+  }
+
+  .about-block-content {
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 768px) {
+  .about-block {
+    height: 75vh;
+    max-height: none;
+  }
+
+  .about-block-content {
+    max-width: 560px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-block {
+    height: 80vh;
+    max-height: 776px;
+    background-position: 10% 5%;
+
+    &-title {
+      margin: 24px 0 32px 0;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  .about-block {
+    height: 95vh;
+
+    &-content {
+      padding: 230px 0 0 0;
+    }
+  }
+
+}

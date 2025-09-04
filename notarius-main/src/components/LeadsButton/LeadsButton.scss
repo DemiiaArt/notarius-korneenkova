@@ -1,0 +1,93 @@
+@use 'sass:map';
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    30% {
+        transform: scale(1.08);
+    }
+    70% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (min-width: 375px) {
+    .circle-button {
+        position: fixed;
+        right: 45px;
+        bottom: 30px;
+        display: none;
+        width: 95px;
+        height: 95px;
+        border-radius: 50%;
+        background-color: map.get($colors, 4);
+        color: map.get($colors, 1);
+        font-size: 12px;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+
+        &::after {
+            content: "";
+            position: absolute;
+            width: 119px;
+            height: 119px;
+            border-radius: 50%;
+            background-color: rgba($color: $btn-default, $alpha: 0.3);
+            z-index: -1;
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            width: 144px;
+            height: 144px;
+            border-radius: 50%;
+            background-color: rgba($color: $btn-default, $alpha: 0.2);
+            z-index: -2;
+        }
+
+
+        &:hover {
+            background-color: $btn-hover;
+
+            &::after {
+                background-color: rgba($color: $btn-hover, $alpha: 0.3)
+            }
+            &::before {
+                background-color: rgba($color: $btn-hover, $alpha: 0.2)
+            }
+        }
+
+         &:active {
+            background-color: $btn-active;
+
+            &::after {
+                background-color: rgba($color: $btn-active, $alpha: 0.3)
+            }
+            &::before {
+                background-color: rgba($color: $btn-active, $alpha: 0.2)
+            }
+        }
+    }
+}
+
+@media (min-width: 1024px) {
+    .circle-button {
+        display: flex;
+        animation: pulse 1.5s ease-in-out infinite;
+        animation-delay: 3s;
+    }
+}
+
+@media (min-width: 1312px) {
+    .circle-button {
+        right: calc((100% - 1312px) / 2 + 40px);
+    }
+}
