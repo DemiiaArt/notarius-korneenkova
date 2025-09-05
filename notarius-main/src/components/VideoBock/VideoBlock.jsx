@@ -30,7 +30,6 @@ export const VideoBlock = ({ title, description }) => {
   };
 
   const isPC = useIsPC();
-  
   return (
     <div className="video-block">
       {/* Превью */}
@@ -46,7 +45,6 @@ export const VideoBlock = ({ title, description }) => {
           />
         )}
       </AnimatePresence>
-      
       {/* Видео */}
       <AnimatePresence>
         {showVideo && (
@@ -101,6 +99,7 @@ export const VideoBlock = ({ title, description }) => {
               exit={{ x: 100, opacity: 0 }}
               transition={{ duration: 0.6 }}
             >
+              
               <span>Дивитись відео</span>
               <svg
                 width="100"
