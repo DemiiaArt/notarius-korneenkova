@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useIsPC } from "@hooks/isPC";
-import videoTest from "@media/video_test.mov";
+// import videoTest from "@media/video_test.mov"; // Закомментируем
 import { useEffect } from "react";
 import "./MainVideo.scss";
 
@@ -25,7 +25,7 @@ const MainVideo = ({ lang }) => {
   return (
     <div className="main-video">
       <video className="main-video-player" autoPlay muted loop playsInline>
-        <source src={videoTest} type="video/mp4" />
+        <source src="https://example.com/placeholder-video.mp4" type="video/mp4" />
         Ваш браузер не поддерживает тег video.
       </video>
 
