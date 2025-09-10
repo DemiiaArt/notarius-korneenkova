@@ -18,10 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
+
+def health_check(request):
+    """Простая проверка здоровья приложения"""
+    return JsonResponse({"status": "ok", "message": "Django app is running"})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/main_page/', include('main_page.urls')),
+    path('health/', health_check, name='health_check'),
+    path('', health_check, name='root_health_check'),  # Для корневого пути
 ]
 # Обслуживание MEDIA файлов в режиме разработки
 if settings.DEBUG:
