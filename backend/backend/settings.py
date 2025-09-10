@@ -41,6 +41,19 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.up.railway.app',
 ]
 
+# Дополнительные настройки для Railway
+CSRF_COOKIE_SECURE = False  # Для Railway
+SESSION_COOKIE_SECURE = False  # Для Railway
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+# Настройки для статических файлов
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
 # Application definition
 
 INSTALLED_APPS = [
