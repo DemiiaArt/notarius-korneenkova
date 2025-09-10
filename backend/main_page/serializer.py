@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Header, BackgroundVideo
+from .models import Header, BackgroundVideo, AboutMe
 
 class HeaderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,3 +17,14 @@ class BackgroundVideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = BackgroundVideo
         fields = ['id', 'video_name', 'video']
+
+class AboutMeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AboutMe
+        fields = [
+            'id', 
+            'subtitle_uk', 'subtitle_en', 'subtitle_ru',
+            'title_uk', 'title_en', 'title_ru',
+            'text_uk', 'text_en', 'text_ru',
+            'photo'
+        ]

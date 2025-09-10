@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
-from .models import Header, BackgroundVideo
-from .serializer import HeaderSerializer, BackgroundVideoSerializer
+from .models import Header, BackgroundVideo, AboutMe
+from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer
 
 # Create your views here.
 
@@ -42,3 +42,26 @@ class BackgroundVideoView(generics.ListAPIView):
         videos = BackgroundVideo.objects.all()
         serializer = self.get_serializer(videos, many=True)
         return Response(serializer.data)
+
+class AboutMeView(generics.ListAPIView):
+    """
+    API endpoint для получения информации "О себе"
+    Возвращает последнюю добавленную запись с мультиязычным контентом
+    """
+    queryset = AboutMe.objects.all()
+    serializer_class = AboutMeSerializer
+    
+    def list(self, request, *args, **kwargs):
+        # Получаем последнюю запись AboutMe (самую новую по ID)
+        about_me_data = AboutMe.objects.last()
+        
+        if about_me_data:
+            serializer = self.get_serializer(about_me_data)
+            return Response(serializer.data)
+        else:
+            return Response({
+                'subtitle_uk': '', 'subtitle_en': '', 'subtitle_ru': '',
+                'title_uk': '', 'title_en': '', 'title_ru': '',
+                'text_uk': '', 'text_en': '', 'text_ru': '',
+                'photo': None
+            })

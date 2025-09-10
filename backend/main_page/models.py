@@ -28,3 +28,35 @@ class BackgroundVideo(models.Model):
         verbose_name = "Фоновое видео"
         verbose_name_plural = "Фоновые видео"
 
+
+class AboutMe(models.Model):
+    
+    subtitle_uk = models.CharField(
+        max_length=255,
+        verbose_name="Підзаголовок"
+    )
+    subtitle_en = models.CharField(
+        max_length=255,
+        verbose_name="Підзаголовок"
+    )
+    subtitle_ru = models.CharField(
+        max_length=255,
+        verbose_name="Підзаголовок"
+    )
+
+    title_uk = models.CharField(max_length=255)
+    title_en = models.CharField(max_length=255)
+    title_ru = models.CharField(max_length=255)
+    
+    text_uk = models.TextField()
+    text_en = models.TextField()
+    text_ru = models.TextField()
+
+    photo = models.ImageField(upload_to='about_me/')
+
+    def __str__(self):
+        return self.title_uk  # Используем title_uk вместо title
+    
+    class Meta:
+        verbose_name = "О себе"
+        verbose_name_plural = "О себе"

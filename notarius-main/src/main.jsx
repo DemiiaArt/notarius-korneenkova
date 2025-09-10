@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import ModalProvider from "@components/ModalProvider/ModalProvider";
+import { LanguageProvider } from "@hooks/useLanguage";
 import App from "./App.jsx";
 import "./main.scss";
 
@@ -75,10 +76,12 @@ const skillsContent = {
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ModalProvider>
-      <Router>
-        <App skillsContent={skillsContent} />
-      </Router>
-    </ModalProvider>
+    <Router>
+      <LanguageProvider>
+        <ModalProvider>
+          <App skillsContent={skillsContent} />
+        </ModalProvider>
+      </LanguageProvider>
+    </Router>
   </StrictMode>
 );
