@@ -27,7 +27,7 @@ class HeaderAdmin(admin.ModelAdmin):
 
 @admin.register(BackgroundVideo)
 class BackgroundVideoAdmin(admin.ModelAdmin):
-    list_display = ['video_name', 'video', 'upload_date']
+    list_display = ['video_name', 'video']
     list_filter = ['video_name']
     search_fields = ['video_name']
     
@@ -37,18 +37,10 @@ class BackgroundVideoAdmin(admin.ModelAdmin):
             'description': 'Загрузите фоновое видео для сайта'
         }),
     )
-    
-    readonly_fields = ['upload_date']
-    
-    def upload_date(self, obj):
-        if obj.id:
-            return obj.video.storage.get_created_time(obj.video.name)
-        return 'Не загружено'
-    upload_date.short_description = 'Дата загрузки'
 
 @admin.register(AboutMe)
 class AboutMeAdmin(admin.ModelAdmin):
-    list_display = ['title_uk', 'subtitle_uk', 'created_at']
+    list_display = ['title_uk', 'subtitle_uk']
     list_filter = ['title_uk']
     search_fields = ['title_uk', 'title_en', 'title_ru', 'subtitle_uk', 'subtitle_en', 'subtitle_ru']
     
@@ -70,14 +62,6 @@ class AboutMeAdmin(admin.ModelAdmin):
             'description': 'Фотографія (загальна для всіх мов)'
         }),
     )
-    
-    readonly_fields = ['created_at']
-    
-    def created_at(self, obj):
-        if obj.id:
-            return obj.id  # Используем ID как индикатор времени создания
-        return 'Не создано'
-    created_at.short_description = 'Порядок создания'
     
     def get_queryset(self, request):
         # Сортируем по ID в убывающем порядке (новые сверху)
