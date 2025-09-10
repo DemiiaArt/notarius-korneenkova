@@ -86,23 +86,23 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# Для Railway используем DATABASE_URL
-if 'DATABASE_URL' in os.environ:
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ['DATABASE_URL'])
+# Для Railway используем переменные, которые ссылаются на Postgres сервис
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'railway'),
+        'USER': os.getenv('PGUSER', 'postgres'),
+        'PASSWORD': os.getenv('PGPASSWORD', ''),
+        'HOST': os.getenv('PGHOST', 'localhost'),
+        'PORT': os.getenv('PGPORT', '5432'),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DB', 'railway'),
-            'USER': os.getenv('PGUSER', 'postgres'),
-            'PASSWORD': os.getenv('PGPASSWORD', ''),
-            'HOST': os.getenv('PGHOST', 'localhost'),
-            'PORT': os.getenv('PGPORT', '5432'),
-        }
-    }
+}
+
+# Добавляем отладочную информацию для Railway
+print(f"DATABASE config: {DATABASES['default']}")
+print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
+print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
+print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
 
 
 # Password validation
