@@ -14,12 +14,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 # Пароль для суперпользователя
-ADMIN_PASSWORD = 'admin123'
+ADMIN_PASSWORD = 'admin12345'
 
 # Создаем суперпользователя
 if not User.objects.filter(username='admin').exists():
     user = User.objects.create_superuser(
-        username='admin',
+        username='admin12',
         email='admin@example.com',
         password=ADMIN_PASSWORD
     )
