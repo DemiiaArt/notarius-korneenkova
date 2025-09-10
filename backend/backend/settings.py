@@ -27,7 +27,7 @@ print(BASE_DIR,'-----')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # Изменено для продакшена
+DEBUG = False  # Изменено для продакшена
 
 ALLOWED_HOSTS = ['*']  # Для Railway
 
