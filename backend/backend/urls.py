@@ -25,10 +25,8 @@ def health_check(request):
     return JsonResponse({"status": "ok", "message": "Django app is running"})
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('api/main_page/', include('main_page.urls')),
-    path('health/', health_check, name='health_check'),
-    path('', health_check, name='root_health_check'),  # Для корневого пути
 ]
 # Обслуживание MEDIA файлов в режиме разработки
 if settings.DEBUG:

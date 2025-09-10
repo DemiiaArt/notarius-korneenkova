@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = 'alluring-vitality-production.up.railway.app/api';
 
 export const useAboutMe = () => {
   const [aboutMe, setAboutMe] = useState({
