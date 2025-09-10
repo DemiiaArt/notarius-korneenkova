@@ -31,8 +31,15 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['*']  # Для Railway
+# Для Railway
+ALLOWED_HOSTS = ['*']
 
+# CSRF настройки для Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://notarius-korneenkova-production.up.railway.app',
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+]
 
 # Application definition
 

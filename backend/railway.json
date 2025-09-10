@@ -4,7 +4,7 @@
       "builder": "NIXPACKS"
     },
     "deploy": {
-      "startCommand": "python manage.py collectstatic --noinput && python manage.py migrate --run-syncdb && python manage.py createsuperuser --noinput --username admin --email admin@example.com && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 30 --workers 1",
+      "startCommand": "python manage.py collectstatic --noinput && python manage.py migrate --run-syncdb && echo 'from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser(\"admin\", \"admin@example.com\", \"admin\") if not User.objects.filter(username=\"admin\").exists() else None' | python manage.py shell && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 30 --workers 1",
       "healthcheckPath": "/health/",
       "healthcheckTimeout": 30,
       "restartPolicyType": "ON_FAILURE",
