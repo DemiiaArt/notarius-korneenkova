@@ -8,6 +8,11 @@ p {
   padding: 0;
   margin: 0;
 }
+ul,
+li {
+  list-style: none;
+  padding: 0;
+}
 
 @media (min-width: 375px) {
   .header {
@@ -15,24 +20,24 @@ p {
     width: 100%;
     top: 0;
     left: 0;
-    transition: background 0.5s ease;
-    background-color: transparent;
     z-index: 2000;
-    &-content {
-      padding: 20px 0 10px 0;
+    &-wrap {
+      padding: 20px 0 0 0;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+    }
+    &-content {
+      background-color: rgba(252, 252, 252, 0.8);
     }
     &-btns {
-      width: 30%;
+      width: 35%;
       display: flex;
       justify-content: space-around;
-      height: 40px;
     }
     &-logo {
       &-wrap {
-        width: 40%;
+        width: 30%;
         position: sticky;
         display: flex;
         justify-content: center;
@@ -41,17 +46,24 @@ p {
     &-info {
       display: none;
     }
-    &-change-lang-dropdown {
-      display: none;
+    &-change-lang {
+      &-list {
+        display: none;
+      }
     }
   }
   .navbar-burger-block {
     width: 30%;
     display: block;
-    align-self: flex-end;
   }
   .navbar-link-block {
     display: none;
+  }
+
+  .navbar-social-link {
+    &-block-pc-wrap {
+      display: none;
+    }
   }
 
   .search-icon-wrap,
@@ -131,11 +143,16 @@ p {
       margin: 10px 0 0 0;
       width: 50%;
       display: flex;
+      gap: 20px;
       justify-content: space-between;
       align-items: center;
+      position: relative;
+      z-index: 10000;
       &-item {
         width: 30px;
         height: 30px;
+        border-radius: 50%;
+        background: map.get($colors, 4);
         &-link {
           width: inherit;
           height: inherit;
@@ -145,6 +162,7 @@ p {
         &-img {
           width: 15px;
           height: 15px;
+          color: map.get($colors, 1);
         }
       }
     }
@@ -247,9 +265,9 @@ p {
   .header {
     &-info {
       display: block;
-      height: 40px;
+      height: 35px;
       &-content {
-        height: 40px;
+        height: 35px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -272,7 +290,6 @@ p {
       }
     }
     &-content {
-      height: 100px;
       align-items: flex-end;
       padding: 0;
     }
@@ -289,10 +306,12 @@ p {
     display: none;
   }
   .navbar-link-block {
-    width: 30%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 30px 0 0 0;
+    padding: 0 0 20px 0;
   }
   .navbar-link {
     text-decoration: inherit;
@@ -300,55 +319,24 @@ p {
 
   .navbar-social-link {
     border-radius: 50%;
-    border-width: 1px;
-    border-style: solid;
     display: grid;
     place-items: center;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     cursor: pointer;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transform: translateY(0);
-    transition:
-      transform 0.3s ease,
-      opacity 0.3s ease;
-    &:first-child {
-      position: relative;
-      opacity: 1;
-    }
-
-    &-dropdown {
-      width: 57px;
-      height: 35px;
-      position: relative;
+    &-block-pc {
+      width: 220px;
       display: flex;
       align-items: center;
-      cursor: pointer;
-      &:hover .navbar-social-link:not(:first-child) {
-        opacity: 1;
-        &:nth-child(2) {
-          transform: translateY(40px);
-        }
-        &:nth-child(3) {
-          transform: translateY(80px);
-        }
-        &:nth-child(4) {
-          transform: translateY(120px);
-        }
-      }
-      &:hover .navbar-social-link-arrow-icon {
-        transform: rotate(-180deg);
+      justify-content: space-between;
+      &-wrap {
+        display: block;
+        width: 35%;
       }
     }
     &-icon {
-      width: 17px;
-      height: 17px;
-      &:first-child {
-        margin-right: 2px;
-      }
+      width: 20px;
+      height: 20px;
     }
     &-arrow-icon {
       transition: transform 0.3s ease;
@@ -363,64 +351,16 @@ p {
   }
 
   .header-change-lang {
-    height: 30px;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    background: transparent;
-    transform: translateY(0);
-    transition:
-      transform 0.3s ease,
-      opacity 0.3s ease;
-    &:first-child {
-      position: relative;
-      opacity: 1;
-      display: flex;
-      justify-content: space-between;
-    }
-    &-dropdown {
-      margin: 0 10%;
-      height: 30px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      cursor: pointer;
-      &:hover .header-change-lang-list {
-        opacity: 1;
-        display: flex;
-        flex-direction: column;
-      }
-      &:hover .header-change-lang:not(:nth-child(0)) {
-        opacity: 1;
-        &:nth-child(2) {
-          transform: translateY(30px);
-        }
-        &:nth-child(3) {
-          transform: translateY(60px);
-        }
-      }
-      &:hover .header-change-lang-arrow-icon {
-        transform: rotate(-180deg);
-      }
+    background-color: transparent;
+    border-right: 1px solid #00000033;
+    &:last-child {
+      border-right: none;
     }
     &-list {
-      top: 30px;
-      left: 0;
-      position: absolute;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    &-arrow-icon {
-      transition: transform 0.3s ease;
-      margin: 0 0 5px 10px;
-    }
-    &:hover &-text {
-      color: map.get($colors, 4);
+      margin: 0 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   }
 
@@ -450,4 +390,47 @@ p {
   .phone-btn {
     font-size: 1rem;
   }
+}
+
+.nav-item/* каждая вкладка-ховер зона */
+.nav-item {
+  position: relative;
+  display: inline-block; /* можно оставить как flex-item, если нужно */
+}
+
+/* контейнер под панель */
+.nav__mega {
+  position: absolute;
+  left: 0;
+  top: 100%; /* отступ вниз от ссылки */
+  width: 100%;
+  z-index: 2200;
+}
+
+/* убрать щель между ссылкой и панелью, чтобы курсор не “ронял” ховер */
+// .nav__mega::before {
+//   content: "";
+//   position: absolute;
+//   left: 0;
+//   right: 0;
+//   top: -12px;
+//   height: 12px;
+// }
+
+/* так как внутри MegaPanel .mega абсолютная — обнулим её позиционирование в шапке */
+.nav__mega .mega-wrap {
+  position: static;
+}
+.nav__mega .mega {
+  position: static; /* было absolute */
+  left: auto;
+  right: auto;
+  top: auto;
+}
+
+/* чтобы панель не резалась */
+.header,
+.header-content,
+.navbar-link-block {
+  overflow: visible;
 }

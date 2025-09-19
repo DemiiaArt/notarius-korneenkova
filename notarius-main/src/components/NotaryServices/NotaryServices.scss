@@ -3,7 +3,7 @@
     width: 100vw;
     height: 100vh;
     max-height: 550px;
-    background-image: url("../../assets/media/services-page-bg.jpg");
+    background-image: url("../../assets/media/services-page-bg.webp");
     background-repeat: no-repeat;
     background-position: 80% top;
     background-size: cover;
@@ -14,7 +14,11 @@
       width: 100vw;
       height: 100vh;
       max-height: 550px;
-      background: linear-gradient(180deg, rgba(31, 31, 31, 30%) 0%, #000000 100%);
+      background: linear-gradient(
+        180deg,
+        rgba(31, 31, 31, 30%) 0%,
+        #000000 100%
+      );
       z-index: 2;
       &-target {
         position: relative;
@@ -25,6 +29,7 @@
     }
     &-title {
       width: 60%;
+      margin-top: 50px;
     }
     &-content {
       position: relative;
@@ -75,6 +80,7 @@
     }
     &-title {
       width: 100%;
+      margin-top: 15vh;
     }
     &-content {
       position: relative;

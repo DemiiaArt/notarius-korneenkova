@@ -1,47 +1,4 @@
-@use 'sass:map';
-
-// винести окремо
-// .main .btn-secondary {
-//   display: block;
-//   @media (min-width: 375px) {
-//     margin: 24px 0 30px 0;
-//     padding: 0 0 6px 0;
-//     border-bottom: 1px solid map.get($colors, 1);
-//     cursor: pointer;
-
-//     &:hover,
-//     &:active {
-//       color: map.get($colors, 4);
-//       border-bottom-color: map.get($colors, 4);
-//     }
-//   }
-
-//   @media (min-width: 768px) {
-//     margin: 40px 0 30px 0;
-//   }
-
-//   @media (min-width: 1024px) {
-//     margin: 48px 0 50px 0;
-//     padding: 14px 83px;
-//     border: 1px solid map.get($colors, 1);
-
-//     &:hover,
-//     &:active {
-//       background-color: map.get($colors, 3);
-//       border: 1px solid map.get($colors, 3);
-//     }
-
-//     &:focus {
-//       background-color: map.get($colors, 3);
-//     }
-//   }
-// }
-
-// .main .about-block-btn {
-//   display: none;
-//   padding: 14px 30px;
-// }
-
+@use "sass:map";
 
 @media (min-width: 375px) {
   .about-block {
@@ -49,11 +6,15 @@
     width: 100vw;
     height: 65vh;
     max-height: 400px;
-    background-image: url("../../assets/media/NadiiaHeroImgMain.png");
+    background-image: url("../../assets/media/NadiiaHeroImgMain-min.webp");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 50% 20%;
     z-index: 1;
+
+    p {
+      margin: 0;
+    }
 
     &-shadow {
       position: absolute;
@@ -61,7 +22,12 @@
       left: 0;
       width: 100vw;
       height: 41.75vh;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.32) 40%, rgba(0, 0, 0, 0.4) 100%);
+      background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.32) 40%,
+        rgba(0, 0, 0, 0.4) 100%
+      );
       z-index: 2;
     }
 
@@ -72,7 +38,7 @@
     }
 
     &-greetings {
-      margin: 0 0 10px 0;
+      margin: 133px 0 10px 0;
     }
 
     &-title {
@@ -97,24 +63,27 @@
 
 @media (min-width: 768px) {
   .about-block {
-    height: 75vh;
+    height: 80vh;
     max-height: none;
   }
 
-  .about-block-content {
-    max-width: 560px;
-  }
+  // .about-block-content {
+  //   max-width: 600px;
+  // }
 }
 
 @media (min-width: 1024px) {
   .about-block {
-    height: 80vh;
+    height: 90vh;
     max-height: 776px;
     background-position: 10% 5%;
 
     &-title {
       margin: 24px 0 32px 0;
     }
+  }
+  .about-block-content {
+    max-width: 600px;
   }
 }
 
@@ -125,41 +94,5 @@
     &-content {
       padding: 230px 0 0 0;
     }
-  }
-
-}
-
-.loading-skeleton {
-  .skeleton-text {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    height: 20px;
-  }
-  
-  .skeleton-subtitle {
-    width: 60%;
-    height: 18px;
-  }
-  
-  .skeleton-title {
-    width: 80%;
-    height: 32px;
-  }
-  
-  .skeleton-description {
-    width: 100%;
-    height: 60px;
-  }
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
   }
 }

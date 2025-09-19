@@ -1,28 +1,28 @@
-@use 'sass:map';
+@use "sass:map";
 button {
   border: 0;
 }
 
-@media (min-width: 375px){
-  .footer{
+@media (min-width: 375px) {
+  .footer {
     height: 50vh;
     min-height: 460px;
     padding: 40px 0 0 0;
-    transition: padding-bottom .3s ease-in-out;
+    transition: padding-bottom 0.3s ease-in-out;
     font-family: "Montserrat", sans-serif !important;
     position: relative;
     bottom: 0;
     left: 0;
-    &.accordion-open{
+    &.accordion-open {
       padding: 40px 0 50px 0;
     }
-    &-social-media{
+    &-social-media {
       width: 90%;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      &-item{
+      &-item {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -30,15 +30,14 @@ button {
         height: 40px;
         border-radius: 50%;
         cursor: pointer;
-        transition: transform .3s ease-in-out  ;
-        &:hover{
+        transition: transform 0.3s ease-in-out;
+        &:hover {
           transform: scale(1.15);
         }
       }
     }
     .footer-accordion {
       margin: 50px 0 70px 0;
-
 
       .footer-accordion-item {
         border-bottom: 1px solid rgba(255, 255, 255, 0.3);
@@ -53,7 +52,9 @@ button {
           justify-content: space-between;
           align-items: center;
           cursor: pointer;
-          transition: color, padding 0.3s ease;
+          transition:
+            color,
+            padding 0.3s ease;
 
           .footer-accordion-icon {
             width: 24px;
@@ -64,79 +65,85 @@ button {
           &.open .footer-accordion-icon {
             transform: rotate(90deg);
           }
-          &.open{
+          &.open {
             padding-bottom: 0;
           }
         }
 
         .footer-accordion-content {
           overflow: hidden;
-          transition: max-height 0.3s ease, opacity 0.3s ease;
+          transition:
+            max-height 0.3s ease,
+            opacity 0.3s ease;
 
           .footer-accordion-inner {
             padding: 8px 0;
-            line-height: 1.4;
+            line-height: 2;
+
+            a {
+              display: block;
+            }
           }
         }
       }
     }
-    &-change-lang{
-      width: 95px;
-      margin: 0 auto 25px auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    &-change-lang {
       background-color: transparent;
-      cursor: pointer;
-      &-text{
-        font: inherit
-        }
+      border-right: 1px solid #ffffff33;
+      &:last-child {
+        border-right: none;
+      }
+      &-list {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
-    &-logo{
+    &-logo {
       width: 100%;
     }
     &-contacts,
     &-navigation,
-    &-help{
+    &-help {
       display: none;
     }
   }
 }
 
 @media (min-width: 767px) {
-  .footer{
-    &.accordion-open{
+  .footer {
+    &.accordion-open {
       padding: 40px 0 140px 0;
     }
   }
 }
 
-@media (min-width: 1024px){
-  .footer{
-    &-content{
+@media (min-width: 1024px) {
+  .footer {
+    &-content {
       display: flex;
       justify-content: space-between;
       padding: 0 0 40px 0;
     }
-    &-social-media{
+    &-social-media {
       margin: 0;
       order: 3;
       width: 22.5%;
       flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
-      &-title{
+      &-title {
         margin: 0 0 30px 0;
       }
-      &-link{
+      &-link {
         width: auto;
         height: auto;
         cursor: pointer;
         margin-bottom: 20px;
-        &:last-child{
+        &:last-child {
           margin-bottom: 0;
-        }       
-        &:hover{
+        }
+        &:hover {
           transform: none;
           transition: color 0.3s ease;
           color: map.get($colors, 4);
@@ -145,90 +152,36 @@ button {
     }
     &-contacts,
     &-navigation,
-    &-help{
+    &-help {
       width: 22.5%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      &-link{
+      &-link {
         text-decoration: none;
         margin-bottom: 20px;
         cursor: pointer;
-        &:last-child{
+        &:last-child {
           margin-bottom: 0;
         }
-        &:hover{
+        &:hover {
           transform: none;
           transition: color 0.3s ease;
           color: map.get($colors, 4);
         }
       }
-      &-title{
+      &-title {
         margin: 0 0 30px 0;
       }
     }
-    &-contacts{
+    &-contacts {
       order: 1;
     }
-    &-navigation{
+    &-navigation {
       order: 2;
     }
-    &-help{
+    &-help {
       order: 4;
-    }
-  }
-  .footer-change-lang {
-    width: auto;
-    height: 30px;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    background: transparent;
-    transform: translateY(0);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    margin: 0;
-    &:first-child {
-      position: relative;
-      opacity: 1;
-      display: flex;
-      justify-content: space-between;
-    }
-    &-dropdown{
-      margin: auto 0 0 0;
-      height: 30px;
-      position: relative; 
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      cursor: pointer;
-      &:hover .footer-change-lang-list{
-        opacity: 1;
-        display: flex;
-        flex-direction: column;
-      }
-      &:hover .footer-change-lang:not(:nth-child(0)) {
-        opacity: 1;
-        &:nth-child(2) { transform: translateY(30px); }
-        &:nth-child(3) { transform: translateY(60px); } 
-      }
-      &:hover .footer-change-lang-arrow-icon{
-        transform: rotate(-180deg);
-      }
-    }
-    &-list{
-      top: 30px;
-      left: 0;
-      position: absolute;
-      opacity: 0;
-      transition: opacity .3s ease;
-    }
-    &-arrow-icon{
-      transition: transform 0.3s ease;
-      margin: 0 0 5px 10px;
     }
   }
 }

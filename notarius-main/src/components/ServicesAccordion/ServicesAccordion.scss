@@ -30,7 +30,7 @@
       transition: max-height 0.4s ease, opacity 0.4s ease;
 
       &.show {
-        max-height: 2000px; 
+        max-height: 2000px;
         opacity: 1;
       }
     }
@@ -64,7 +64,7 @@
   .accordion-content {
     margin-top: 10px;
     white-space: pre-line;
-    list-style: disc;
+    list-style-type: disc;
     padding-left: 16px;
     margin-left: 5px;
     opacity: 0;
@@ -74,8 +74,14 @@
 
     & li {
       margin-top: 10px;
+      list-style: disc;
+
+      &::marker {
+        font-size: 10px;
+      }
     }
   }
+
 
   .accordion-toggle {
     margin-top: 30px;
@@ -97,9 +103,10 @@
 }
 
 @media (min-width: 768px) {
-    .accordion-container {
+  .accordion-container {
     padding: 70px 0;
   }
+
   .accordion-title {
     margin-bottom: 70px;
   }
@@ -121,6 +128,7 @@
 
   .accordion-item {
     height: fit-content;
+    min-height: 40px;
   }
 
   .accordion-content {
@@ -129,16 +137,17 @@
   }
 
   .accordion-toggle {
-    display: none; 
+    display: none;
   }
 }
 
 @media (min-width: 1024px) {
-    .accordion-container {
+  .accordion-container {
     padding: 100px 0;
   }
 
   .accordion-item {
     padding: 26px;
-}
+     min-height: 50px;
+  }
 }

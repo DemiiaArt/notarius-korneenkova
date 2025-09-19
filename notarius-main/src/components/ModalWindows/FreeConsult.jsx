@@ -7,16 +7,24 @@ const formName = "freeConsult";
 
 export const FreeConsult = () => {
   const { close, getOpenModalState } = useModal();
-
   const openModalState = getOpenModalState(formName);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    tel: "",
+    city: "",
+    question: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    tel: "",
+    city: "",
+    question: "",
+  });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [text, setText] = useState("");
-  const [errorCity, setErrorCity] = useState("");
-  const [errorQuestion, setErrorQuestion] = useState("");
-  const [errorName, setErrorName] = useState("");
-  const [errorTel, setErrorTel] = useState("");
 
   const isPC = useIsPC();
 
@@ -28,51 +36,64 @@ export const FreeConsult = () => {
 
   // автоочистка ошибок через 30 сек
   useEffect(() => {
-    if (errorName) {
-      const t = setTimeout(() => setErrorName(""), 30000);
-      return () => clearTimeout(t);
-    }
-  }, [errorName]);
+    const timers = [];
+    Object.entries(errors).forEach(([key, value]) => {
+      if (value) {
+        const t = setTimeout(
+          () => setErrors((prev) => ({ ...prev, [key]: "" })),
+          3000
+        );
+        timers.push(t);
+      }
+    });
+    return () => timers.forEach((t) => clearTimeout(t));
+  }, [errors]);
 
-  useEffect(() => {
-    if (errorTel) {
-      const t = setTimeout(() => setErrorTel(""), 30000);
-      return () => clearTimeout(t);
-    }
-  }, [errorTel]);
+  const handleClose = () => {
+    close(formName);
+    setFormData({ name: "", tel: "", city: "", question: "" });
+    setErrors({ name: "", tel: "", city: "", question: "" });
+    setIsSubmitted(false);
+    setIsLoading(false);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorName("");
-    setErrorTel("");
-    setErrorCity("");
-    setErrorQuestion("");
-
-    const formData = new FormData(e.target);
-    const name = formData.get("name");
-    const tel = formData.get("tel");
-    const city = formData.get("city");
-    const question = formData.get("question");
+    setErrors({ name: "", tel: "", city: "", question: "" });
 
     let hasError = false;
 
-    if (!name.trim()) {
-      setErrorName("Поле ім’я обов’язкове");
+    if (!formData.name.trim()) {
+      setErrors((prev) => ({ ...prev, name: "Поле ім’я обов’язкове" }));
       hasError = true;
     }
 
-    if (!validatePhone(tel)) {
-      setErrorTel("Введіть номер у форматі: +380....");
+    if (!validatePhone(formData.tel)) {
+      setErrors((prev) => ({
+        ...prev,
+        tel: "Введіть номер у форматі: +380....",
+      }));
       hasError = true;
     }
 
-    if (!city.trim()) {
-      setErrorCity("Поле місто обов’язкове");
+    if (!formData.city.trim()) {
+      setErrors((prev) => ({
+        ...prev,
+        city: "Поле місто обов’язкове",
+      }));
       hasError = true;
     }
 
-    if (!question.trim() || question.trim().length < 1) {
-      setErrorQuestion("Поле питання не може бути порожнім");
+    if (!formData.question.trim()) {
+      setErrors((prev) => ({
+        ...prev,
+        question: "Поле питання не може бути порожнім",
+      }));
       hasError = true;
     }
 
@@ -84,128 +105,151 @@ export const FreeConsult = () => {
       // имитация запроса
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsSubmitted(true);
-      formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-      });
-      formData.set("name", "");
-      formData.set("tel", "");
-      formData.set("city", "");
-      formData.set("question", "");
-      formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-      });
+
+      // тестовый лог
+      console.log("Form submitted:", formData);
     } catch (err) {
-      setErrorTel("Помилка при відправці. Спробуйте ще раз.");
+      setErrors((prev) => ({
+        ...prev,
+        tel: "Помилка при відправці. Спробуйте ще раз.",
+      }));
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <div className={`free-form ${openModalState ? "open" : ""}`}>
       <div className="container">
-        <div className="form-container bg3 c1 uppercase">
+        <div className="form-container bg1 c3 uppercase">
           <button
             className="close-btn"
-            onClick={() => close(formName)}
+            onClick={handleClose}
             aria-label="Закрити"
           ></button>
+
           <div className="form-content">
-            <h2 className={`fw-bold ${isPC ? "fs-p--30px" : "fs-p--16px"}`}>
+            <h2
+              className={`fw-bold ${
+                isPC ? "fs-p--30px" : "fs-p--16px"
+              }`}
+            >
               отримати безкоштовну консультацію
             </h2>
           </div>
+
           <form
-            className="application-form input-black"
+            className="application-form input-white"
             onSubmit={handleSubmit}
           >
+            {/* name */}
             <div
-              className={`input-group ${isPC ? "fs-p--18px" : "fs-p--10px"} c1 lh-150`}
+              className={`input-group ${
+                isPC ? "fs-p--18px" : "fs-p--10px"
+              } c3 lh-150`}
             >
               <input
                 type="text"
                 id="free-consult-name"
                 name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Ім'я"
-                className={`c1 ${errorName ? "error" : ""}`}
-                autoComplete="on"
+                className={`c3 ${errors.name ? "error" : ""}`}
                 disabled={isSubmitted}
               />
-              {errorName ? (
-                <span className="error-label">{errorName}</span>
+              {errors.name ? (
+                <span className="error-label">{errors.name}</span>
               ) : (
                 <label htmlFor="free-consult-name">Ім’я</label>
               )}
             </div>
+
+            {/* tel */}
             <div
-              className={`input-group ${isPC ? "fs-p--18px" : "fs-p--10px"} c1 lh-150`}
+              className={`input-group ${
+                isPC ? "fs-p--18px" : "fs-p--10px"
+              } c3 lh-150`}
             >
               <input
                 type="tel"
                 id="free-consult-tel"
                 name="tel"
+                value={formData.tel}
+                onChange={handleChange}
                 placeholder="Номер телефону"
-                className={`c1 ${errorTel ? "error" : ""}`}
-                autoComplete="on"
+                className={`c3 ${errors.tel ? "error" : ""}`}
                 disabled={isSubmitted}
               />
-              {errorTel ? (
-                <span className="error-label">{errorTel}</span>
+              {errors.tel ? (
+                <span className="error-label">{errors.tel}</span>
               ) : (
                 <label htmlFor="free-consult-tel">Номер телефону</label>
               )}
             </div>
+
+            {/* city */}
             <div
-              className={`input-group ${isPC ? "fs-p--18px" : "fs-p--10px"} c1 lh-150`}
+              className={`input-group ${
+                isPC ? "fs-p--18px" : "fs-p--10px"
+              } c3 lh-150`}
             >
               <input
                 type="text"
                 id="city"
                 name="city"
+                value={formData.city}
+                onChange={handleChange}
                 placeholder="Місто"
-                className={`c1 ${errorCity ? "error" : ""}`}
-                // autoComplete="on"
+                className={`c3 ${errors.city ? "error" : ""}`}
                 disabled={isSubmitted}
               />
-              {errorCity ? (
-                <span className="error-label">{errorCity}</span>
+              {errors.city ? (
+                <span className="error-label">{errors.city}</span>
               ) : (
                 <label htmlFor="city">Місто</label>
               )}
             </div>
+
+            {/* question */}
             <div
-              className={`input-group ${isPC ? "fs-p--18px" : "fs-p--10px"} c1 lh-150`}
+              className={`input-group ${
+                isPC ? "fs-p--18px" : "fs-p--10px"
+              } c3 lh-150`}
             >
               <textarea
-                name="question"
-                placeholder="Питання, яке вас цікавить"
-                value={text}
                 id="question"
-                required
+                name="question"
+                value={formData.question}
                 onChange={(e) => {
-                  setText(e.target.value);
+                  handleChange(e);
                   e.target.style.height = "auto";
                   e.target.style.height = `${e.target.scrollHeight - 15}px`;
                 }}
+                placeholder="Питання, яке вас цікавить"
                 rows={1}
-                className={errorQuestion ? "error" : ""}
+                className={errors.question ? "error" : ""}
                 disabled={isSubmitted}
               />
-              {errorQuestion && (
-                <span className="error-label">{errorQuestion}</span>
+              {errors.question && (
+                <span className="error-label">{errors.question}</span>
               )}
               <label htmlFor="question">Питання, яке вас цікавить</label>
             </div>
 
+            {/* submit */}
             <button
               type="submit"
-              className={`btn-submit ${isPC ? "fs-p--24px" : "fs-p--14px"} bg4 c1 fw-normal uppercase`}
+              className={`btn-submit ${
+                isPC ? "fs-p--24px" : "fs-p--14px"
+              } bg4 c1 fw-normal uppercase`}
               disabled={isSubmitted || isLoading}
             >
               {isSubmitted
                 ? "Ваша заявка успішно відправлена"
                 : isLoading
-                  ? "Відправка..."
-                  : "ВІДПРАВИТИ"}
+                ? "Відправка..."
+                : "ВІДПРАВИТИ"}
             </button>
           </form>
         </div>

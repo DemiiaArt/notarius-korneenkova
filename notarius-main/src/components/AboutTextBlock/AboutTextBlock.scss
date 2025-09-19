@@ -45,6 +45,9 @@
 @media (min-width: 1024px) {
 
     .about-container {
+        h2 {
+        text-align: left;
+    }
         padding: 100px 0;
 
         & .about-content {

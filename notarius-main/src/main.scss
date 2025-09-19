@@ -23,66 +23,13 @@ html,
 }
 
 .fs {
-  // @media (min-width: 768px) {
-  //   // &-score {
-  //   //   font-size: toRem(34px);
-  //   // }
-
-  //   // &-h1 {
-  //   //   font-size: toRem(30px);
-  //   // }
-
-  //   // &-h2 {
-  //   //   font-size: toRem(28px);
-  //   // }
-
-  //   // &-h2-small {
-  //   //   font-size: toRem(22px);
-  //   // }
-
-  //   // &-p {
-  //   //   font-size: toRem(24px);
-  //   // }
-  //   // &-p-2 {
-  //   //   font-size: toRem(18px);
-  //   // }
-
-  //   // &-p-small {
-  //   //   font-size: toRem(22px);
-  //   // }
-
-  //   &-p-small-3 {
-  //     font-size: toRem(18px);
-  //   }
-  //   &-p-small-4 {
-  //     font-size: toRem(16px);
-  //   }
-
-  //   // &-p-small-2 {
-  //   //   font-size: toRem(16px);
-  //   // }
-
-  //   &-p-esmall {
-  //     font-size: toRem(16px);
-  //   }
-  //   &-p-esmall-2 {
-  //     font-size: toRem(14px);
-  //   }
-
-  //   &-input {
-  //     font-size: toRem(14px);
-  //   }
-  // }
-
-  // @media (min-width: 1024px) {
-  //   &-h1-big {
-  //     font-size: toRem(60px);
-  //   }
-  // }
-
   &-italic {
     font-style: italic;
   }
+}
+
+.fs-h1--70px {
+  font-size: toRem(70px);
 }
 
 .fs-h1--60px {
@@ -101,6 +48,10 @@ html,
   font-size: toRem(24px);
 }
 
+.fs-h2--34px {
+  font-size: toRem(34px);
+}
+
 .fs-h2--32px {
   font-size: toRem(32px);
 }
@@ -110,6 +61,10 @@ html,
 }
 
 .fs-p--40px {
+  font-size: toRem(40px);
+}
+
+.fs-p--36px {
   font-size: toRem(40px);
 }
 

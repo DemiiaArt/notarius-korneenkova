@@ -4,8 +4,8 @@
   .hero {
     &-img {
       width: 100vw;
-      padding: 197px 0 0 0;
-      height: calc(100vh - 197px);
+      padding: 100px 0 0 0;
+      height: calc(100vh - 150px);
       max-height: 600px;
       background-image: url("../../assets/media/ApostilleHero.png");
       background-repeat: no-repeat;
@@ -27,7 +27,7 @@
     h1 {
       display: block;
       position: relative;
-      padding: 45vh 0 0 0;
+      padding: 25vh 0 0 0;
       z-index: 3;
     }
   }
@@ -71,10 +71,11 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .hero-img {
     max-height: none;
     background-size: cover;
+    height: calc(100vh - 100px);
 
     &-shadow {
       background: linear-gradient(
@@ -83,6 +84,12 @@
         rgba(0, 0, 0, 0.85) 100%
       );
       max-height: none;
+    }
+  }
+
+  .hero {
+    h1 {
+      padding: 45vh 0 0 0;
     }
   }
 
@@ -123,6 +130,7 @@
   }
 
   .hero-img {
+    padding: 200px 0 0 0;
     h1 {
       padding: 35vh 0 0 0;
     }

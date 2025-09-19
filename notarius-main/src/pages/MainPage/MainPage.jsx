@@ -10,7 +10,6 @@ import ServicesAccordion from "@components/ServicesAccordion/ServicesAccordion";
 import Form from "@components/Form/Form";
 
 import "./MainPage.scss";
-
 const MainPage = ({ skillsContent, lang }) => {
   return (
     <>

@@ -1,15 +1,68 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
 import Services from "@components/Services/Services";
-// import Comments from "@components/Comments/Comments";
-// import HowIWork from "@components/HowIWork/HowIWork";
+import Comments from "@components/Comments/Comments";
+import HowIWork from "@components/HowIWork/HowIWork";
 import QuestionItem from "@components/Questions/Questions";
-// import ReviewForm from "@components/ReviewForm/ReviewForm";
-// import Form from "@components/Form/Form";
-// import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
+import ReviewForm from "@components/ReviewForm/ReviewForm";
+import Form from "@components/Form/Form";
+import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
 
 import "./MilitaryPage.scss";
+import { useIsPC } from "@hooks/isPC";
+const content = [
+  {
+    type: "paragraph",
+    text: `Нотаріальні послуги — це комплекс дій, що надаються нотаріусом з
+    метою надання юридичної сили документам та угодам, захисту прав
+    і законних інтересів громадян і юридичних осіб. Основна мета
+    нотаріуса — гарантувати законність, достовірність і безпеку
+    угод, а також запобігти спорам у майбутньому.`,
+  },
+  {
+    type: "paragraph",
+    text: `Нотаріальні послуги в Україні займають особливе місце серед юридичних процедур, адже вони гарантують правову захищеність громадян та юридичних осіб у найрізноманітніших сферах життя. Основна мета нотаріату полягає у забезпеченні законності, достовірності та безпеки документів і угод, які укладають люди. Саме нотаріус виступає своєрідним гарантом прав та обов’язків сторін, підтверджуючи їх волю та законність дій.`,
+  },
+  {
+    type: "title",
+    text: "Навіщо потрібен нотаріус?",
+  },
+  {
+    type: "paragraph",
+    text: `Звернення до нотаріуса дозволяє уникнути багатьох суперечок і
+    непорозумінь у майбутньому. Від посвідчення договорів та
+    заповітів до оформлення довіреностей та заяв, нотаріальні
+    послуги охоплюють широкий спектр потреб. Кожна дія, здійснена
+    нотаріусом, набуває юридичної сили, а документи, завірені ним,
+    визнаються чинними перед державними органами, судами та іншими
+    установами.`,
+  },
+  {
+    type: "list",
+    items: [
+      "Юридична сила документів.",
+      "Захист прав та інтересів.",
+      "Спокій та впевненість.",
+    ],
+  },
+  {
+    type: "image",
+    src: "#",
+    alt: "text-content-img",
+  },
+  {
+    type: "paragraph",
+    text: `Звернення до нотаріуса дозволяє уникнути багатьох суперечок і
+    непорозумінь у майбутньому. Від посвідчення договорів та
+    заповітів до оформлення довіреностей та заяв, нотаріальні
+    послуги охоплюють широкий спектр потреб. Кожна дія, здійснена
+    нотаріусом, набуває юридичної сили, а документи, завірені ним,
+    визнаються чинними перед державними органами, судами та іншими
+    установами.`,
+  },
+];
 
 const MilitaryPage = () => {
+  const isPC = useIsPC();
   return (
     <>
       <div className="military-wrap">
@@ -22,42 +75,65 @@ const MilitaryPage = () => {
           ]}
         />
       </div>
-      <Services />
-      <div className="questions">
+      <div className="template-text-content">
         <div className="container">
-          <QuestionItem
-            title="Кваліфікована юридична допомога військовослужбовцям офлайн та онлайн."
-            text="Апостиль («Apostille») – це спеціальний штамп на офіційних документах, які були складені на території України, яким засвідчуються справжність підпису, якість, в якій виступала особа, що підписала документ, та, у відповідному випадку, автентичність відбитку печатки або штампа, яким скріплено документ."
-          />
-          <QuestionItem
-            title="Для яких країн проставляється апостиль документів"
-            text="Апостиль документів визнають на будь-якому державному рівні в
-            країнах-учасницях Гаазької Конвенції. В даний час цю Конвенцію
-            підписали більше 136 держав, серед яких США, майже всі країни ЄС, а
-            також Японія, Австралія."
-          />
-          <QuestionItem
-            title="Що таке апостиль документів?"
-            text="Апостиль («Apostille») – це спеціальний штамп на офіційних
-            документах, які були складені на території України, яким
-            засвідчуються справжність підпису, якість, в якій виступала особа,
-            що підписала документ, та, у відповідному випадку, автентичність
-            відбитку печатки або штампа, яким скріплено документ."
-          />
-          <QuestionItem
-            title="Для яких країн проставляється апостиль документів"
-            text="Апостиль документів визнають на будь-якому державному рівні в
-            країнах-учасницях Гаазької Конвенції. В даний час цю Конвенцію
-            підписали більше 136 держав, серед яких США, майже всі країни ЄС, а
-            також Японія, Австралія."
-          />
+          <article className="text-content">
+            {content.map((block, i) => {
+              switch (block.type) {
+                case "paragraph":
+                  return (
+                    <p
+                      key={i}
+                      className={`text-content-text lh-150 ${
+                        isPC ? "fs-p--16px" : "fs-p--14px"
+                      }`}
+                    >
+                      {block.text}
+                    </p>
+                  );
+                case "title":
+                  return (
+                    <h2
+                      key={i}
+                      className={`text-content-title ${
+                        isPC ? "fs-p--32px" : "fs-p--18px"
+                      } fw-semi-bold lh-100`}
+                    >
+                      {block.text}
+                    </h2>
+                  );
+                case "list":
+                  return (
+                    <ul
+                      key={i}
+                      className={`text-content-list lh-150 ${
+                        isPC ? "fs-p--16px" : "fs-p--14px"
+                      }`}
+                    >
+                      {block.items.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  );
+                case "image":
+                  return (
+                    <div key={i} className="text-content-image">
+                      <img src={block.src} alt={block.alt} />
+                    </div>
+                  );
+                default:
+                  return null;
+              }
+            })}
+          </article>
         </div>
       </div>
-      {/* <HowIWork />
+      <Services />
+      <HowIWork />
       <Comments />
       <ReviewForm />
       <Form />
-      <OftenQuestions /> */}
+      <OftenQuestions />
     </>
   );
 };

@@ -15,8 +15,19 @@
 
     &:hover,
     &:active {
-      color: map.get($colors, 4);
-      border-bottom-color: map.get($colors, 4);
+      color: map.get($colors, 1);
+      background: map.get($colors, 3);
+    }
+
+    &:focus {
+      color: map.get($colors, 1);
+      background: map.get($colors, 3);
+    }
+
+    &:disabled {
+      color: #8D8D8D;
+      background: #C6C6C6;
+
     }
   }
 

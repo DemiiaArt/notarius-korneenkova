@@ -93,10 +93,10 @@ const CommentsCarousel = ({ comments }) => {
           nextEl: ".comments-carousel-next",
           prevEl: ".comments-carousel-prev",
         }}
-        autoplay={{
-          delay: 4000, // задержка между сменой слайдов (в мс)
-          disableOnInteraction: false, // продолжать после взаимодействия
-        }}
+        // autoplay={{
+        //   delay: 4000, // задержка между сменой слайдов (в мс)
+        //   disableOnInteraction: false, // продолжать после взаимодействия
+        // }}
         speed={1500}
         className="comments-carousel"
         spaceBetween={32}

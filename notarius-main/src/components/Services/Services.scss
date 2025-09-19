@@ -39,18 +39,31 @@ a {
       }
     }
     &-list {
-      width: fit-content;
       display: flex;
       list-style: none;
       height: 28px;
-      overflow-x: hidden;
-      overscroll-behavior: contain;
+      width: 100%; /* было fit-content — мешало скроллу */
+      margin: 0 auto 10px auto;
+      overflow: visible; /* было hidden — резало конец трека */
+      touch-action: pan-x;
+      overscroll-behavior-x: contain;
       margin: 0 auto 10px auto;
       height: auto;
-      & .swiper-wrapper {
+      .swiper-slide {
+        width: max-content;
+        flex: 0 0 auto;
+        margin: 0;
+        width: auto; /* ширина = по контенту */
+        flex: 0 0 auto; /* не сжимать */
+        margin: 0 !important; /* отступы только через spaceBetween */
+      }
+      .swiper-wrapper {
         gap: 10px;
+        align-items: center;
       }
       &-item {
+        width: auto; /* ширина — за змістом */
+        object-fit: cover;
         cursor: pointer;
         width: auto !important;
         padding: 0 0 12px 0;
@@ -62,12 +75,12 @@ a {
             transform: rotate(0);
           }
         }
+        &.open {
+          border-bottom: 1px solid map.get($colors, 3);
+        }
         &-header {
           display: flex;
           align-items: center;
-        }
-        &:first-child {
-          border-bottom: 1px solid;
         }
       }
       &-submenu {
@@ -85,13 +98,19 @@ a {
         margin: 0;
         overflow: hidden;
         &.open {
-          max-height: 500px;
-          padding: 20px 0;
+          max-height: 1000px;
+          padding: 0 0 20px 0;
           opacity: 1;
+        }
+        &-items {
+          margin: 0 0 0 10px;
+        }
+        &-title {
+          margin: 0 0 10px 0;
         }
         &-item {
           width: fit-content;
-          padding: 0 0 8px 0;
+          padding: 5px 0;
         }
       }
     }
@@ -149,11 +168,18 @@ a {
 @media (min-width: 768px) {
   .services-list {
     margin: 0 0 10px 0 !important;
+
+    & .swiper-wrapper {
+      gap: 32px;
+    }
   }
 }
 
 @media (min-width: 1024px) {
   .services {
+    &-title {
+      margin: 100px 0 60px 0;
+    }
     &-carousel {
       height: 500px;
       &-slide {

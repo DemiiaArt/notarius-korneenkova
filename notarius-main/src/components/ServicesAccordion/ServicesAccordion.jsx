@@ -82,10 +82,10 @@ const AccordionItem = ({ service, isOpen, onToggle }) => {
       onClick={onToggle}
     >
       <div
-        className={`accordion-header ${isPC ? "fs-p--28px" : "fs-p--18px"} fw-medium`}
+        className={`accordion-header ${isPC ? "fs-p--24px" : "fs-p--18px"} fw-medium`}
       >
         <span>{service.title}</span>
-        <span >{isOpen ? <MinusIcon /> : <PlusIcon />}</span>
+        <span>{isOpen ? <MinusIcon /> : <PlusIcon />}</span>
       </div>
 
       <div
@@ -95,7 +95,9 @@ const AccordionItem = ({ service, isOpen, onToggle }) => {
           transition: "max-height 0.4s ease",
         }}
       >
-        <ul className={`accordion-content ${isPC ? "fs-p--16px" : "fs-p--14px"} fw-normal lh-150`}>
+        <ul
+          className={`accordion-content ${isPC ? "fs-p--16px" : "fs-p--14px"} fw-normal lh-150`}
+        >
           {service.content.map((point, idx) => (
             <li key={idx}>{point}</li>
           ))}

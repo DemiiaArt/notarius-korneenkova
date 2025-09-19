@@ -266,7 +266,7 @@
     }
 
     .review-form-input {
-        gap: 34px;
+        // gap: 34px;
 
         .input-group textarea~label {
             top: 7px;
@@ -285,4 +285,8 @@
         height: 40px;
         width: 40px;
     }
+
+     .review-block .review-form-input {
+        gap: 15px;}
+
 }

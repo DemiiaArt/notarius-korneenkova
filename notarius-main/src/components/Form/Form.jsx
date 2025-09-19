@@ -3,11 +3,18 @@ import "./Form.scss";
 import { useIsPC } from "@hooks/isPC";
 
 export const Form = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    tel: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    tel: "",
+  });
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const [errorName, setErrorName] = useState("");
-  const [errorTel, setErrorTel] = useState("");
 
   const isPC = useIsPC();
 
@@ -19,37 +26,40 @@ export const Form = () => {
 
   // автоочистка ошибок через 30 сек
   useEffect(() => {
-    if (errorName) {
-      const t = setTimeout(() => setErrorName(""), 30000);
-      return () => clearTimeout(t);
-    }
-  }, [errorName]);
+    const timers = [];
+    Object.entries(errors).forEach(([key, value]) => {
+      if (value) {
+        const t = setTimeout(
+          () => setErrors((prev) => ({ ...prev, [key]: "" })),
+          30000
+        );
+        timers.push(t);
+      }
+    });
+    return () => timers.forEach((t) => clearTimeout(t));
+  }, [errors]);
 
-  useEffect(() => {
-    if (errorTel) {
-      const t = setTimeout(() => setErrorTel(""), 30000);
-      return () => clearTimeout(t);
-    }
-  }, [errorTel]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorName("");
-    setErrorTel("");
-
-    const formData = new FormData(e.target);
-    const name = formData.get("name");
-    const tel = formData.get("tel");
+    setErrors({ name: "", tel: "" });
 
     let hasError = false;
 
-    if (!name.trim()) {
-      setErrorName("Поле ім’я обов’язкове");
+    if (!formData.name.trim()) {
+      setErrors((prev) => ({ ...prev, name: "Поле ім’я обов’язкове" }));
       hasError = true;
     }
 
-    if (!validatePhone(tel)) {
-      setErrorTel("Введіть номер у форматі: +380....");
+    if (!validatePhone(formData.tel)) {
+      setErrors((prev) => ({
+        ...prev,
+        tel: "Введіть номер у форматі: +380....",
+      }));
       hasError = true;
     }
 
@@ -61,8 +71,12 @@ export const Form = () => {
       // имитация запроса
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsSubmitted(true);
+      console.log("Form submitted:", formData);
     } catch (err) {
-      setErrorTel("Помилка при відправці. Спробуйте ще раз.");
+      setErrors((prev) => ({
+        ...prev,
+        tel: "Помилка при відправці. Спробуйте ще раз.",
+      }));
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +91,11 @@ export const Form = () => {
               Не знаєте з чого почати? <br />
               Залиште заявку.
             </h2>
-            <p className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150 uppercase`}>
+            <p
+              className={`${
+                isPC ? "fs-p--24px" : "fs-p--14px"
+              } lh-150 uppercase`}
+            >
               Ваша ситуація – <span className="fw-bold">не глухий кут</span>.
               <br />
               Заповніть форму і ви отримаєте
@@ -86,34 +104,46 @@ export const Form = () => {
             </p>
           </div>
           <form className="application-form input-black" onSubmit={handleSubmit}>
-            <div className={`input-group ${isPC ? "fs-p--18px" : "fs-p--10px"} c1 lh-150`}>
+            <div
+              className={`input-group ${
+                isPC ? "fs-p--18px" : "fs-p--10px"
+              } c1 lh-150`}
+            >
               <input
                 type="text"
                 id="name"
                 name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Ім'я"
-                className={`c1 ${errorName ? "error" : ""}`}
+                className={`c1 ${errors.name ? "error" : ""}`}
                 autoComplete="on"
                 disabled={isSubmitted}
               />
-              {errorName ? (
-                <span className="error-label">{errorName}</span>
+              {errors.name ? (
+                <span className="error-label">{errors.name}</span>
               ) : (
                 <label htmlFor="name">Ім’я</label>
               )}
             </div>
-            <div className={`input-group ${isPC ? "fs-p--18px" : "fs-p--10px"} c1 lh-150`}>
+            <div
+              className={`input-group ${
+                isPC ? "fs-p--18px" : "fs-p--10px"
+              } c1 lh-150`}
+            >
               <input
                 type="tel"
                 id="tel"
                 name="tel"
+                value={formData.tel}
+                onChange={handleChange}
                 placeholder="Номер телефону"
-                className={`c1 ${errorTel ? "error" : ""}`}
+                className={`c1 ${errors.tel ? "error" : ""}`}
                 autoComplete="on"
                 disabled={isSubmitted}
               />
-              {errorTel ? (
-                <span className="error-label">{errorTel}</span>
+              {errors.tel ? (
+                <span className="error-label">{errors.tel}</span>
               ) : (
                 <label htmlFor="tel">Номер телефону</label>
               )}
@@ -121,7 +151,9 @@ export const Form = () => {
 
             <button
               type="submit"
-              className={`btn-submit ${isPC ? "fs-p--24px" : "fs-p--14px"} bg4 c1 fw-normal uppercase`}
+              className={`btn-submit ${
+                isPC ? "fs-p--16px" : "fs-p--12px"
+              } bg4 c1 fw-normal uppercase`}
               disabled={isSubmitted || isLoading}
             >
               {isSubmitted

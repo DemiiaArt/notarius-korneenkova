@@ -13,6 +13,8 @@ import { useIsPC } from "@hooks/isPC";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { detectLang, buildLocalizedLink } from "@utils/detectLang";
+import { useLang } from "../../nav/use-lang";
+import { buildServicesMenuList } from "../../nav/build-services-menu-list";
 
 const Services = () => {
   const isPC = useIsPC();
@@ -153,7 +155,7 @@ const ServicesCarousel = ({ slides }) => {
                 />
                 <div className="services-carousel-slide-shadow"></div>
                 <p
-                  className={`services-carousel-slide-text ${isPC ? "fs-p--30px" : "fs-p--18px"} fw-semi-bold uppercase c1`}
+                  className={`services-carousel-slide-text ${isPC ? "fs-h2--34px" : "fs-p--18px"} fw-semi-bold uppercase c1`}
                 >
                   {text}
                 </p>
@@ -175,37 +177,167 @@ const ServicesCarousel = ({ slides }) => {
 const menuList = {
   items: [
     {
-      text: "ДОГОВОРИ",
+      title: "ДОГОВОРИ",
       subMenu: [
-        { text: "Спадкові договори" },
-        { text: "Договори щодо корпоративних прав" },
-        { text: "ВИКОНАВЧИЙ НАПИС на договорі" },
+        {
+          title: "",
+          items: [
+            {
+              text: "Договір дарування нерухомості або рухомого майна",
+              link: "",
+            },
+            { text: "Договір позики", link: "" },
+            { text: "Договір міни майна", link: "" },
+            { text: "Договір довічного утримання (догляду)", link: "" },
+            {
+              text: "Договір оренди (найму) будівель, земельних ділянок (якщо вимагається нотаріальне посвідчення)",
+              link: "",
+            },
+            { text: "Договір застави (іпотеки)", link: "" },
+            {
+              text: "Договір поділу або виділу з майна, що є у спільній частковій або сумісній власності",
+              link: "",
+            },
+            { text: "Шлюбний договір", link: "" },
+            { text: "Договір про поділ майна подружжя", link: "" },
+            {
+              text: "Договір про виділ частки у спільному майні подружжя",
+              link: "",
+            },
+            { text: "Договір про розірвання Договору іпотеки", link: "" },
+            { text: "Договір поруки", link: "" },
+            {
+              text: "Договір купівлі-продажу майбутнього об’єкту продажу",
+              link: "",
+            },
+          ],
+        },
+        {
+          title: "Спадкові договори",
+          items: [
+            { text: "Заповіт простий", link: "" },
+            { text: "Заповіт при свідках/складний (з умовами)", link: "" },
+            { text: "Спільний заповіт подружжя", link: "" },
+            { text: "Договір про відмову від прийняття спадщини", link: "" },
+            { text: "Договір про розподіл спадкового майна", link: "" },
+          ],
+        },
+        {
+          title: "Договори щодо корпоративних прав",
+          items: [
+            {
+              text: "Договір купівлі-продажу частки в статутному капіталі ТОВ",
+              link: "",
+            },
+            { text: "Договір дарування корпоративних прав", link: "" },
+            {
+              text: "Договір про внесення змін до установчих документів (в окремих випадках)",
+              link: "",
+            },
+          ],
+        },
+        {
+          title: "ВИКОНАВЧИЙ НАПИС на договорі",
+          items: [
+            { text: "Оренда нерухомості", link: "" },
+            { text: "Транспортного засобу оренда", link: "" },
+          ],
+        },
+        {
+          title: "Договори щодо корпоративних прав",
+          items: [
+            { text: "Інші Договори", link: "" },
+            { text: "Корпоративні права", link: "" },
+          ],
+        },
       ],
     },
     {
       text: "ДОВІРЕНІСТЬ",
-      link: "/notarialni-apostil",
+      subMenu: [
+        {
+          items: [
+            { text: "Розпорядження транспортним засобом", link: "" },
+            { text: "Розпорядження нерухомим майном", link: "" },
+            { text: "Представництво інтересів / користування авто", link: "" },
+            {
+              text: "Розпорядження рухомим майном (грошовими коштами)",
+              link: "",
+            },
+            {
+              text: "об’єднана довіреність на представництво інтересів з різними напрямками повноважень (рухоме/нерухоме не об’єднується)",
+              link: "",
+            },
+            {
+              text: "Довіреність на двох мовах",
+              link: "",
+            },
+            {
+              text: "Cкасування довіреності",
+              link: "",
+            },
+          ],
+        },
+      ],
     },
     {
       text: "ПІДПИС, ЗАЯВА (на бланках)",
-      link: "/notarialni-apostil",
+      subMenu: [
+        {
+          items: [
+            { text: "Згода подружжя, на виїзд дитини та інші.", link: "" },
+            { text: "На банківських картках", link: "" },
+            { text: "На статуті, протоколі, рішенні (1 підпис)", link: "" },
+            { text: "Вихід учасника із Товариства заява", link: "" },
+            { text: "Заяви на двох мовах", link: "" },
+          ],
+        },
+      ],
     },
     {
-      text: "Документи під ключ",
-      link: "/notarialni-apostil",
+      text: "КОНСУЛЬТАЦІЯ. КОПІЯ ДОКУМЕНТІВ. ПОВТОРНЕ ОТРИМАННЯ СВІДОЦТВ.",
+      subMenu: [
+        {
+          items: [
+            { text: "Нотаріальні консультації", link: "" },
+            { text: "Копія окремих документ до 4-х стор.", link: "" },
+            { text: "Копія багатосторінкового документа 1 сторінка", link: "" },
+            { text: "ДУБЛІКАТ документів", link: "" },
+            {
+              text: "Консультативні послуги щодо отримання дублікатів Свідоцтв",
+              link: "",
+            },
+          ],
+        },
+      ],
     },
     {
       text: "АПОСТИЛЬ ТА АФФІДЕВІТ",
-      link: "/notarialni-poslugy/apostil-na-dokumenty",
+      subMenu: [
+        {
+          items: [
+            { text: "Апостиль будь-яких документів", link: "" },
+            { text: "Афідевіт від особи", link: "" },
+            { text: "Афідевіт за підписом перекладача", link: "" },
+          ],
+        },
+      ],
     },
   ],
 };
 
-const ServicesList = ({ isPC }) => {
-  const [isOpenSubmenu, setIsOpenSubmenu] = useState(false);
+// src/components/ServicesList.jsx
 
-  const toggleSubmenu = () => {
-    setIsOpenSubmenu(!isOpenSubmenu);
+const ServicesList = ({ isPC, menu /* optional override */ }) => {
+  const [openIndex, setOpenIndex] = useState(null);
+  const { currentLang } = useLang();
+
+  // если сверху не передали menu — строим из NAV_TREE
+  const menuList = menu ?? buildServicesMenuList(currentLang);
+
+  const toggleSubmenu = (idx, hasSubmenu) => {
+    if (!hasSubmenu) return;
+    setOpenIndex((cur) => (cur === idx ? null : idx));
   };
 
   return (
@@ -214,51 +346,82 @@ const ServicesList = ({ isPC }) => {
         modules={[Navigation]}
         className="services-list"
         slidesPerView={"auto"}
-        observer={true}
-        observeParents={true}
-        watchOverflow={true}
-        breakpoints={{
-          764: { slidesPerView: 10 },
-        }}
+        spaceBetween={10}
+        slidesOffsetAfter={150}
+        observer
+        observeParents
+        watchOverflow
+        onResize={(sw) => sw.update()}
       >
-        {menuList.items.map(({ text, link }, index) => (
-          <SwiperSlide
-            key={index}
-            className={`services-list-item ${isPC ? "fs-p--16px" : "fs-p--12px"} fw-semi-bold uppercase c3 ${index == 0 ? "br-c3" : ""}`}
-            onClick={() => index === 0 && toggleSubmenu()}
-          >
-            {index > 0 ? <Link to={link}>{text}</Link> : ""}
-            {index == 0 ? (
+        {menuList.items.map((item, index) => {
+          const label = item.title || item.text; // поддержка обоих полей (как у тебя)
+          const hasSubmenu =
+            Array.isArray(item.subMenu) && item.subMenu.length > 0;
+
+          return (
+            <SwiperSlide
+              key={index}
+              className={`services-list-item ${isPC ? "fs-p--16px" : "fs-p--12px"} fw-semi-bold uppercase c3 ${openIndex === index ? "open" : ""}`}
+              onClick={() => toggleSubmenu(index, hasSubmenu)}
+            >
               <div className="services-list-item-header">
-                <p>{text}</p>
-                <img
-                  className={`services-list-item-icon ${isOpenSubmenu ? "open" : ""}`}
-                  src={arrow}
-                  alt="arrow.svg"
-                />
+                {/* если есть прямая ссылка и нет подменю — делаем линком весь пункт */}
+                {item.link && !hasSubmenu ? (
+                  <Link to={item.link} className="services-list-item-link">
+                    <p>{label}</p>
+                  </Link>
+                ) : (
+                  <p>{label}</p>
+                )}
+
+                {hasSubmenu && (
+                  <img
+                    className={`services-list-item-icon ${openIndex === index ? "open" : ""}`}
+                    src={arrow}
+                    alt="arrow.svg"
+                  />
+                )}
               </div>
-            ) : (
-              ""
-            )}
-          </SwiperSlide>
-        ))}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
 
-      <ul className={`services-list-submenu ${isOpenSubmenu ? "open" : ""}`}>
-        {menuList.items.map(({ subMenu }) =>
-          subMenu
-            ? subMenu.map(({ text, link }, index) => (
-                <Link
-                  to={link}
-                  key={index}
-                  className={`services-list-submenu-item ${isPC ? "fs-p--16px" : "fs-p--12px"} fw-semi-bold uppercase c3`}
-                >
-                  {text}
-                </Link>
-              ))
-            : null
+      {/* Подменю для открытого пункта */}
+      {openIndex !== null &&
+        Array.isArray(menuList.items[openIndex]?.subMenu) && (
+          <div
+            className={`services-list-submenu ${openIndex !== null ? "open" : ""}`}
+          >
+            {menuList.items[openIndex].subMenu.map((group, gIdx) => (
+              <div key={`g-${gIdx}`} className="services-list-submenu-group">
+                {/* Заголовок группы — НЕ линк */}
+                {group.title && (
+                  <div
+                    className={`services-list-submenu-title ${isPC ? "fs-p--16px" : "fs-p--12px"} fw-bold uppercase c3`}
+                  >
+                    {group.title}
+                  </div>
+                )}
+
+                <ul className="services-list-submenu-items">
+                  {group.items?.map((it, iIdx) => {
+                    const cls = `services-list-submenu-item ${isPC ? "fs-p--16px" : "fs-p--12px"} fw-semi-bold uppercase c3`;
+                    return (
+                      <li key={`g-${gIdx}-i-${iIdx}`} className={cls}>
+                        {it.link ? (
+                          <Link to={it.link}>{it.text}</Link>
+                        ) : (
+                          <span className={cls}>{it.text}</span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
         )}
-      </ul>
     </>
   );
 };

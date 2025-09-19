@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-// const API_BASE_URL = 'http://localhost:8000/api';
-const API_BASE_URL = 'https://notarius-korneenkova-production.up.railway.app/api';
+const API_BASE_URL = 'http://localhost:8000/api';
 
 export const useContacts = () => {
   const [contacts, setContacts] = useState({

@@ -45,7 +45,7 @@ export const AboutTextBlock = () => {
 
         <div className={`about-content ${expanded ? "expanded" : ""}`}>
           {visibleContent.map((paragraph, idx) => (
-            <p key={idx} className={`${isPC ? "fs-p--16px" : "fs-p--14px"} align-center lh-150`}>{paragraph}</p>
+            <p key={idx} className={`${isPC ? "fs-p--16px" : "fs-p--14px align-center"}  lh-150`}>{paragraph}</p>
           ))}
         </div>
 

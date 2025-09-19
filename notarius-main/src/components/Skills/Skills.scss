@@ -2,7 +2,7 @@
 
 @media (min-width: 375px) {
   .skills {
-    background-color: map.get($colors, 2);
+    background-color: map.get($colors, 5);
     &-content {
       display: flex;
       flex-direction: column;

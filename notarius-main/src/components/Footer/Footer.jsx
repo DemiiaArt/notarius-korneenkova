@@ -6,7 +6,6 @@ import youtube from "@media/social-media/youtube.svg";
 import icon from "@media/footer/icon-accordion-footer.svg";
 import planet from "@media/footer/planet.svg";
 import logoFooter from "@media/footer/logo-footer.svg";
-import arrow from "@media/icons/arrow-footer-pc.svg";
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 
@@ -62,9 +61,9 @@ const Footer = () => {
   const LANG_UI_TO_ROUTE = { ukr: "ua", rus: "ru", eng: "en" };
 
   const languages = {
-    ukr: "Ук",
-    rus: "Ру",
-    eng: "En",
+    ukr: "UA",
+    rus: "RU",
+    eng: "EN",
   };
 
   const [currentLang, setCurrentLang] = useState("ukr");
@@ -81,77 +80,81 @@ const Footer = () => {
         <div className="container">
           <div className="footer-content">
             <div className="footer-social-media">
-              <p className="footer-social-media-title fs-p--24px fw-semi-bold c1">
+              <p
+                className={`footer-social-media-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
+              >
                 Стежте за нами
               </p>
-              <a className="footer-social-media-link fs-p--18px lh-100 fw-medium c1">
+              <a
+                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+              >
                 Tiktok
               </a>
-              <a className="footer-social-media-link fs-p--18px lh-100 fw-medium c1">
+              <a
+                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+              >
                 Instagram
               </a>
-              <a className="footer-social-media-link fs-p--18px lh-100 fw-medium c1">
+              <a
+                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+              >
                 Facebook
               </a>
-              <a className="footer-social-media-link fs-p--18px lh-100 fw-medium c1">
+              <a
+                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+              >
                 X
               </a>
               <a className="footer-social-media-link c1">Youtube</a>
             </div>
             <div className="footer-contacts">
-              <p className="footer-contacts-title fs-p--24px fw-semi-bold c1">
+              <p
+                className={`footer-contacts-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
+              >
                 Контакти
               </p>
               <a
-                className="footer-contacts-link fs-p--18px lh-100 fw-medium c1"
+                className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                 href="#"
               >
                 +380 67 820 07 00
               </a>
               <a
-                className="footer-contacts-link fs-p--18px lh-100 fw-medium c1"
+                className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                 href="#"
               >
                 nk.yes@gmail.com
               </a>
               <a
-                className="footer-contacts-link fs-p--18px lh-100 fw-medium c1"
+                className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                 href="#"
               >
-                м.Дніпро, бул. Слави, 2-Б
+                м.Дніпро, пр. Дмитра Яворницького, 2
               </a>
               <a
-                className="footer-contacts-link fs-p--18px lh-100 fw-medium c1"
+                className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                 href="#"
               >
                 Пн-Нд: 09:00 - 18:00
               </a>
               <div className="footer-change-lang-dropdown">
-                <button className="footer-change-lang current c1">
-                  {languages[currentLang]}
-                  <img
-                    className="footer-change-lang-arrow-icon"
-                    src={arrow}
-                    alt=""
-                  />
-                </button>
                 <div className="footer-change-lang-list">
-                  {Object.entries(languages)
-                    .filter(([key]) => key !== currentLang)
-                    .map(([key, label]) => (
-                      <button
-                        key={key}
-                        className="footer-change-lang c1"
-                        onClick={() => setCurrentLang(key)}
-                      >
-                        {label}
-                      </button>
-                    ))}
+                  {Object.entries(languages).map(([key, label]) => (
+                    <button
+                      key={key}
+                      className={`footer-change-lang ${currentLang == key ? "c1" : "c16"}`}
+                      onClick={() => setCurrentLang(key)}
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
             <div className="footer-navigation">
-              <p className="footer-navigation-title fs-p--24px fw-semi-bold c1">
+              <p
+                className={`footer-navigation-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
+              >
                 Навігація
               </p>
               {navigationLinks[LANG_UI_TO_ROUTE[currentLang]].map(
@@ -159,7 +162,7 @@ const Footer = () => {
                   <Link
                     key={link}
                     to={`/${link}`}
-                    className="footer-navigation-link fs-p--18px lh-100 fw-medium c1"
+                    className={`footer-navigation-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                   >
                     {label}
                   </Link>
@@ -167,7 +170,9 @@ const Footer = () => {
               )}
             </div>
             <div className="footer-help">
-              <p className="footer-help-title fs-p--24px fw-semi-bold c1">
+              <p
+                className={`footer-help-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
+              >
                 Допомога
               </p>
               {helpLinks[LANG_UI_TO_ROUTE[currentLang]].map(
@@ -175,7 +180,7 @@ const Footer = () => {
                   <Link
                     key={link}
                     to={`/${link}`}
-                    className="footer-help-link fs-p--18px lh-100 fw-medium c1"
+                    className={`footer-help-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                   >
                     {label}
                   </Link>
@@ -254,16 +259,24 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
       title: "Контакти",
       content: (
         <>
-          <a className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150`}>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
             +380 67 820 07 00
           </a>
-          <a className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150`}>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
             nk.yes@gmail.com
           </a>
-          <a className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150`}>
-            м.Дніпро, бул. Слави, 2-Б
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
+            м.Дніпро, пр. Дмитра Яворницького, 2
           </a>
-          <a className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150`}>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
             Пн-Нд: 09:00 - 18:00
           </a>
         </>
@@ -273,10 +286,14 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
       title: "Навігація",
       content: (
         <>
-          <a className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150`}>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
             Головна
           </a>
-          <a className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150`}>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
             Про нас
           </a>
         </>
@@ -286,10 +303,14 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
       title: "Допомога",
       content: (
         <>
-          <a className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150`}>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
             Часті запитання
           </a>
-          <a className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-150`}>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
             Підтримка
           </a>
         </>

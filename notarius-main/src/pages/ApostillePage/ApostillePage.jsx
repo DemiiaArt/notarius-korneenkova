@@ -6,7 +6,7 @@ import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 
 import { useIsPC } from "@hooks/isPC";
 import "./ApostillePage.scss";
-import apostilleTextImg from "../../assets/media/Apostille.jpg";
+import apostilleTextImg from "../../assets/media/Apostille.jpeg";
 
 const Apostille = () => {
   const isPC = useIsPC();

@@ -66,7 +66,7 @@ const OftenQuestionsItem = ({ question, isOpen, onToggle }) => {
       onClick={onToggle}
     >
       <div
-        className={`often-quetions-header ${isPC ? "fs-p--body-20" : "fs-p--16px"} fw-semi-bold c3`}
+        className={`often-quetions-header ${isPC ? "fs-p--20px" : "fs-p--16px"} fw-semi-bold c3`}
       >
         <span>{question.title}</span>
         <span className="fs-h5">{isOpen ? <MinusIcon /> : <PlusIcon />}</span>
