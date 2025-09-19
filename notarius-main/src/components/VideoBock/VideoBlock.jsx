@@ -1,5 +1,5 @@
 import "./VideoBlock.scss";
-import videoTest from "@media/video_test.mov";
+import videoTest from "@media/NotaryTranslateHero.jpg";
 import { useState, useRef } from "react";
 import { useIsPC } from "@hooks/isPC";
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,23 +45,20 @@ export const VideoBlock = ({ title, description }) => {
           />
         )}
       </AnimatePresence>
-      {/* Видео */}
+      {/* Видео - картинка замена для Realway*/}
       <AnimatePresence>
-        {showVideo && (
-          <motion.video
-            key="video"
-            ref={videoRef}
-            src={videoTest}
-            autoPlay
-            controls
-            className="video-block-video"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onEnded={handleStop}
-          />
-        )}
-      </AnimatePresence>
+      {showVideo && (
+        <motion.img
+          key="image"
+          src={videoTest}
+          alt="video placeholder"
+          className="video-block-video"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        />
+      )}
+    </AnimatePresence>
 
       {/* Текст и кнопка */}
       <AnimatePresence>
