@@ -19,6 +19,12 @@ export default defineConfig({
       "@nav": path.resolve(fileURLToPath(new URL('./src/nav', import.meta.url))),
     },
   },
+  preview: {
+    host: '0.0.0.0',
+    port: process.env.PORT || 3000,
+    strictPort: true,
+    allowedHosts: 'all'
+  },
   css: {
     preprocessorOptions: {
       scss: {
