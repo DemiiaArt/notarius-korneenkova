@@ -52,19 +52,17 @@ export default defineConfig({
             './src/pages/MilitaryPage/MilitaryPage.jsx',
             './src/pages/OtherServicesPage/OtherServicesPage.jsx'
           ],
-          'pages-second-level': [
-            './src/pages/secondLevel'
-          ],
           // Component chunks
           'components-common': [
-            './src/components/Header',
-            './src/components/Footer',
-            './src/components/ScrollToTop'
+            './src/components/Header/Header.jsx',
+            './src/components/Footer/Footer.jsx',
+            './src/components/ScrollToTop/ScrollToTop.jsx'
           ],
           'components-forms': [
-            './src/components/Form',
-            './src/components/ReviewForm',
-            './src/components/ModalWindows'
+            './src/components/Form/Form.jsx',
+            './src/components/ReviewForm/ReviewForm.jsx',
+            './src/components/ModalWindows/FreeConsult.jsx',
+            './src/components/ModalWindows/OrderConsult.jsx'
           ]
         }
       }
