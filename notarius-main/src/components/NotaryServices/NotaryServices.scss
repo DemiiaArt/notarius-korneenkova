@@ -1,0 +1,99 @@
+@media (min-width: 375px) {
+  .services-page {
+    width: 100vw;
+    height: 100vh;
+    max-height: 550px;
+    background-image: url("../../assets/media/services-page-bg.webp");
+    background-repeat: no-repeat;
+    background-position: 80% top;
+    background-size: cover;
+    &-shadow {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      max-height: 550px;
+      background: linear-gradient(
+        180deg,
+        rgba(31, 31, 31, 30%) 0%,
+        #000000 100%
+      );
+      z-index: 2;
+      &-target {
+        position: relative;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+    }
+    &-title {
+      width: 60%;
+      margin-top: 50px;
+    }
+    &-content {
+      position: relative;
+      padding: 100px 0 0 0;
+      z-index: 3;
+    }
+    &-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 20px 0 0 0;
+      list-style: none; /* remove default bullets */
+      padding: 0 0 0 0;
+      & &-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        &::before {
+          content: url("../../assets/media/icons/arrow-right-list-service-page.svg"); /* arrow */
+          font-size: 24px;
+          color: teal;
+        }
+      }
+    }
+    &-btn {
+      margin: 50px 0 0 0;
+      padding: 14px 46px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .services-page {
+    max-height: none;
+    &-shadow {
+      background: linear-gradient(
+        270deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.85) 100%
+      );
+      max-height: none;
+    }
+    &-title {
+      width: 100%;
+      margin-top: 15vh;
+    }
+    &-content {
+      position: relative;
+      padding: 197px 0 0 0;
+    }
+    &-list {
+      gap: 14px;
+      & &-item {
+        gap: 10px;
+      }
+    }
+    &-btn {
+      padding: 14px 30px;
+    }
+  }
+}

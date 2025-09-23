@@ -1,0 +1,104 @@
+@use "sass:map";
+
+@media (min-width: 375px) {
+  .questions-article-image img {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .hero-img .notaryServicesPage {
+    background-image: url("../../assets/media/services-page-bg.webp");
+  }
+
+  .hero-img .notaryTranslatePage {
+    background-image: url("../../assets/media/NotaryTranslateHero.webp");
+  }
+
+  .hero-img .otherServicesPage {
+    background-image: url("../../assets/media/OtherServicesHero.webp");
+  }
+
+  .hero {
+    &-img {
+      width: 100vw;
+      padding: 100px 0 0 0;
+      height: calc(100vh - 150px);
+      max-height: 600px;
+      background-repeat: no-repeat;
+      background-position: 37% 20%;
+      background-size: 400%;
+
+      &-shadow {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: 600px;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+        z-index: 2;
+      }
+    }
+
+    h1 {
+      display: block;
+      position: relative;
+      padding: 25vh 0 0 0;
+      z-index: 3;
+    }
+  }
+
+  .question-block {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .template-text-content {
+    .text-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      &-text {
+        padding-bottom: 20px;
+      }
+
+      .text-content-list {
+        list-style: none;
+        margin: 0;
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .template-text-content {
+    .text-content {
+      &-image {
+        float: left;
+        max-width: 40%;
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-img {
+    padding: 200px 0 0 0;
+
+    h1 {
+      padding: 35vh 0 0 0;
+    }
+  }
+
+  .text-content-list {
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .text-content-block {
+    grid-template-columns: 1fr 35%;
+  }
+}

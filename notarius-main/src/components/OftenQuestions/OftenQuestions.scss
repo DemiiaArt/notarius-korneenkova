@@ -1,0 +1,155 @@
+@use "sass:map";
+
+@media (min-width: 375px) {
+  .often-quetions {
+    padding: 50px 0;
+  }
+
+  .often-quetions-content {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+
+  .often-quetions-list {
+    display: flex;
+    flex-direction: column;
+
+    .open {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .collapsed {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition:
+        max-height 0.4s ease,
+        opacity 0.4s ease;
+
+      &.show {
+        opacity: 1;
+      }
+    }
+  }
+
+  .often-quetions-item {
+    height: fit-content;
+    border: none;
+    padding: 20px 0;
+    cursor: pointer;
+    box-shadow: inset 0 -0.5px 0 0 #8d8d8d;
+    &.open .often-quetions-text {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  }
+
+  .often-quetions-body {
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    max-height: 0;
+  }
+
+  .often-quetions-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .often-quetions-text {
+    width: 100%;
+    margin-top: 10px;
+    white-space: pre-line;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
+    pointer-events: none;
+  }
+
+  .often-quetions-item.open .often-quetions-text {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .often-quetions-toggle {
+    margin-top: 30px;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 6px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 0.5px;
+      background-color: map.get($colors, 3);
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .often-quetions {
+    padding: 70px 0;
+  }
+  .often-quetions-title {
+    margin-bottom: 50px;
+  }
+
+  .often-quetions-content {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+  }
+
+  .often-quetions-list {
+    width: 70%;
+    gap: 32px;
+
+    .open,
+    .collapsed {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-height: none;
+      opacity: 1;
+    }
+  }
+
+  .often-quetions-item {
+    height: fit-content;
+  }
+
+  .often-quetions-text {
+    width: 90%;
+  }
+
+  .often-quetions-toggle {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .often-quetions {
+    padding: 100px 0;
+  }
+
+  .often-quetions-list {
+    margin-top: 20px;
+  }
+
+  .often-quetions-item {
+    padding: 20px 10px 20px 0;
+  }
+}

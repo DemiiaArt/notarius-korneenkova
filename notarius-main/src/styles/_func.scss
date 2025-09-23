@@ -1,0 +1,7 @@
+@use 'sass:math'; // импорт модуля math
+@use './vars' as *;
+
+
+@function toRem($px-value){
+  @return math.div($px-value, $fs-root) * 1rem;
+}

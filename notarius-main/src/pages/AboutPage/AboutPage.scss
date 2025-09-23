@@ -1,0 +1,102 @@
+@use 'sass:map';
+h2 {
+    margin: 0;
+  }
+
+.about-page {
+
+  @media (min-width: 375px) {
+    .btn-secondary {
+      display: none;
+    }
+
+    .about-block-btn {
+      display: block;
+      padding: 14px 30px;
+      background: map.get($colors, 4);
+      margin-top: 24px;
+      cursor: pointer;
+
+      &:hover {
+        background: $btn-hover;
+      }
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .about-block-btn {
+      margin-top: 46px;
+    }
+  }
+
+
+
+  @media (min-width: 375px) {
+    .about-block {
+      height: 100vh;
+      max-height: 600px;
+      background-position: 70% 0%;
+
+      &-content {
+        padding: 100px 0 0 0;
+
+        .breadcrumbs {
+          padding-bottom: 70px;
+        }
+      }
+
+    }
+  }
+
+  @media (min-width: 768px) {
+    .about-block {
+      background-image: url("../../assets/media/NadiiaHeroImgAbout-min.webp");
+      background-position: 50% 20%;
+      height: 110vh;
+      max-height: none;
+
+      &-content {
+        padding: 150px 0 0 0;
+      }
+
+    }
+
+    .about-block-content {
+      max-width: 560px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .about-block {
+      max-height: 960px;
+
+      &-title {
+        margin: 24px 0 32px 0;
+      }
+      &-content {
+        padding: 236px 0 0 0;
+        .breadcrumbs {
+          padding-bottom: 0;
+        }
+      }
+      &-text-content {
+        margin-top: 80px; /* отступ от breadcrumbs для экранов 1200+ */
+      }
+    }
+  }
+
+  @media (min-width: 1204px) {
+    .about-block {
+      height: 110vh;
+
+      &-content {
+        padding: 197px 0 0 0;
+      }
+
+      &-text-content {
+        margin-top: 100px; /* отступ от breadcrumbs для экранов 1200+ */
+      }
+    }
+
+  }
+}
