@@ -37,7 +37,7 @@ notarius\*.sw?
 
 # Video files
 *.mov
-*.mp4
+# *.mp4
 *.avi
 *.mkv
 notarius-main/src/assets/media/video_test.mov
