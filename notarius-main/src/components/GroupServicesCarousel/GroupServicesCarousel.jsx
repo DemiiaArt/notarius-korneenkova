@@ -7,6 +7,11 @@ import { NAV_TREE } from "@nav/nav-tree";
 import { useIsPC } from "@hooks/isPC";
 import "./GroupServicesCarousel.scss";
 
+// Import images
+import notaryImage from "@media/services-carousel/ServicesGallery_notary.png";
+import translateImage from "@media/services-carousel/ServicesGallery_ranslate.png";
+import militaryImage from "@media/services-carousel/ServicesGallery_military.png";
+
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -61,9 +66,22 @@ const GroupServicesCarousel = ({
 
   // Отримуємо зображення для послуги (можна розширити)
   const getServiceImage = (serviceId) => {
-    // Тут можна додати логіку для різних зображень
-    // Поки що використовуємо одне зображення
-    return "/src/assets/media/services-carousel/ServicesGallery_notary.png";
+    const images = [
+      notaryImage,
+      translateImage,
+      militaryImage,
+    ];
+
+    // Використовуємо хеш ID для вибору зображення
+    let hash = 0;
+    for (let i = 0; i < serviceId.length; i++) {
+      const char = serviceId.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+
+    const imageIndex = Math.abs(hash) % images.length;
+    return images[imageIndex];
   };
 
   if (visibleChildren.length === 0) {

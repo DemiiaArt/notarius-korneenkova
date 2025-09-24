@@ -7,6 +7,11 @@ import { NAV_TREE } from "@nav/nav-tree";
 import { useIsPC } from "@hooks/isPC";
 import "./ServicesCarousel.scss";
 
+// Import images
+import notaryImage from "@media/services-carousel/ServicesGallery_notary.png";
+import translateImage from "@media/services-carousel/ServicesGallery_ranslate.png";
+import militaryImage from "@media/services-carousel/ServicesGallery_military.png";
+
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -164,9 +169,9 @@ const ServicesCarousel = ({
   // Отримуємо зображення для послуги
   const getServiceImage = (serviceId) => {
     const images = [
-      "/src/assets/media/services-carousel/ServicesGallery_notary.png",
-      "/src/assets/media/services-carousel/ServicesGallery_ranslate.png",
-      "/src/assets/media/services-carousel/ServicesGallery_military.png",
+      notaryImage,
+      translateImage,
+      militaryImage,
     ];
 
     // Використовуємо хеш ID для вибору зображення
