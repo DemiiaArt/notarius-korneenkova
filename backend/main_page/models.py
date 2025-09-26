@@ -1,4 +1,5 @@
 from django.db import models
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class Header(models.Model):
@@ -48,9 +49,9 @@ class AboutMe(models.Model):
     title_en = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
     
-    text_uk = models.TextField()
-    text_en = models.TextField()
-    text_ru = models.TextField()
+    text_uk = RichTextUploadingField()
+    text_en = RichTextUploadingField()
+    text_ru = RichTextUploadingField()
 
     photo = models.ImageField(upload_to='about_me/')
 
@@ -60,3 +61,30 @@ class AboutMe(models.Model):
     class Meta:
         verbose_name = "О себе"
         verbose_name_plural = "О себе"
+
+class Services(models.Model):
+    title_uk = models.CharField(max_length=255)
+    title_en = models.CharField(max_length=255)
+    title_ru = models.CharField(max_length=255)
+
+    image = models.ImageField(upload_to='services/')
+
+    def __str__(self):
+        return self.title_uk
+    
+    class Meta:
+        verbose_name = "Услуга"
+        verbose_name_plural = "Услуги"
+
+class ServiceDescription(models.Model):
+    service = models.ForeignKey(Services, on_delete=models.CASCADE)
+    text_uk = RichTextUploadingField()
+    text_en = RichTextUploadingField()
+    text_ru = RichTextUploadingField()                                                                                                                                                                                                                                                                     
+
+    def __str__(self):
+        return self.service.title_uk
+    
+    class Meta:
+        verbose_name = "Описание услуги"
+        verbose_name_plural = "Описание услуг"

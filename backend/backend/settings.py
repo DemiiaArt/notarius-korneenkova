@@ -110,19 +110,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'railway'),
+        'NAME': os.getenv('POSTGRES_DB', 'notarius'),
         'USER': os.getenv('PGUSER', 'postgres'),
-        'PASSWORD': os.getenv('PGPASSWORD', ''),
+        'PASSWORD': os.getenv('PGPASSWORD', 'root1'),
         'HOST': os.getenv('PGHOST', 'localhost'),
         'PORT': os.getenv('PGPORT', '5432'),
     }
 }
-
-# Добавляем отладочную информацию для Railway
-print(f"DATABASE config: {DATABASES['default']}")
-print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
-print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
-print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
 
 
 # Password validation
