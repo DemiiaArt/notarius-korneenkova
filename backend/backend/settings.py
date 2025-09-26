@@ -67,6 +67,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'whitenoise.runserver_nostatic',
 
+    'ckeditor',
+    'ckeditor_uploader',
+
     'main_page',
 ]
 
@@ -112,11 +115,17 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'notarius'),
         'USER': os.getenv('PGUSER', 'postgres'),
-        'PASSWORD': os.getenv('PGPASSWORD', 'root1'),
+        'PASSWORD': os.getenv('PGPASSWORD', 'root1'),  # Укажите ваш пароль PostgreSQL
         'HOST': os.getenv('PGHOST', 'localhost'),
         'PORT': os.getenv('PGPORT', '5432'),
     }
 }
+
+# Добавляем отладочную информацию для Railway
+# print(f"DATABASE config: {DATABASES['default']}")
+# print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
+# print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
+# print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
 
 
 # Password validation
@@ -159,6 +168,28 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Media files (User uploaded files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# CKEditor settings
+CKEDITOR_UPLOAD_PATH = 'ckeditor_uploads/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_BROWSE_SHOW_DIRS = True
+CKEDITOR_ALLOW_NONIMAGE_FILES = False
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+        'extraPlugins': ','.join([
+            'uploadimage',
+            'image2',
+            'autogrow',
+            'justify',
+            'codesnippet',
+        ]),
+        'removePlugins': 'resize',
+        'autoGrow_onStartup': True,
+    }
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
