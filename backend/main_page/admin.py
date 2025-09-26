@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Header, BackgroundVideo, AboutMe
+from django import forms
+from .models import Header, BackgroundVideo, AboutMe, Services, ServiceDescription
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 @admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
@@ -38,8 +40,19 @@ class BackgroundVideoAdmin(admin.ModelAdmin):
         }),
     )
 
+class AboutMeForm(forms.ModelForm):
+    text_uk = forms.CharField(widget=CKEditorUploadingWidget())
+    text_en = forms.CharField(widget=CKEditorUploadingWidget())
+    text_ru = forms.CharField(widget=CKEditorUploadingWidget())
+
+    class Meta:
+        model = AboutMe
+        fields = '__all__'
+
+
 @admin.register(AboutMe)
 class AboutMeAdmin(admin.ModelAdmin):
+    form = AboutMeForm
     list_display = ['title_uk', 'subtitle_uk']
     list_filter = ['title_uk']
     search_fields = ['title_uk', 'title_en', 'title_ru', 'subtitle_uk', 'subtitle_en', 'subtitle_ru']
@@ -66,3 +79,34 @@ class AboutMeAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         # Сортируем по ID в убывающем порядке (новые сверху)
         return super().get_queryset(request).order_by('-id')
+
+
+class ServiceDescriptionInline(admin.TabularInline):
+    model = ServiceDescription
+    extra = 1
+    fields = ('text_uk', 'text_en', 'text_ru')
+
+
+@admin.register(Services)
+class ServicesAdmin(admin.ModelAdmin):
+    list_display = ['title_uk', 'title_en', 'title_ru', 'image']
+    search_fields = ['title_uk', 'title_en', 'title_ru']
+    inlines = [ServiceDescriptionInline]
+
+
+class ServiceDescriptionForm(forms.ModelForm):
+    text_uk = forms.CharField(widget=CKEditorUploadingWidget())
+    text_en = forms.CharField(widget=CKEditorUploadingWidget())
+    text_ru = forms.CharField(widget=CKEditorUploadingWidget())
+
+    class Meta:
+        model = ServiceDescription
+        fields = '__all__'
+
+
+@admin.register(ServiceDescription)
+class ServiceDescriptionAdmin(admin.ModelAdmin):
+    form = ServiceDescriptionForm
+    list_display = ['service']
+    autocomplete_fields = ['service']
+    search_fields = ['service__title_uk', 'service__title_en', 'service__title_ru']
