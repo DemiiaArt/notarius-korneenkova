@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(os.path.join(BASE_DIR, '.env'))
-print(BASE_DIR,'-----')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -39,6 +38,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://notarius-korneenkova-production.up.railway.app',
     'https://*.railway.app',
     'https://*.up.railway.app',
+    'http://127.0.0.1:8000/',
 ]
 
 # Дополнительные настройки для Railway
@@ -69,6 +69,7 @@ INSTALLED_APPS = [
 
     'ckeditor',
     'ckeditor_uploader',
+    'mptt',
 
     'main_page',
 ]
@@ -113,19 +114,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'notarius'),
+        'NAME': os.getenv('POSTGRES_DB'),
         'USER': os.getenv('PGUSER', 'postgres'),
-        'PASSWORD': os.getenv('PGPASSWORD', 'root1'),  # Укажите ваш пароль PostgreSQL
-        'HOST': os.getenv('PGHOST', 'localhost'),
-        'PORT': os.getenv('PGPORT', '5432'),
+        'PASSWORD': os.getenv('PGPASSWORD'),  # Укажите ваш пароль PostgreSQL
+        'HOST': os.getenv('PGHOST'),
+        'PORT': os.getenv('PGPORT'),
     }
 }
 
-# Добавляем отладочную информацию для Railway
-# print(f"DATABASE config: {DATABASES['default']}")
-# print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
-# print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
-# print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
 
 
 # Password validation

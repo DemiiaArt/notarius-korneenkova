@@ -110,3 +110,42 @@ class ServiceDescriptionAdmin(admin.ModelAdmin):
     list_display = ['service']
     autocomplete_fields = ['service']
     search_fields = ['service__title_uk', 'service__title_en', 'service__title_ru']
+
+from mptt.admin import DraggableMPTTAdmin
+from .models import ServiceCategory
+
+
+@admin.register(ServiceCategory)
+class ServiceCategoryAdmin(DraggableMPTTAdmin):
+    mptt_indent_field = "label_ua"  # поле, по которому будут рисоваться отступы
+    prepopulated_fields = {
+        "nav_id": ("label_en",),
+        "slug_ua": ("label_ua",),
+        "slug_ru": ("label_ua",),
+        "slug_en": ("label_en",),
+    }
+
+    list_display = (
+        'tree_actions',       # кнопки перемещения (из MPTT)
+        'indented_title',     # красиво отрисованное дерево
+        'kind',
+        'nav_id',
+        'show_in_menu',
+        'order',
+        'created_at',
+        'updated_at',
+    )
+    list_display_links = ('indented_title',)
+
+    list_editable = ('order', 'show_in_menu',)
+
+    search_fields = ('label_ua', 'label_ru', 'label_en', 'nav_id')
+    list_filter = ('kind', 'show_in_menu')
+
+    # Чтобы дерево можно было редактировать drag&drop
+    mptt_level_indent = 20
+
+    def indented_title(self, instance):
+        """Название с учётом вложенности"""
+        return instance.label_ua
+    indented_title.short_description = "Название (UA)"

@@ -7,8 +7,8 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.urls import reverse
-from .models import Header, BackgroundVideo, AboutMe
-from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer
+from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
+from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServiceCategorySerializer
 
 # Create your views here.
 
@@ -87,3 +87,43 @@ class CKEditorUploadView(APIView):
             # CKEditor SimpleUploadAdapter expects this shape
             "url": file_url
         })
+
+
+class ServicesCategoryView(APIView):
+    """
+    API endpoint для получения структуры услуг в формате nav-tree.js
+    Возвращает иерархическую структуру категорий услуг из базы данных
+    """
+    
+    def get(self, request, *args, **kwargs):
+        """
+        Возвращает структуру услуг в том же формате, что и nav-tree.js
+        """
+        try:
+            # Получаем корневые категории (без родителя)
+            root_categories = ServiceCategory.objects.filter(parent__isnull=True)
+            
+            if not root_categories.exists():
+                return Response({
+                    "id": "root",
+                    "kind": "section", 
+                    "label": {"ua": "", "ru": "", "en": ""},
+                    "slug": {"ua": "", "ru": "", "en": ""},
+                    "showInMenu": False,
+                    "component": None,
+                    "children": []
+                })
+            
+            # Сериализуем корневые категории
+            serializer = ServiceCategorySerializer(root_categories, many=True)
+            
+            # Формируем ответ в формате nav-tree.js
+            response_data = serializer.data
+            
+            
+            return Response(response_data)
+            
+        except Exception as e:
+            return Response({
+                "error": f"Ошибка при получении структуры услуг: {str(e)}"
+            }, status=500)
