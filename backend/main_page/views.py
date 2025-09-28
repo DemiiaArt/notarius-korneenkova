@@ -1,8 +1,14 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
-from .models import Header, BackgroundVideo, AboutMe
-from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+from django.urls import reverse
+from .models import Header, BackgroundVideo, AboutMe, Services
+from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServicesSerializer
 
 # Create your views here.
 
@@ -65,3 +71,35 @@ class AboutMeView(generics.ListAPIView):
                 'text_uk': '', 'text_en': '', 'text_ru': '',
                 'photo': None
             })
+
+
+class CKEditorUploadView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+        file_obj = request.data.get('upload') or request.FILES.get('upload')
+        if not file_obj:
+            return Response({"error": {"message": "No file uploaded"}}, status=400)
+
+        saved_path = default_storage.save(f"uploads/{file_obj.name}", ContentFile(file_obj.read()))
+        file_url = settings.MEDIA_URL + saved_path
+        return Response({
+            # CKEditor SimpleUploadAdapter expects this shape
+            "url": file_url
+        })
+
+
+class ServicesListView(generics.ListAPIView):
+    """
+    Список услуг с вложенными описаниями и изображением
+    """
+    queryset = Services.objects.all().order_by('id')
+    serializer_class = ServicesSerializer
+
+
+class ServicesDetailView(generics.RetrieveAPIView):
+    """
+    Детальная информация об услуге
+    """
+    queryset = Services.objects.all()
+    serializer_class = ServicesSerializer
