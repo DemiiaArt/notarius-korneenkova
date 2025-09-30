@@ -1,0 +1,267 @@
+.services-carousel {
+  background-color: white;
+  padding: 60px 0;
+
+  &-container {
+    max-width: 1200px;
+  }
+
+  &-title {
+    color: #333;
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 50px;
+  }
+
+  &-wrapper {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+
+  &-swiper {
+    overflow: visible;
+    padding: 0 20px;
+  }
+
+  &-slide {
+    display: block;
+    text-decoration: none;
+    position: relative;
+    height: 700px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      .services-carousel-image img {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.3) 50%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  }
+
+  &-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px 20px;
+    z-index: 2;
+  }
+
+  &-label {
+    margin: 0;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  // Навігаційні стрілки
+  &-prev,
+  &-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #FCFCFCB2;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    z-index: 20;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #1A1A1AB2;
+      
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+
+    img {
+      filter: brightness(0) saturate(100%) invert(8%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+      transition: filter 0.3s ease;
+    }
+  }
+
+  &-prev {
+    left: 40px;
+    
+    img {
+      rotate: 180deg;
+    }
+  }
+
+  &-next {
+    right: 40px;
+  }
+
+  // Адаптивність
+  @media (max-width: 767px) {
+    padding: 40px 0;
+
+
+    &-wrapper {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+    }
+
+    &-swiper {
+      padding: 0 15px;
+    }
+
+    &-title {
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+    }
+
+    &-slide {
+      height: 400px;
+    }
+
+    &-image {
+      height: 100%;
+    }
+
+    &-content {
+      height: 30%;
+      padding: 20px 15px;
+    }
+
+    &-prev,
+    &-next {
+      width: 36px;
+      height: 36px;
+
+      img {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    &-prev {
+      left: 25px;
+    }
+
+    &-next {
+      right: 25px;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    padding: 50px 0;
+
+    &-wrapper {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+    }
+
+    &-swiper {
+      padding: 0 20px;
+    }
+
+    &-title {
+      margin-bottom: 40px;
+    }
+
+    &-slide {
+      height: 550px;
+    }
+
+    &-image {
+      height: 100%;
+    }
+
+    &-content {
+      height: 30%;
+      padding: 22px 18px;
+    }
+
+    &-prev,
+    &-next {
+      width: 60px;
+      height: 60px;
+
+      img {
+        width: 28px;
+        height: 24px;
+      }
+    }
+  }
+
+  @media (min-width: 1024px) {
+    &-wrapper {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+    }
+
+    &-swiper {
+      padding: 0 20px;
+    }
+
+    &-title {
+      font-size: 32px;
+    }
+
+    &-slide {
+      height: 700px;
+    }
+
+    &-image {
+      height: 100%;
+    }
+
+    &-content {
+      height: 30%;
+      padding: 25px 20px;
+    }
+
+    &-prev,
+    &-next {
+      width: 60px;
+      height: 60px;
+
+      img {
+        width: 28px;
+        height: 24px;
+      }
+    }
+  }
+}

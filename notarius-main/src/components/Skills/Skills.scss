@@ -1,0 +1,89 @@
+@use "sass:map";
+
+@media (min-width: 375px) {
+  .skills {
+    background-color: map.get($colors, 5);
+    &-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 50px 0;
+    }
+
+    &-title {
+      margin: 0;
+      max-width: 150px;
+    }
+
+    &-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(200px, 416px));
+      gap: 32px;
+      justify-content: center;
+    }
+
+    &-card {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      gap: 6px;
+      & > p {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+}
+
+@media (min-width: 420px) {
+  .skills {
+    &-list {
+      grid-template-columns: repeat(2, minmax(250px, 416px));
+      gap: 32px;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .skills {
+    &-content {
+      flex-direction: row;
+      gap: 80px;
+      padding: 70px 0;
+
+      & > *:first-child {
+        flex: 0 1 25%;
+        max-width: 200px;
+      }
+
+      & > *:last-child {
+        flex: 1;
+      }
+    }
+
+    &-card {
+      gap: 16px;
+    }
+    &-list {
+      grid-template-columns: repeat(2, minmax(300px, 416px));
+      gap: 32px;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .skills {
+    &-content {
+      padding: 100px 0;
+
+      & > *:first-child {
+        max-width: 450px;
+      }
+    }
+
+    &-list {
+      grid-template-columns: repeat(2, minmax(350px, 416px));
+      gap: 32px;
+    }
+  }
+}

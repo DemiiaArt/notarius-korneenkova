@@ -1,0 +1,164 @@
+.group-services-carousel {
+  padding-bottom: 50px;
+  &-title {
+    margin-bottom: 60px;
+  }
+
+  &-wrapper {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  &-swiper {
+    width: 100%;
+  }
+
+  &-slide {
+    display: block;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+    width: 100%;
+
+    &:hover {
+      .group-services-carousel-image img {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &-image {
+    width: 100%;
+    height: 430px;
+    overflow: hidden;
+    margin-bottom: 30px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &-content {
+    text-align: center;
+  }
+
+  &-label {
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  // Навігаційні стрілки
+  &-prev,
+  &-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background-color: #FCFCFCB2;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #1A1A1AB2;
+      
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+
+    img {
+      filter: brightness(0) saturate(100%) invert(8%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+      transition: filter 0.3s ease;
+    }
+  }
+
+  &-prev {
+    left: 20px;
+    
+    img {
+      rotate: 180deg;
+    }
+  }
+
+  &-next {
+    right: 20px;
+  }
+
+  // Пагінація
+  &-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    position: relative;
+    z-index: 1;
+
+    .swiper-pagination-bullet {
+      width: 12px;
+      height: 12px;
+      background: #ccc;
+      opacity: 1;
+      margin: 0 5px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+
+      &.swiper-pagination-bullet-active {
+        background: #333;
+        transform: scale(1.2);
+      }
+    }
+  }
+
+  // Responsive
+
+  @media (min-width: 768px) {
+    &-prev,
+    &-next {
+      width: 60px;
+      height: 60px;
+
+      img {
+        width: 28px;
+        height: 24px;
+      }
+    }
+
+    &-prev {
+      left: 40px;
+    }
+
+    &-next {
+      right: 40px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    padding-bottom: 120px;
+    &-prev,
+    &-next {
+      width: 60px;
+      height: 60px;
+
+      img {
+        width: 28px;
+        height: 24px;
+      }
+    }
+
+    &-prev {
+      left: 60px;
+    }
+
+    &-next {
+      right: 60px;
+    }
+  }
+}

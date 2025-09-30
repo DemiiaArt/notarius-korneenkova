@@ -1,0 +1,152 @@
+@use "sass:map";
+
+.similar-articles {
+  padding: 0 0 50px 0;
+
+  &-title {
+    margin: 0 0 30px 0;
+    text-align: start;
+  }
+
+  // Мобильная версия - 3 карточки в колонку
+  &-mobile {
+    display: block;
+    
+    &-item {
+      margin-bottom: 30px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &-carousel-wrapper {
+    position: relative;
+    display: none; // Скрыто на мобильных
+  }
+
+  &-carousel {
+    position: relative;
+    z-index: 1;
+
+    &-next,
+    &-prev {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background-color: rgba(252, 252, 252, 0.7);
+      z-index: 2;
+      cursor: pointer;
+      top: 25%;
+      transform: translateY(-50%);
+
+      &:hover {
+        background-color: map.get($colors, 1);
+      }
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    &-next {
+      right: 0;
+    }
+
+    &-prev {
+      left: 0;
+
+      img {
+        rotate: 180deg;
+      }
+    }
+
+    &-slide {
+      height: auto;
+    }
+  }
+
+  // Скрываем пагинацию на мобильных устройствах
+  .swiper-pagination {
+    display: none;
+  }
+}
+
+@media(min-width: 768px) {
+  .similar-articles {
+    padding: 0 0 70px 0;
+
+    &-title {
+      margin: 0 0 40px 0;
+    }
+
+    // Скрываем мобильную версию на планшетах и десктопах
+    &-mobile {
+      display: none;
+    }
+
+    // Показываем свайпер на планшетах и десктопах
+    &-carousel-wrapper {
+      display: block;
+      padding-bottom: 50px;
+    }
+
+    &-carousel {
+      &-next,
+      &-prev {
+        width: 60px;
+        height: 60px;
+
+        img {
+          width: 28px;
+          height: 24px;
+        }
+      }
+    }
+
+    // Показываем пагинацию на планшетах и десктопах
+    .swiper-pagination {
+      display: block !important;
+      margin-top: 40px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+
+      .swiper-pagination-bullet {
+        width: 12px;
+        height: 12px;
+        background-color: map.get($colors, 11);
+        opacity: 1;
+        margin: 0 4px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+    }
+  }
+
+  .similar-articles-carousel .swiper-pagination-bullet-active {
+    background-color: map.get($colors, 4) !important;
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media(min-width: 1200px) {
+  .similar-articles {
+    padding: 0 0;
+
+    &-title {
+      margin: 0 0 60px 0;
+    }
+
+    &-carousel-wrapper {
+        padding-bottom: 100px;
+      }
+  
+  }
+}
