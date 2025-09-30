@@ -1,5 +1,5 @@
 from django.db import models
-from ckeditor_uploader.fields import RichTextUploadingField
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 class Header(models.Model):
@@ -49,9 +49,9 @@ class AboutMe(models.Model):
     title_en = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
     
-    text_uk = RichTextUploadingField()
-    text_en = RichTextUploadingField()
-    text_ru = RichTextUploadingField()
+    text_uk = CKEditor5Field('Text', config_name='default')
+    text_en = CKEditor5Field('Text', config_name='default')
+    text_ru = CKEditor5Field('Text', config_name='default')
 
     photo = models.ImageField(upload_to='about_me/')
 
@@ -62,42 +62,15 @@ class AboutMe(models.Model):
         verbose_name = "О себе"
         verbose_name_plural = "О себе"
 
-class Services(models.Model):
-    title_uk = models.CharField(max_length=255)
-    title_en = models.CharField(max_length=255)
-    title_ru = models.CharField(max_length=255)
-
-    image = models.ImageField(upload_to='services/')
-
-    def __str__(self):
-        return self.title_uk
-    
-    class Meta:
-        verbose_name = "Услуга"
-        verbose_name_plural = "Услуги"
-
-class ServiceDescription(models.Model):
-    service = models.ForeignKey(Services, on_delete=models.CASCADE)
-    text_uk = RichTextUploadingField()
-    text_en = RichTextUploadingField()
-    text_ru = RichTextUploadingField()                                                                                                                                                                                                                                                                     
-
-    def __str__(self):
-        return self.service.title_uk
-    
-    class Meta:
-        verbose_name = "Описание услуги"
-        verbose_name_plural = "Описание услуг"
-
 
 class VideoInterview(models.Model):
     title_video_uk = models.CharField(max_length=255)
     title_video_en = models.CharField(max_length=255)
     title_video_ru = models.CharField(max_length=255)
 
-    text_video_uk = RichTextUploadingField()
-    text_video_en = RichTextUploadingField()
-    text_video_ru = RichTextUploadingField()
+    text_video_uk = CKEditor5Field('Text', config_name='default')
+    text_video_en = CKEditor5Field('Text', config_name='default')
+    text_video_ru = CKEditor5Field('Text', config_name='default')
 
     video = models.FileField(upload_to='video_interview/')
 
@@ -117,9 +90,9 @@ class ServicesFor(models.Model):
     subtitle_en = models.CharField(max_length=255)
     subtitle_ru = models.CharField(max_length=255)
 
-    description_uk = RichTextUploadingField(blank=True, null=True)
-    description_en = RichTextUploadingField(blank=True, null=True)
-    description_ru = RichTextUploadingField(blank=True, null=True)
+    description_uk = CKEditor5Field('Description', config_name='default', blank=True, null=True)
+    description_en = CKEditor5Field('Description', config_name='default', blank=True, null=True)
+    description_ru = CKEditor5Field('Description', config_name='default', blank=True, null=True)
 
     def __str__(self):
         return self.title_uk

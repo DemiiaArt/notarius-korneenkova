@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Header, BackgroundVideo, AboutMe, Services, ServiceDescription, ServicesFor, Application, VideoInterview
+from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview
 
 
 
@@ -29,28 +29,6 @@ class AboutMeSerializer(serializers.ModelSerializer):
             'title_uk', 'title_en', 'title_ru',
             'text_uk', 'text_en', 'text_ru',
             'photo'
-        ]
-
-
-class ServiceDescriptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ServiceDescription
-        fields = [
-            'id',
-            'text_uk', 'text_en', 'text_ru'
-        ]
-
-
-class ServicesSerializer(serializers.ModelSerializer):
-    descriptions = ServiceDescriptionSerializer(source='servicedescription_set', many=True, read_only=True)
-
-    class Meta:
-        model = Services
-        fields = [
-            'id',
-            'title_uk', 'title_en', 'title_ru',
-            'image',
-            'descriptions'
         ]
 
 

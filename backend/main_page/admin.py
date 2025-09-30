@@ -1,8 +1,6 @@
 from django.contrib import admin
-from django import forms
 from django.utils.html import format_html
-from .models import Header, BackgroundVideo, AboutMe, Services, ServiceDescription, ServicesFor, Application, VideoInterview
-from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview
 
 @admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
@@ -45,19 +43,8 @@ class BackgroundVideoAdmin(admin.ModelAdmin):
         }),
     )
 
-class AboutMeForm(forms.ModelForm):
-    text_uk = forms.CharField(widget=CKEditorUploadingWidget())
-    text_en = forms.CharField(widget=CKEditorUploadingWidget())
-    text_ru = forms.CharField(widget=CKEditorUploadingWidget())
-
-    class Meta:
-        model = AboutMe
-        fields = '__all__'
-
-
 @admin.register(AboutMe)
 class AboutMeAdmin(admin.ModelAdmin):
-    form = AboutMeForm
     list_display = ['title_uk', 'subtitle_uk', 'photo_thumb']
     list_filter = ['title_uk']
     search_fields = ['title_uk', 'title_en', 'title_ru', 'subtitle_uk', 'subtitle_en', 'subtitle_ru']
@@ -93,53 +80,6 @@ class AboutMeAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" style="height:60px;border-radius:4px;object-fit:cover;" />', obj.photo.url)
         return '—'
     photo_thumb.short_description = 'Превью'
-
-
-class ServiceDescriptionInline(admin.TabularInline):
-    model = ServiceDescription
-    form = None  # будет подменено ниже после определения формы
-    extra = 0
-    fields = ('text_uk', 'text_en', 'text_ru')
-    show_change_link = True
-
-
-@admin.register(Services)
-class ServicesAdmin(admin.ModelAdmin):
-    list_display = ['title_uk', 'title_en', 'title_ru', 'image_thumb']
-    search_fields = ['title_uk', 'title_en', 'title_ru']
-    inlines = [ServiceDescriptionInline]
-    readonly_fields = []
-    save_on_top = True
-    list_per_page = 25
-
-    def image_thumb(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" style="height:60px;border-radius:4px;object-fit:cover;" />', obj.image.url)
-        return '—'
-    image_thumb.short_description = 'Превью'
-
-
-class ServiceDescriptionForm(forms.ModelForm):
-    text_uk = forms.CharField(widget=CKEditorUploadingWidget())
-    text_en = forms.CharField(widget=CKEditorUploadingWidget())
-    text_ru = forms.CharField(widget=CKEditorUploadingWidget())
-
-    class Meta:
-        model = ServiceDescription
-        fields = '__all__'
-
-
-@admin.register(ServiceDescription)
-class ServiceDescriptionAdmin(admin.ModelAdmin):
-    form = ServiceDescriptionForm
-    list_display = ['service']
-    autocomplete_fields = ['service']
-    search_fields = ['service__title_uk', 'service__title_en', 'service__title_ru']
-    save_on_top = True
-    list_per_page = 25
-
-# Привязываем форму к инлайну после определения класса формы
-ServiceDescriptionInline.form = ServiceDescriptionForm
 
 
 @admin.register(ServicesFor)

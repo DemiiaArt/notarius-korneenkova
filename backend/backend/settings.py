@@ -67,8 +67,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'whitenoise.runserver_nostatic',
 
-    'ckeditor',
-    'ckeditor_uploader',
+    'django_ckeditor_5',
 
     'main_page',
 ]
@@ -169,27 +168,16 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# CKEditor settings
-CKEDITOR_UPLOAD_PATH = 'ckeditor_uploads/'
-CKEDITOR_IMAGE_BACKEND = 'pillow'
-CKEDITOR_BROWSE_SHOW_DIRS = True
-CKEDITOR_ALLOW_NONIMAGE_FILES = False
-CKEDITOR_CONFIGS = {
+# CKEditor 5 settings
+CKEDITOR_5_CONFIGS = {
     'default': {
-        'toolbar': 'full',
-        'height': 300,
-        'width': '100%',
-        'extraPlugins': ','.join([
-            'uploadimage',
-            'image2',
-            'autogrow',
-            'justify',
-            'codesnippet',
-        ]),
-        'removePlugins': 'resize',
-        'autoGrow_onStartup': True,
-    }
+        'toolbar': ['heading', '|', 'bold', 'italic', 'link',
+                    'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', ],
+    },
 }
+
+CKEDITOR_5_UPLOAD_PATH = "uploads/"
+CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
