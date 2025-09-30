@@ -7,8 +7,11 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.urls import reverse
-from .models import Header, BackgroundVideo, AboutMe, Services
-from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServicesSerializer
+from .models import Header, BackgroundVideo, AboutMe, Services, ServicesFor, Application, VideoInterview
+from .serializer import (
+    HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServicesSerializer,
+    ServicesForSerializer, ApplicationSerializer, ApplicationCreateSerializer, VideoInterviewSerializer
+)
 
 # Create your views here.
 
@@ -103,3 +106,54 @@ class ServicesDetailView(generics.RetrieveAPIView):
     """
     queryset = Services.objects.all()
     serializer_class = ServicesSerializer
+
+
+class ServicesForListView(generics.ListAPIView):
+    """
+    Список категорий "Для кого услуги"
+    """
+    queryset = ServicesFor.objects.all()
+    serializer_class = ServicesForSerializer
+
+
+class ApplicationCreateView(generics.CreateAPIView):
+    """
+    Создание новой заявки
+    """
+    queryset = Application.objects.all()
+    serializer_class = ApplicationCreateSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+class ApplicationListView(generics.ListAPIView):
+    """
+    Список всех заявок (только для админов)
+    """
+    queryset = Application.objects.all().order_by('-created_at')
+    serializer_class = ApplicationSerializer
+
+
+class ApplicationDetailView(generics.RetrieveUpdateAPIView):
+    """
+    Детальная информация о заявке и возможность обновления
+    """
+    queryset = Application.objects.all()
+    serializer_class = ApplicationSerializer
+
+
+class VideoInterviewListView(generics.ListAPIView):
+    """
+    Список видео интервью
+    """
+    queryset = VideoInterview.objects.all()
+    serializer_class = VideoInterviewSerializer
+
+
+class VideoInterviewDetailView(generics.RetrieveAPIView):
+    """
+    Детальная информация о видео интервью
+    """
+    queryset = VideoInterview.objects.all()
+    serializer_class = VideoInterviewSerializer
