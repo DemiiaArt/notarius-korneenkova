@@ -1,5 +1,5 @@
 import "./VideoBlock.scss";
-import videoTest from "../../assets/media/video_test.mp4";
+import videoTest from "@media/video_test.mov";
 import { useState, useRef } from "react";
 import { useIsPC } from "@hooks/isPC";
 import { motion, AnimatePresence } from "framer-motion";
