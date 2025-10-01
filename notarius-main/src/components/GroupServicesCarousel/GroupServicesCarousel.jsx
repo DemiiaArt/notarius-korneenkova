@@ -5,12 +5,8 @@ import { useLang } from "@nav/use-lang";
 import { buildFullPathForId } from "@nav/nav-utils";
 import { NAV_TREE } from "@nav/nav-tree";
 import { useIsPC } from "@hooks/isPC";
+import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import "./GroupServicesCarousel.scss";
-
-// Import images
-import notaryImage from "@media/services-carousel/ServicesGallery_notary.png";
-import translateImage from "@media/services-carousel/ServicesGallery_ranslate.png";
-import militaryImage from "@media/services-carousel/ServicesGallery_military.png";
 
 // Import Swiper styles
 import "swiper/css";
@@ -66,22 +62,9 @@ const GroupServicesCarousel = ({
 
   // Отримуємо зображення для послуги (можна розширити)
   const getServiceImage = (serviceId) => {
-    const images = [
-      notaryImage,
-      translateImage,
-      militaryImage,
-    ];
-
-    // Використовуємо хеш ID для вибору зображення
-    let hash = 0;
-    for (let i = 0; i < serviceId.length; i++) {
-      const char = serviceId.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-
-    const imageIndex = Math.abs(hash) % images.length;
-    return images[imageIndex];
+    // Тут можна додати логіку для різних зображень
+    // Поки що використовуємо одне зображення
+    return "/src/assets/media/services-carousel/ServicesGallery_notary.png";
   };
 
   if (visibleChildren.length === 0) {
@@ -129,7 +112,7 @@ const GroupServicesCarousel = ({
                 </div>
                 <div className="group-services-carousel-content">
                   <h3
-                    className={`group-services-carousel-label ${isPC ? "fs-p--24px" : "fs-p--14px"} fw-semi-bold c3`}
+                    className={`group-services-carousel-label ${isPC ? "fs-p--24px" : "fs-p--14px"} fw-semi-bold c3 uppercase`}
                   >
                     {getLabel(service, currentLang)}
                   </h3>
@@ -141,26 +124,10 @@ const GroupServicesCarousel = ({
 
         {/* Навігаційні стрілки */}
         <button className="group-services-carousel-prev">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M15 18L9 12L15 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <img src={arrowRight} alt="arrow-right" />
         </button>
         <button className="group-services-carousel-next">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M9 18L15 12L9 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <img src={arrowRight} alt="arrow-right" />
         </button>
       </div>
     </div>

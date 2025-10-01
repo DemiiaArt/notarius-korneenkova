@@ -44,7 +44,7 @@ const PolicyPage = () => {
       <div className="container text-container">
         <Breadcrumbs />
         <h1
-          className={`policy-title ${isPC ? "fs-h2--40px" : "fs-h2--24px"} fw-bold uppercase`}
+          className={`policy-title ${isPC ? "fs-h1  --40px" : "fs-h1--24px"} fw-bold uppercase`}
         >
           Політика конфіденційності
         </h1>

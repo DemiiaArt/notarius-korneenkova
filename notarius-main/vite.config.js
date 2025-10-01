@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      "@": path.resolve(fileURLToPath(new URL('./src', import.meta.url))),
       src: path.resolve(fileURLToPath(new URL('./src', import.meta.url))),
       "@components": path.resolve(fileURLToPath(new URL('./src/components', import.meta.url))),
       "@media": path.resolve(fileURLToPath(new URL('./src/assets/media', import.meta.url))),
@@ -52,18 +53,19 @@ export default defineConfig({
             './src/pages/MilitaryPage/MilitaryPage.jsx',
             './src/pages/OtherServicesPage/OtherServicesPage.jsx'
           ],
-          // 'pages-second-level': [
-          //   './src/pages/secondLevel'
-          // ],
+          'pages-second-level': [
+            './src/pages/secondLevel'
+          ],
           // Component chunks
           'components-common': [
-            './src/components/Header/Header.jsx',
-            './src/components/Footer/Footer.jsx',
-            './src/components/ScrollToTop/ScrollToTop.jsx'
+            './src/components/Header',
+            './src/components/Footer',
+            './src/components/ScrollToTop'
           ],
           'components-forms': [
-            './src/components/Form/Form.jsx',
-            './src/components/ReviewForm/ReviewForm.jsx'
+            './src/components/Form',
+            './src/components/ReviewForm',
+            './src/components/ModalWindows'
           ]
         }
       }

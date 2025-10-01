@@ -5,12 +5,8 @@ import { useLang } from "@nav/use-lang";
 import { buildFullPathForId } from "@nav/nav-utils";
 import { NAV_TREE } from "@nav/nav-tree";
 import { useIsPC } from "@hooks/isPC";
+import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import "./ServicesCarousel.scss";
-
-// Import images
-import notaryImage from "@media/services-carousel/ServicesGallery_notary.png";
-import translateImage from "@media/services-carousel/ServicesGallery_ranslate.png";
-import militaryImage from "@media/services-carousel/ServicesGallery_military.png";
 
 // Import Swiper styles
 import "swiper/css";
@@ -169,9 +165,9 @@ const ServicesCarousel = ({
   // Отримуємо зображення для послуги
   const getServiceImage = (serviceId) => {
     const images = [
-      notaryImage,
-      translateImage,
-      militaryImage,
+      "/src/assets/media/services-carousel/ServicesGallery_notary.png",
+      "/src/assets/media/services-carousel/ServicesGallery_ranslate.png",
+      "/src/assets/media/services-carousel/ServicesGallery_military.png",
     ];
 
     // Використовуємо хеш ID для вибору зображення
@@ -192,8 +188,10 @@ const ServicesCarousel = ({
 
   return (
     <div className={`services-carousel ${className}`}>
-      <div className="services-carousel-container">
-        {showTitle && <h2 className="services-carousel-title">{title}</h2>}
+      <div className="container">
+        <div className="services-carousel-container">
+          {showTitle && <h2 className="services-carousel-title">{title}</h2>}
+        </div>
       </div>
       <div className="services-carousel-wrapper">
         <Swiper
@@ -232,26 +230,10 @@ const ServicesCarousel = ({
 
         {/* Навігаційні стрілки */}
         <button className="services-carousel-prev">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M15 18L9 12L15 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <img src={arrowRight} alt="arrow-right" />
         </button>
         <button className="services-carousel-next">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M9 18L15 12L9 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <img src={arrowRight} alt="arrow-right" />
         </button>
       </div>
     </div>

@@ -1,7 +1,7 @@
 @use "sass:map";
 
 .breadcrumbs {
-  margin: 50px 0 0 0;
+  // margin: 50px 0 0 0;
   &-link {
     text-decoration: none;
     transition: color 0.3s ease;
@@ -13,3 +13,8 @@
     margin: 0 5px;
   }
 }
+
+// @media (min-width: 1024px) {
+//   .breadcrumbs {
+//     margin: 80px 0 0 0;}
+// }

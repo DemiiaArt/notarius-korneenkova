@@ -17,6 +17,7 @@ const OfferPage = lazy(() => import("@pages/OfferAndPolicy/Offer"));
 const PolicyPage = lazy(() => import("@pages/OfferAndPolicy/Policy"));
 const ContactsPage = lazy(() => import("@pages/ContactsPage/ContactsPage"));
 const TradeMarkPage = lazy(() => import("@pages/TradeMarkPage/TradeMarkPage"));
+const MainBlogPage = lazy(() => import("@pages/BlogPage/MainBlogPage"));
 const ContractPage = lazy(
   () => import("@pagesSecondLevel/NotaryServices/ContractPage")
 );
@@ -161,6 +162,7 @@ const components = {
   policy: PolicyPage,
   contacts: ContactsPage,
   trademark: TradeMarkPage,
+  blog: MainBlogPage,
   contracts: ContractPage,
   "property-agreements": PropertyAgreements,
   "family-agreements": FamilyAgreements,

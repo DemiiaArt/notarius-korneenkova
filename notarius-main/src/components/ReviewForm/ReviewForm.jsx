@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useIsPC } from "@hooks/isPC";
+import { apiClient } from "@/config/api";
 import "./ReviewForm.scss";
 
 export const ReviewForm = () => {
@@ -17,6 +18,13 @@ export const ReviewForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
+
+  // Состояние для статистики рейтинга
+  const [ratingStats, setRatingStats] = useState({
+    average_rating: 0,
+    total_reviews: 0,
+    rating_counts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  });
 
   // список услуг
   const services = [
@@ -36,23 +44,21 @@ export const ReviewForm = () => {
     },
   ];
 
-  // from Google API (пока статичное)
-  const ratingCounts = { 5: 20, 4: 10, 3: 2, 2: 1, 1: 0 };
-  const totalVotes = Object.values(ratingCounts).reduce(
-    (sum, count) => sum + count,
-    0
-  );
-  const averageRating =
-    totalVotes > 0
-      ? Number(
-          (
-            Object.entries(ratingCounts).reduce(
-              (sum, [star, count]) => sum + Number(star) * count,
-              0
-            ) / totalVotes
-          ).toFixed(1)
-        )
-      : 0;
+  // Загрузка статистики рейтинга с бэкенда
+  useEffect(() => {
+    const fetchRatingStats = async () => {
+      try {
+        const data = await apiClient.get('/reviews/stats/');
+        setRatingStats(data);
+      } catch (error) {
+        console.error('Ошибка при загрузке статистики рейтинга:', error);
+      }
+    };
+
+    fetchRatingStats();
+  }, [isSubmitted]); // Обновляем статистику после отправки нового отзыва
+
+  const { average_rating: averageRating, total_reviews: totalVotes, rating_counts: ratingCounts } = ratingStats;
 
   // управление звездами
   const handleClick = (value) => setSelectedRating(value);
@@ -84,7 +90,7 @@ export const ReviewForm = () => {
       return;
     }
     if (!name.trim()) {
-      alert("Поле Ім’я обов’язкове");
+      alert("Поле Ім'я обов'язкове");
       return;
     }
     if (!text.trim()) {
@@ -95,7 +101,13 @@ export const ReviewForm = () => {
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // имитация запроса
+      await apiClient.post('/reviews/create/', {
+        name: name.trim(),
+        service: selectedService,
+        rating: selectedRating,
+        text: text.trim(),
+      });
+
       setIsSubmitted(true);
 
       // очистка полей после отправки
@@ -103,7 +115,13 @@ export const ReviewForm = () => {
       setText("");
       setSelectedRating(0);
       setSelectedService("");
+
+      // Автоматически скрываем сообщение об успехе через 5 секунд
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 5000);
     } catch (err) {
+      console.error('Ошибка при отправке отзыва:', err);
       alert("Помилка при відправці. Спробуйте ще раз.");
     } finally {
       setIsLoading(false);
@@ -239,7 +257,7 @@ export const ReviewForm = () => {
                 >
                   {selectedService
                     ? services.find((s) => s.value === selectedService)?.label
-                    : "Оберіть послугу, за якою звертались"}
+                    : "Послуга за якою зверталися"}
                   <span className="arrow"></span>
                 </div>
 

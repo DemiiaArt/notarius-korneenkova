@@ -23,7 +23,8 @@ import diploma from "@media/cerficates/diploma.jpg";
 import arrowRight from "@media/services-carousel/icons/arrow-right.svg";
 
 const Certificates = () => {
-  const [activeTab, setActiveTab] = useState("certificates");
+  const [activeTab, setActiveTab] = useState("diplomas");
+  const [selectedImage, setSelectedImage] = useState(null);
   const isPC = useIsPC();
 
   const certificates = [diploma];
@@ -82,6 +83,8 @@ const Certificates = () => {
                 className="certificates-carousel-slide-image"
                 src={src}
                 alt={`Certificate ${i + 1}`}
+                onClick={() => setSelectedImage(src)}
+                style={{ cursor: 'pointer' }}
               />
             </div>
           </SwiperSlide>
@@ -110,20 +113,20 @@ const Certificates = () => {
         {/* Вкладки */}
         <div className="certificates-tabs">
           <button
-            onClick={() => setActiveTab("certificates")}
-            className={`${isPC ? "fs-p--16px" : "fs-p--12px"} uppercase fw-semi-bold c3 certificates-tab ${
-              activeTab === "certificates" ? "active" : ""
-            }`}
-          >
-            Свідоцтво
-          </button>
-          <button
             onClick={() => setActiveTab("diplomas")}
-            className={` ${isPC ? "fs-p--16px" : "fs-p--12px"} uppercase fw-semi-bold c3 certificates-tab ${
+            className={`${isPC ? "fs-p--16px" : "fs-p--12px"} uppercase fw-semi-bold c3 certificates-tab ${
               activeTab === "diplomas" ? "active" : ""
             }`}
           >
             Сертифікати
+          </button>
+          <button
+            onClick={() => setActiveTab("certificates")}
+            className={` ${isPC ? "fs-p--16px" : "fs-p--12px"} uppercase fw-semi-bold c3 certificates-tab ${
+              activeTab === "certificates" ? "active" : ""
+            }`}
+          >
+            Свідоцтво
           </button>
         </div>
 
@@ -133,6 +136,31 @@ const Certificates = () => {
           activeTab
         )}
       </div>
+
+      {/* Модальное окно для просмотра изображения */}
+      {selectedImage && (
+        <div 
+          className="certificates-modal-overlay"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div 
+            className="certificates-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              className="certificates-modal-close"
+              onClick={() => setSelectedImage(null)}
+            >
+              ×
+            </button>
+            <img 
+              src={selectedImage} 
+              alt="Certificate full size"
+              className="certificates-modal-image"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

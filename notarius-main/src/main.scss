@@ -178,17 +178,18 @@ html,
 
 // Глобальные стили для template-text-content
 .template-text-content {
-  padding: 50px 0;
+  padding: 10px 0 0 0;
 
   .text-content {
     display: flex;
     flex-direction: column;
     gap: 20px;
     max-width: 976px;
+    padding-bottom: 30px;
 
-    &-title {
-      margin: 20px 0;
-    }
+    // &-title {
+    //   margin: 20px 0;
+    // }
 
     &-image {
       margin: 20px 0;
@@ -216,10 +217,10 @@ html,
   .template-text-content {
     padding: 100px 0;
 
-    .text-content {
-      &-title {
-        margin: 50px 0;
-      }
-    }
+    // .text-content {
+    //   &-title {
+    //     margin: 10px 0 0 0;
+    //   }
+    // }
   }
 }

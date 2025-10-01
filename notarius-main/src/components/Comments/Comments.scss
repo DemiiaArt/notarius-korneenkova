@@ -129,8 +129,10 @@
   .comments-carousel {
     .swiper-pagination {
       display: block !important;
-      margin-top: 60px;
+      margin-top: 40px;
       text-align: center;
+      position: relative;
+      z-index: 1;
 
       .swiper-pagination-bullet {
         width: 12px;

@@ -90,10 +90,13 @@ button {
     &-change-lang {
       background-color: transparent;
       border-right: 1px solid #ffffff33;
+      cursor: pointer;
       &:last-child {
         border-right: none;
       }
       &-list {
+        margin: 60px auto 30px auto;
+        max-width: 106px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -182,6 +185,9 @@ button {
     }
     &-help {
       order: 4;
+    }
+    .no-click {
+      pointer-events: none;
     }
   }
 }

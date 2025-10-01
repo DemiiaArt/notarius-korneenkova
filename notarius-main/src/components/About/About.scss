@@ -32,13 +32,14 @@
     }
 
     &-content {
-      padding: 100px 0 0 0;
+      padding: 73px 0 0 0;
       position: relative;
       z-index: 3;
     }
 
     &-text-content {
       margin-top: 30px; /* отступ от breadcrumbs для маленьких экранов */
+      max-width: 645px;
     }
 
     &-greetings {
@@ -51,7 +52,7 @@
   }
 
   .about-block-content {
-    max-width: 335px;
+    max-width: 560px;
   }
 }
 
@@ -61,7 +62,7 @@
   }
 
   .about-block-content {
-    max-width: 400px;
+    max-width: 560px;
   }
 }
 
@@ -71,7 +72,7 @@
     max-height: none;
 
     &-content {
-      padding: 150px 0 0 0;}
+      padding: 220px 0 0 0;}
   }
 
   // .about-block-content {
@@ -90,7 +91,7 @@
     }
   }
   .about-block-content {
-    max-width: 600px;
+    max-width: 645px;
   }
 }
 

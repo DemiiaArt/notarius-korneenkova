@@ -3,72 +3,68 @@ import quotes from "@media/icons/quotes-icon.svg";
 import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useState, useEffect } from "react";
 
 import { useIsPC } from "@hooks/isPC";
+import { apiClient } from "@/config/api";
 import "swiper/css/navigation";
 import "swiper/css";
 import "./Comments.scss";
 
 const Comments = () => {
-   const isPC = useIsPC();
-  const comments = [
-    {
-      index:'1',
-      imgSrc: userIcon,
-      imgAlt: "user-icon.jpg",
-      userName: "Оксана",
-      userSurName: "Мельник",
-      userService: "Договір купівлі-продажу земельної ділянки",
-      userComment: `Пані Надія — високо кваліфікований нотаріус,
-                    яка досконало знає свою справу. Усі документи
-                    були оформлені швидко, чітко та без жодних
-                    зайвих питань. Особливо вразила її уважність
-                    до деталей і доброзичливе ставлення.
-                    Рекомендую Надію як надійного фахівця з великим досвідом!`,
-    },
-    {
-      index:'2',
-      imgSrc: userIcon,
-      imgAlt: "user-icon.jpg",
-      userName: "Оксана",
-      userSurName: "Мельник",
-      userService: "Договір купівлі-продажу земельної ділянки",
-      userComment: `Пані Надія — високо кваліфікований нотаріус,
-                    яка досконало знає свою справу. Усі документи
-                    були оформлені швидко, чітко та без жодних
-                    зайвих питань. Особливо вразила її уважність
-                    до деталей і доброзичливе ставлення.
-                    Рекомендую Надію як надійного фахівця з великим досвідом!`,
-    },
-    {
-      index:'3',
-      imgSrc: userIcon,
-      imgAlt: "user-icon.jpg",
-      userName: "Оксана",
-      userSurName: "Мельник",
-      userService: "Договір купівлі-продажу земельної ділянки",
-      userComment: `Пані Надія — високо кваліфікований нотаріус,
-                    яка досконало знає свою справу. Усі документи
-                    були оформлені швидко, чітко та без жодних
-                    зайвих питань. Особливо вразила її уважність
-                    до деталей і доброзичливе ставлення.
-                    Рекомендую Надію як надійного фахівця з великим досвідом!`,
-    },
-    {
-      index:'4',
-      imgSrc: userIcon,
-      imgAlt: "user-icon.jpg",
-      userName: "Оксана",
-      userSurName: "Мельник",
-      userService: "Договір купівлі-продажу земельної ділянки",
-      userComment: `Пані Надія — високо кваліфікований нотаріус,
-                    яка досконало знає свою справу. Усі документи
-                    були оформлені швидко, чітко та без жодних
-                    зайвих питань. Особливо вразила її уважність
-                    до деталей і доброзичливе ставлення.
-                    Рекомендую Надію як надійного фахівця з великим досвідом!`,
-    },
-  ];
+  const isPC = useIsPC();
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const data = await apiClient.get('/reviews/');
+        
+        // Преобразуем данные из API в формат, который ожидает компонент
+        const formattedComments = data.map((review) => ({
+          index: review.id.toString(),
+          imgSrc: userIcon,
+          imgAlt: "user-icon.jpg",
+          userName: review.name.split(' ')[0] || review.name, // Первое слово как имя
+          userSurName: review.name.split(' ').slice(1).join(' ') || '', // Остальное как фамилия
+          userService: review.service_display,
+          userComment: review.text,
+        }));
+        
+        setComments(formattedComments);
+      } catch (error) {
+        console.error('Ошибка при загрузке отзывов:', error);
+        setComments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="comments">
+        <div className="container">
+          <h2 className={`comments-title ${isPC? "fs-h2--32px" : "fs-h2--20px"} fw-bold uppercase c3`}>Відгуки</h2>
+          <p>Завантаження відгуків...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (comments.length === 0) {
+    return (
+      <div className="comments">
+        <div className="container">
+          <h2 className={`comments-title ${isPC? "fs-h2--32px" : "fs-h2--20px"} fw-bold uppercase c3`}>Відгуки</h2>
+          <p>Поки що немає відгуків. Будьте першим!</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="comments">

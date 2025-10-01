@@ -54,13 +54,13 @@
     .hero-container {
       position: relative;
       z-index: 3;
-      padding-top: 100px;
+      padding: 94px 0 0 0 ;
     }
 
     h1 {
       display: block;
       position: relative;
-      padding: 30vh 0 0 0;
+      padding: 40vh 0 0 0;
       z-index: 3;
     }
   }
@@ -79,23 +79,22 @@
       max-width: 976px;
 
       &-title {
-        margin: 20px 0;
+        margin: 10px 0 0 0;
       }
 
       &-image {
         margin: 20px 0;
       }
 
-      .text-content-list,
-      .text-content-list li {
-        list-style: disc;
-        margin: 0 0 0 40px;
-      }
-
-      .text-content-list {
-        margin: 20px 0;
-      }
     }
+  }
+  // .text-content-list {
+  //   margin: 0 0 0 20px;
+  // }
+  
+  .text-content-list li {
+    list-style: disc;
+    margin: 0 0 0 20px;
   }
 }
 
@@ -116,11 +115,11 @@
     &-img {max-height: 100vh;}
 
     .hero-container {
-      padding-top: 200px;
+      padding-top: 50px;
     }
 
     h1 {
-      padding: 40vh 0 0 0;
+      padding: 60vh 0 0 0;
     }
 
     &-img-shadow {
@@ -135,15 +134,20 @@
 
   .template-text-content {
     padding: 100px 0;
+    .text-content-title {
+      margin: 10px 0 0 0;
+    }
   }
 
-  .text-content-title {
-    margin: 50px 0;
+
+  .text-content-list li {
+    list-style: disc;
+    margin: 0 0 0 40px;
   }
 
-  .text-content-list {
-    gap: 14px;
-  }
+  // .text-content-list {
+  //   margin: 0 0 0 20px;
+  // }
 }
 
 // @media (min-width: 1200px) {

@@ -1,5 +1,4 @@
-@use 'sass:map';
-
+@use "sass:map";
 
 .certificates-carousel-prev.swiper-button-disabled,
 .certificates-carousel-next.swiper-button-disabled {
@@ -28,9 +27,29 @@
       padding: 0 0 10px 0;
       cursor: pointer;
       transition: 0.3s ease;
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #000;
+        transition: width 0.3s ease;
+      }
+
+      &:hover::after {
+        width: 100%;
+      }
 
       &.active {
         border-bottom: 2px solid map.get($colors, 3);
+
+        &::after {
+          display: none;
+        }
       }
     }
 
@@ -40,7 +59,7 @@
       z-index: 1;
 
       .swiper-pagination {
-        display: none
+        display: none;
       }
 
       &-next,
@@ -53,6 +72,15 @@
         place-items: center;
         z-index: 2;
         cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: #1a1a1ab2;
+
+          img {
+            filter: brightness(0) invert(1);
+          }
+        }
       }
 
       &-next {
@@ -98,17 +126,17 @@
         }
       }
     }
-
   }
 }
 
 @media (min-width: 768px) {
-
   .certificates-pagination-certificates,
   .certificates-pagination-diplomas {
     display: block !important;
     margin-top: 40px;
     text-align: center;
+    position: relative;
+    z-index: 1;
 
     .swiper-pagination-bullet {
       width: 12px;
@@ -123,7 +151,6 @@
     .swiper-pagination-bullet-active {
       background-color: map.get($colors, 4) !important;
     }
-
   }
   .certificates {
     &-tabs {
@@ -131,7 +158,6 @@
     }
   }
 }
-
 
 @media (min-width: 1024px) {
   .certificates {
@@ -162,5 +188,85 @@
         }
       }
     }
+  }
+}
+
+// Модальное окно для просмотра изображений
+.certificates-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: pointer;
+}
+
+.certificates-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.certificates-modal-close {
+  position: absolute;
+  top: -40px;
+  right: -10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 10000;
+  padding: 5px 10px;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.certificates-modal-image {
+  max-width: 100%;
+  max-height: calc(100vh - 50px);
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+}
+
+// Специальные стили для вертикальных сертификатов
+@media (max-width: 768px) {
+  .certificates-modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+    padding: 10px;
+  }
+
+  .certificates-modal-close {
+    right: -10px;
+  }
+
+  .certificates-modal-image {
+    max-height: calc(100vh - 30px);
+  }
+}
+
+@media (min-width: 769px) {
+  .certificates-modal-content {
+    max-width: 85vw;
+    max-height: 85vh;
+  }
+
+  .certificates-modal-image {
+    max-height: calc(100vh - 50px);
   }
 }

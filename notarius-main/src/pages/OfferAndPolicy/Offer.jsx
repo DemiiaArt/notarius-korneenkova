@@ -41,7 +41,7 @@ const OfferPage = () => {
       <div className="container text-container">
         <Breadcrumbs />
         <h1
-          className={`offer-title ${isPC ? "fs-h2--40px" : "fs-h2--24px"} fw-bold uppercase`}
+          className={`offer-title ${isPC ? "fs-h1--40px" : "fs-h1--24px"} fw-bold uppercase`}
         >
           Договір оферти
         </h1>

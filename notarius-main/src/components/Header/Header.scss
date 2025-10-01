@@ -21,14 +21,17 @@ li {
     top: 0;
     left: 0;
     z-index: 2000;
+
+    &.mega-open {
+    }
     &-wrap {
-      padding: 20px 0 0 0;
+      padding: 16px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     &-content {
-      background-color: rgba(252, 252, 252, 0.8);
+      background-color: rgba(252, 252, 252);
     }
     &-btns {
       width: 35%;
@@ -264,6 +267,9 @@ li {
 
 @media (min-width: 1024px) {
   .header {
+    position: relative;
+    &.mega-open {
+    }
     &-info {
       display: block;
       height: 35px;
@@ -315,8 +321,18 @@ li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 30px 0 0 0;
-    padding: 0 0 20px 0;
+    margin: 0 auto;
+    padding: 30px 0 20px 0;
+
+    &-wrap {
+      width: 100%;
+      height: auto;
+      position: sticky;
+      top: 0;
+      left: 0;
+      background-color: rgba(252, 252, 252, 0.8);
+      z-index: 2600;
+    }
   }
   .navbar-link {
     text-decoration: inherit;
@@ -357,9 +373,16 @@ li {
 
   .header-change-lang {
     background-color: transparent;
-    border-right: 1px solid #00000033;
-    &:last-child {
-      border-right: none;
+    position: relative;
+    &:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 0.8em;
+      background-color: #00000033;
     }
     &-list {
       margin: 0 48px;
@@ -387,6 +410,11 @@ li {
     background-color: map.get($colors, 4);
     color: map.get($colors, 1);
     transition: all 0.3s ease;
+
+    svg {
+      fill: #1a1a1a;
+    }
+
     &:hover {
       opacity: 0.9;
     }
@@ -436,7 +464,6 @@ li {
 /* чтобы панель не резалась */
 
 .header,
-.header-content,
-.navbar-link-block {
+.header-content {
   overflow: visible;
 }

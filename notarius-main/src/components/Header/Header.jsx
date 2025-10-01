@@ -87,7 +87,9 @@ export const Header = () => {
 
   return (
     <>
-      <header className={`header ${menuOpen ? "menu-open bg8" : ""}`}>
+      <header
+        className={`header${menuOpen ? "menu-open bg8" : ""}${openKey ? "mega-open" : ""}`}
+      >
         <div className="header-info bg4">
           <div className="container">
             <div className="header-info-content fs-p--16px lh-150 text-decoration--none c1">
@@ -102,7 +104,7 @@ export const Header = () => {
                   + 38 067 544 07 00
                 </a>
               </div>
-              <a className="header-info-address " href="#">
+              <a className="header-info-address" href="#">
                 м. Дніпро, пр. Дмитра Яворницького, 2, 49100 
               </a>
             </div>
@@ -299,11 +301,11 @@ export const Header = () => {
                     className="search-icon c3"
                     width="24"
                     height="24"
-                    viewBox="0 0 24 24"
+                    viewBox="0 0 32 32"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M21.353 20.646L17.344 16.637C18.68 15.135 19.5 13.164 19.5 11C19.5 6.313 15.687 2.5 11 2.5C6.313 2.5 2.5 6.313 2.5 11C2.5 15.687 6.313 19.5 11 19.5C13.164 19.5 15.135 18.68 16.637 17.344L20.646 21.353C20.744 21.451 20.872 21.499 21 21.499C21.128 21.499 21.256 21.45 21.354 21.353C21.548 21.158 21.548 20.842 21.353 20.646ZM3.49902 11C3.49902 6.865 6.86302 3.5 10.999 3.5C15.135 3.5 18.499 6.865 18.499 11C18.499 15.135 15.135 18.5 10.999 18.5C6.86302 18.5 3.49902 15.135 3.49902 11Z"
+                      d="M29.71,28.29l-6.5-6.5-.07,0a12,12,0,1,0-1.39,1.39s0,.05,0,.07l6.5,6.5a1,1,0,0,0,1.42,0A1,1,0,0,0,29.71,28.29ZM14,24A10,10,0,1,1,24,14,10,10,0,0,1,14,24Z"
                       fill="currentColor"
                     />
                   </svg>
@@ -344,45 +346,82 @@ export const Header = () => {
                 </button>
               </div>
             </div>
-            {/* <nav className="navbar-link-block fs-p--16px uppercase fw-semi-bold lh-150 c3">
-              <Link
-                className="navbar-link text-decoration--none c3"
-                to="/notarialni-pro-mene"
-              >
-                Про мене
-              </Link>
-              <Link
-                onMouseEnter={() => openOnHover("services")}
+          </div>
+        </div>
+      </header>
+      <div className="navbar-link-block-wrap">
+        <nav className="navbar-link-block container fs-p--16px uppercase fw-semi-bold lh-150 c3">
+          <Link
+            className="navbar-link text-decoration--none c3"
+            to="/notarialni-pro-mene"
+          >
+            Про мене
+          </Link>
+
+          {/* Нотаріальні послуги */}
+          <div
+            className={`nav-item nav-item--mega ${openKey === "services" ? "is-open" : ""}`}
+            onMouseEnter={() => openOnHover("services")}
+            onMouseLeave={(e) => {
+              // не закрывать, если уходим на дочернюю панель
+              if (e.currentTarget.contains(e.relatedTarget)) return;
+              closeAfterHover();
+            }}
+            onFocus={() => onFocusItem("services")}
+            onBlur={onBlurZone}
+          >
+            <Link
+              className="navbar-link text-decoration--none c3"
+              to="/notarialni-poslugy"
+            >
+              Нотаріальні послуги
+            </Link>
+
+            {openKey === "services" && (
+              <div
+                className="nav__mega"
+                onMouseEnter={() => clearTimeout(hoverTimer.current)}
                 onMouseLeave={closeAfterHover}
-                onFocus={() => onFocusItem("services")}
-                onBlur={onBlurZone}
-                className={`navbar-link ${openKey === "services" ? "active" : ""} text-decoration--none c3`}
-                // to="/notarialni-poslugy"
               >
-                Нотаріальні послуги
-              </Link>
-              {openKey === "services" && (
-                <div className="nav__mega">
-                  <MegaPanel
-                    openKey="services"
-                    data={panelData}
-                    onClose={() => setOpenKey(null)}
-                    lang={lang}
-                  />
-                </div>
-              )}
-              <Link
-                onMouseEnter={() => openOnHover("translate")}
-                onMouseLeave={closeAfterHover}
-                onFocus={() => onFocusItem("translate")}
-                onBlur={onBlurZone}
-                className={`navbar-link ${openKey === "translate" ? "active" : ""} text-decoration--none c3`}
-                // to="/notarialni-pereklad"
-              >
+                <MegaPanel
+                  openKey="services"
+                  data={panelData}
+                  onClose={() => setOpenKey(null)}
+                  lang={lang}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Нотаріальний переклад */}
+          {SHOW_MEGAPANEL_ONLY_FOR_SERVICES ? (
+            <Link
+              className="navbar-link text-decoration--none c3"
+              to="/notarialni-pereklad"
+            >
+              Нотаріальний переклад
+            </Link>
+          ) : (
+            <div
+              className={`nav-item nav-item--mega ${openKey === "translate" ? "is-open" : ""}`}
+              onMouseEnter={() => openOnHover("translate")}
+              onMouseLeave={(e) => {
+                if (e.currentTarget.contains(e.relatedTarget)) return;
+                closeAfterHover();
+              }}
+              onFocus={() => onFocusItem("translate")}
+              onBlur={onBlurZone}
+            >
+              <Link className="navbar-link text-decoration--none c3">
                 Нотаріальний переклад
               </Link>
+
               {openKey === "translate" && (
-                <div className="nav__mega">
+                <div
+                  className="nav__mega"
+                  onMouseEnter={() => clearTimeout(hoverTimer.current)}
+                  onMouseLeave={closeAfterHover}
+                >
                   <MegaPanel
                     openKey="translate"
                     data={panelData}
@@ -391,18 +430,38 @@ export const Header = () => {
                   />
                 </div>
               )}
-              <Link
-                onMouseEnter={() => openOnHover("other")}
-                onMouseLeave={closeAfterHover}
-                onFocus={() => onFocusItem("other")}
-                onBlur={onBlurZone}
-                className={`navbar-link ${openKey === "other" ? "active" : ""} text-decoration--none c3`}
-                // to="/notarialni-inshi"
-              >
+            </div>
+          )}
+
+          {/* Інші послуги */}
+          {SHOW_MEGAPANEL_ONLY_FOR_SERVICES ? (
+            <Link
+              className="navbar-link text-decoration--none c3"
+              to="/notarialni-inshi"
+            >
+              Інші послуги
+            </Link>
+          ) : (
+            <div
+              className={`nav-item nav-item--mega ${openKey === "other" ? "is-open" : ""}`}
+              onMouseEnter={() => openOnHover("other")}
+              onMouseLeave={(e) => {
+                if (e.currentTarget.contains(e.relatedTarget)) return;
+                closeAfterHover();
+              }}
+              onFocus={() => onFocusItem("other")}
+              onBlur={onBlurZone}
+            >
+              <Link className="navbar-link text-decoration--none c3">
                 Інші послуги
               </Link>
+
               {openKey === "other" && (
-                <div className="nav__mega">
+                <div
+                  className="nav__mega"
+                  onMouseEnter={() => clearTimeout(hoverTimer.current)}
+                  onMouseLeave={closeAfterHover}
+                >
                   <MegaPanel
                     openKey="other"
                     data={panelData}
@@ -411,170 +470,29 @@ export const Header = () => {
                   />
                 </div>
               )}
-              <Link
-                className="navbar-link text-decoration--none c3"
-                to="/notarialni-dopomoga-viyskovim"
-              >
-                Для військових
-              </Link>
-              <Link
-                className="navbar-link text-decoration--none c3"
-                to="/notarialni-blog"
-              >
-                Блог
-              </Link>
-              <Link
-                className="navbar-link text-decoration--none c3"
-                to="/notarialni-contacty"
-              >
-                Контакти
-              </Link>
-            </nav> */}
-            <nav className="navbar-link-block fs-p--16px uppercase fw-semi-bold lh-150 c3">
-              <Link
-                className="navbar-link text-decoration--none c3"
-                to="/notarialni-pro-mene"
-              >
-                Про мене
-              </Link>
+            </div>
+          )}
 
-              {/* Нотаріальні послуги */}
-              <div
-                className={`nav-item nav-item--mega ${openKey === "services" ? "is-open" : ""}`}
-                onMouseEnter={() => openOnHover("services")}
-                onMouseLeave={(e) => {
-                  // не закрывать, если уходим на дочернюю панель
-                  if (e.currentTarget.contains(e.relatedTarget)) return;
-                  closeAfterHover();
-                }}
-                onFocus={() => onFocusItem("services")}
-                onBlur={onBlurZone}
-              >
-                <Link
-                  className="navbar-link text-decoration--none c3"
-                  to="/notarialni-poslugy"
-                >
-                  Нотаріальні послуги
-                </Link>
-
-                {openKey === "services" && (
-                  <div
-                    className="nav__mega"
-                    onMouseEnter={() => clearTimeout(hoverTimer.current)}
-                    onMouseLeave={closeAfterHover}
-                  >
-                    <MegaPanel
-                      openKey="services"
-                      data={panelData}
-                      onClose={() => setOpenKey(null)}
-                      lang={lang}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Нотаріальний переклад */}
-              {SHOW_MEGAPANEL_ONLY_FOR_SERVICES ? (
-                <Link
-                  className="navbar-link text-decoration--none c3"
-                  to="/notarialni-pereklad"
-                >
-                  Нотаріальний переклад
-                </Link>
-              ) : (
-                <div
-                  className={`nav-item nav-item--mega ${openKey === "translate" ? "is-open" : ""}`}
-                  onMouseEnter={() => openOnHover("translate")}
-                  onMouseLeave={(e) => {
-                    if (e.currentTarget.contains(e.relatedTarget)) return;
-                    closeAfterHover();
-                  }}
-                  onFocus={() => onFocusItem("translate")}
-                  onBlur={onBlurZone}
-                >
-                  <Link className="navbar-link text-decoration--none c3">
-                    Нотаріальний переклад
-                  </Link>
-
-                  {openKey === "translate" && (
-                    <div
-                      className="nav__mega"
-                      onMouseEnter={() => clearTimeout(hoverTimer.current)}
-                      onMouseLeave={closeAfterHover}
-                    >
-                      <MegaPanel
-                        openKey="translate"
-                        data={panelData}
-                        onClose={() => setOpenKey(null)}
-                        lang={lang}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Інші послуги */}
-              {SHOW_MEGAPANEL_ONLY_FOR_SERVICES ? (
-                <Link
-                  className="navbar-link text-decoration--none c3"
-                  to="/notarialni-inshi"
-                >
-                  Інші послуги
-                </Link>
-              ) : (
-                <div
-                  className={`nav-item nav-item--mega ${openKey === "other" ? "is-open" : ""}`}
-                  onMouseEnter={() => openOnHover("other")}
-                  onMouseLeave={(e) => {
-                    if (e.currentTarget.contains(e.relatedTarget)) return;
-                    closeAfterHover();
-                  }}
-                  onFocus={() => onFocusItem("other")}
-                  onBlur={onBlurZone}
-                >
-                  <Link className="navbar-link text-decoration--none c3">
-                    Інші послуги
-                  </Link>
-
-                  {openKey === "other" && (
-                    <div
-                      className="nav__mega"
-                      onMouseEnter={() => clearTimeout(hoverTimer.current)}
-                      onMouseLeave={closeAfterHover}
-                    >
-                      <MegaPanel
-                        openKey="other"
-                        data={panelData}
-                        onClose={() => setOpenKey(null)}
-                        lang={lang}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <Link
-                className="navbar-link text-decoration--none c3"
-                to="/notarialni-dopomoga-viyskovim"
-              >
-                Для військових
-              </Link>
-              <Link
-                className="navbar-link text-decoration--none c3"
-                to="/notarialni-blog"
-              >
-                Блог
-              </Link>
-              <Link
-                className="navbar-link text-decoration--none c3"
-                to="/notarialni-contacty"
-              >
-                Контакти
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+          <Link
+            className="navbar-link text-decoration--none c3"
+            to="/notarialni-dopomoga-viyskovim"
+          >
+            Для військових
+          </Link>
+          <Link
+            className="navbar-link text-decoration--none c3"
+            to="/notarialni-blog"
+          >
+            Блог
+          </Link>
+          <Link
+            className="navbar-link text-decoration--none c3"
+            to="/notarialni-contacty"
+          >
+            Контакти
+          </Link>
+        </nav>
+      </div>
       <div
         className={`overlay ${menuOpen ? "show" : ""}`}
         onClick={() => setMenuOpen(false)}

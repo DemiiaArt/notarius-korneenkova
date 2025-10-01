@@ -12,9 +12,10 @@
     }
     &-title {
       padding: 50px 0 100px 0;
+      margin: 0;
     }
     &-block {
-      padding: 30px 66px;
+      padding: 30px 46px;
       display: flex;
       flex-direction: column;
       &-item {
@@ -28,6 +29,7 @@
         }
         &-text {
           text-align: center;
+          padding: 0 40px;
         }
       }
     }
@@ -39,9 +41,10 @@
     height: 600px;
     &-title {
       padding: 100px 0 220px 0;
+      margin: 0;
     }
     &-block {
-      padding: 40px 20px;
+      padding: 60px 40px;
       flex-direction: row;
       justify-content: flex-start;
       align-items: flex-start;
@@ -55,6 +58,7 @@
         }
         &:last-child {
           box-shadow: none;
+          padding-right: 0;
         }
         &-number {
           text-align: start;
@@ -62,6 +66,7 @@
         }
         &-text {
           text-align: start;
+          padding: 0;
         }
       }
     }
@@ -77,6 +82,7 @@
     }
     &-title {
       padding: 100px 0 300px 0;
+      margin: 0;
     }
     &-block {
       &-item {

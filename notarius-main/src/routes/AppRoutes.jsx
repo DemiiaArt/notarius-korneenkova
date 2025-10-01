@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 import { NAV_TREE } from "../nav/nav-tree";
 import { INDICES } from "../nav/indices"; // содержит pathById/idByPath/parentOf
 import { useLang } from "../nav/use-lang";
+import BlogArticlePage from "../pages/BlogPage/BlogArticlePage";
 
 // Loading component
 const LoadingSpinner = () => (
@@ -73,6 +74,9 @@ export default function AppRoutes({ pageProps = {} }) {
       {routes.map(({ id, path, Element }) => (
         <Route key={`${id}:${path}`} path={path} element={<Element />} />
       ))}
+
+      {/* Blog article route */}
+      <Route path="/blog-article" element={<BlogArticlePage />} />
 
       {/* 404 */}
       <Route path="*" element={<div>404</div>} />

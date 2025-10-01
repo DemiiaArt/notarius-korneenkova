@@ -40,7 +40,7 @@ export const AboutTextBlock = () => {
 
   return (
     <div className="about-container">
-      <div className="container">
+      <div className="container container-1200">
         <h2 className={`${isPC? "fs-h2--32px" : "fs-h2--20px"} fw-bold`}>ПРО МЕНЕ</h2>
 
         <div className={`about-content ${expanded ? "expanded" : ""}`}>

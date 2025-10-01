@@ -126,13 +126,13 @@ const Footer = () => {
                 nk.yes@gmail.com
               </a>
               <a
-                className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                className={`footer-contacts-link no-click c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                 href="#"
               >
                 м.Дніпро, пр. Дмитра Яворницького, 2
               </a>
               <a
-                className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                className={`footer-contacts-link no-click c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                 href="#"
               >
                 Пн-Нд: 09:00 - 18:00
@@ -235,12 +235,19 @@ const Footer = () => {
           </div>
           <FooterAccordion openIndex={openIndex} setOpenIndex={setOpenIndex} />
         </div>
-        <button
-          className={`footer-change-lang ${isPC ? "fs-p--18px" : "fs-p--12px"} lh-150 c1`}
-        >
-          <img src={planet} alt="planet" />
-          <span className="footer-change-lang-text">Українська</span>
-        </button>
+        <div className="footer-change-lang-dropdown">
+          <div className="footer-change-lang-list">
+            {Object.entries(languages).map(([key, label]) => (
+              <button
+                key={key}
+                className={`footer-change-lang ${currentLang == key ? "c1" : "c16"}`}
+                onClick={() => setCurrentLang(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
         <img className="footer-logo" src={logoFooter} alt="logoFooter" />
       </div>
     </footer>

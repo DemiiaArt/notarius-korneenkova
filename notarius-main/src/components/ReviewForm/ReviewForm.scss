@@ -1,6 +1,8 @@
 @use 'sass:map';
 
 .review-block {
+    color: #1A1A1A;
+    
     ul, li {
         list-style: none;
         margin: 0;
@@ -31,9 +33,11 @@
     .rating-summary,
     .review-form {
         flex: 1;
+        color: #1A1A1A;
 
         & h2 {
             margin-bottom: 20px;
+            color: #1A1A1A;
         }
     }
 
@@ -144,7 +148,7 @@
                 border: none;
                 border-bottom: 0.25px solid map.get($colors, 3);
                 font: inherit;
-                padding: 6px 0;
+                padding: 6px 0 6px 0;
                 appearance: none;
 
                 &::placeholder {
@@ -195,6 +199,7 @@
                     transform: rotate(45deg);
                     transition: transform 0.2s ease;
                     margin-left: 8px;
+                    margin-right: 9px;
                 }
 
                 &.open .arrow {
@@ -246,8 +251,11 @@
 
     .rating-summary,
     .review-form {
+        color: #1A1A1A;
+        
         & h2 {
             margin-bottom: 55px;
+            color: #1A1A1A;
         }
     }
 
@@ -275,6 +283,17 @@
 
     .review-form-input .input-group.select-group .custom-select__trigger {
         padding: 6px 0 8px 0;
+    }
+    
+    .review-form-input .input-group {
+        & input,
+        & textarea {
+            padding: 6px 0 24px 0;
+        }
+    }
+    
+    .review-form-input .input-group.select-group .custom-select__trigger {
+        padding: 6px 0 24px 0;
     }
 }
 

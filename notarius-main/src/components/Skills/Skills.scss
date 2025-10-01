@@ -17,12 +17,14 @@
 
     &-list {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px 15px;
+      grid-template-columns: repeat(2, minmax(200px, 416px));
+      gap: 32px;
+      justify-content: center;
     }
 
     &-card {
       display: flex;
+      width: 100%;
       flex-direction: column;
       gap: 6px;
       & > p {
@@ -36,7 +38,8 @@
 @media (min-width: 420px) {
   .skills {
     &-list {
-      gap: 30px;
+      grid-template-columns: repeat(2, minmax(250px, 416px));
+      gap: 32px;
     }
   }
 }
@@ -49,7 +52,7 @@
       padding: 70px 0;
 
       & > *:first-child {
-        flex: 0 1 30%;
+        flex: 0 1 25%;
         max-width: 200px;
       }
 
@@ -62,7 +65,8 @@
       gap: 16px;
     }
     &-list {
-      gap: 40px;
+      grid-template-columns: repeat(2, minmax(300px, 416px));
+      gap: 32px;
     }
   }
 }
@@ -75,6 +79,11 @@
       & > *:first-child {
         max-width: 450px;
       }
+    }
+
+    &-list {
+      grid-template-columns: repeat(2, minmax(350px, 416px));
+      gap: 32px;
     }
   }
 }
