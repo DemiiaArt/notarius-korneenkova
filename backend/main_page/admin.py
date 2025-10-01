@@ -231,6 +231,32 @@ class ReviewAdmin(admin.ModelAdmin):
     unpublish_reviews.short_description = 'Снять с публикации'
 
 
+@admin.register(ServiceCategory)
+class ServiceCategoryAdmin(MPTTModelAdmin):
+    prepopulated_fields = {
+        "nav_id": ("label_en",),
+        "slug_ua": ("label_ua",),
+        "slug_ru": ("label_ua",),
+        "slug_en": ("label_en",),
+    }
+
+    list_display = (
+        'label_ua',
+        'parent',
+        'kind',
+        'show_in_menu',
+        'order',
+        'created_at',
+        'updated_at',
+    )
+    list_editable = ('kind', 'order', 'show_in_menu',)
+
+    search_fields = ('label_ua', 'label_ru', 'label_en', 'nav_id')
+    list_filter = ('kind', 'show_in_menu',)
+
+    # Чтобы дерево можно было редактировать drag&drop
+    mptt_level_indent = 30
+
 # Кастомизация брендинга админки
 admin.site.site_header = 'Панель администратора — Notarius'
 admin.site.site_title = 'Админ — Notarius'

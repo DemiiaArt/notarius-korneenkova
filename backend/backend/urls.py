@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
+from main_page.views import CKEditorUploadView
 
 def health_check(request):
     """Простая проверка здоровья приложения"""
@@ -29,6 +30,7 @@ urlpatterns = [
     path('api/blog/', include('blog.urls')),
     path('api/', include('main_page.urls')),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
+    path('ckeditor/upload/', CKEditorUploadView.as_view(), name='ckeditor_upload'),
     path('health/', health_check, name='health_check'),
     path('', health_check, name='root_health_check'),
 ]

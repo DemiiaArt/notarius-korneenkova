@@ -89,7 +89,7 @@ class ServicesFor(models.Model):
     title_en = models.CharField(max_length=255)
     title_ru = models.CharField(max_length=255)
 
-    image = models.ImageField(upload_to='services/')
+    image = models.ImageField(upload_to='services/', blank=True, null=True)
     subtitle_uk = models.CharField(max_length=255)
     subtitle_en = models.CharField(max_length=255)
     subtitle_ru = models.CharField(max_length=255)
@@ -102,8 +102,8 @@ class ServicesFor(models.Model):
         return self.title_uk
     
     class Meta:
-        verbose_name = "Услуга"
-        verbose_name_plural = "Услуги"
+        verbose_name = "Для кого услуги"
+        verbose_name_plural = "Для кого услуги"
 
 
 class ServiceCategory(MPTTModel):
@@ -192,9 +192,9 @@ class ServiceCategory(MPTTModel):
         verbose_name="Порядок сортировки"
     )
     # Описание (на 3 языках)
-    description_ua = RichTextUploadingField(blank=True, null=True, verbose_name="Описание (UA)")
-    description_ru = RichTextUploadingField(blank=True, null=True, verbose_name="Описание (RU)")
-    description_en = RichTextUploadingField(blank=True, null=True, verbose_name="Описание (EN)")
+    description_ua = CKEditor5Field(blank=True, null=True, verbose_name="Описание (UA)")
+    description_ru = CKEditor5Field(blank=True, null=True, verbose_name="Описание (RU)")
+    description_en = CKEditor5Field(blank=True, null=True, verbose_name="Описание (EN)")
     
     # Метаданные
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
