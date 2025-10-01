@@ -151,7 +151,7 @@ class ServiceCategory(MPTTModel):
     
     # Показывать ли в меню
     show_in_menu = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name="Показывать в меню"
     )
     
@@ -203,28 +203,7 @@ class ServiceCategory(MPTTModel):
         
         # Ограничение количества корневых категорий до 4
         if not self.parent:
-            if ServiceCategory.objects.filter(parent__isnull=True).exclude(pk=self.pk).count() > 4:
+            if ServiceCategory.objects.filter(parent__isnull=True).exclude(pk=self.pk).count() > 3:
                 raise ValidationError("Нельзя создавать больше 4 корневых категорий.")
     
-    def get_label(self, language='ua'):
-        """Получить название на указанном языке"""
-        return getattr(self, f'label_{language}', self.label_ua)
-    
-    # def get_slug(self, language='ua'):
-    #     """Получить slug на указанном языке"""
-    #     return getattr(self, f'slug_{language}', self.slug_ua)
-    
-    # def get_full_path(self, language='ua'):
-    #     """Получить полный путь к категории"""
-    #     ancestors = self.get_ancestors(include_self=True)
-    #     return '/'.join([cat.get_slug(language) for cat in ancestors if cat.get_slug(language)])
-    
-    # @classmethod
-    # def get_root_categories(cls):
-    #     """Получить корневые категории"""
-    #     return cls.objects.filter(parent=None)
-    
-    # @classmethod
-    # def get_menu_items(cls):
-    #     """Получить элементы для отображения в меню"""
-    #     return cls.objects.filter(show_in_menu=True)
+

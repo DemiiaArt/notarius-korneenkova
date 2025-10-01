@@ -10,6 +10,7 @@ from django.urls import reverse
 from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
 from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServiceCategorySerializer
 
+from .utils import inject_services, root_data
 # Create your views here.
 
 class HeaderView(generics.ListAPIView):
@@ -96,34 +97,20 @@ class ServicesCategoryView(APIView):
     """
     
     def get(self, request, *args, **kwargs):
-        """
-        Возвращает структуру услуг в том же формате, что и nav-tree.js
-        """
+
         try:
             # Получаем корневые категории (без родителя)
-            root_categories = ServiceCategory.objects.filter(parent__isnull=True)
+            root_categories = ServiceCategory.objects.filter(parent__isnull=True, show_in_menu=True).order_by('order')
             
             if not root_categories.exists():
-                return Response({
-                    "id": "root",
-                    "kind": "section", 
-                    "label": {"ua": "", "ru": "", "en": ""},
-                    "slug": {"ua": "", "ru": "", "en": ""},
-                    "showInMenu": False,
-                    "component": None,
-                    "children": []
-                })
-            
-            # Сериализуем корневые категории
-            serializer = ServiceCategorySerializer(root_categories, many=True)
-            
-            # Формируем ответ в формате nav-tree.js
-            response_data = serializer.data
+                return Response(root_data)
             
             
-            return Response(response_data)
+            serializer = ServiceCategorySerializer(root_categories, many=True)            
+            response_data = serializer.data            
+            merged_children = inject_services(root_data, response_data)
+            
+            return Response(merged_children)
             
         except Exception as e:
-            return Response({
-                "error": f"Ошибка при получении структуры услуг: {str(e)}"
-            }, status=500)
+            return Response(root_data)

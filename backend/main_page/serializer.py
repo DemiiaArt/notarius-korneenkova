@@ -66,7 +66,7 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
     
     def get_children(self, obj):
         """Рекурсивно получаем дочерние элементы"""
-        children = obj.get_children()
+        children = obj.get_children().filter(show_in_menu=True).order_by('order')
         if children.exists():
             return ServiceCategorySerializer(children, many=True, context=self.context).data
         return []
