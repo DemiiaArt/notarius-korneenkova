@@ -26,7 +26,7 @@ def health_check(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/main_page/', include('main_page.urls')),
+    path('api/', include('main_page.urls')),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
     path('health/', health_check, name='health_check'),
     path('', health_check, name='root_health_check'),

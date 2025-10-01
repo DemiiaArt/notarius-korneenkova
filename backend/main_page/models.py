@@ -117,3 +117,47 @@ class Application(models.Model):
         ordering = ['-created_at']
 
 
+class Review(models.Model):
+    """
+    Модель для хранения отзывов клиентов
+    """
+    RATING_CHOICES = [
+        (1, '1 звезда'),
+        (2, '2 звезды'),
+        (3, '3 звезды'),
+        (4, '4 звезды'),
+        (5, '5 звезд'),
+    ]
+    
+    SERVICE_CHOICES = [
+        ('certification', 'Засвідчення копій документів та підписів'),
+        ('realEstateTransactions', 'Нотаріальне супроводження угод з нерухомістю'),
+        ('heritage', 'Оформлення спадщини та заповітів'),
+        ('attorney', 'Посвідчення довіреностей та згод'),
+        ('agreements', 'Посвідчення договорів купівлі-продажу, дарування, оренди'),
+    ]
+    
+    name = models.CharField(max_length=255, verbose_name="Имя")
+    service = models.CharField(
+        max_length=50, 
+        choices=SERVICE_CHOICES, 
+        verbose_name="Услуга"
+    )
+    rating = models.IntegerField(
+        choices=RATING_CHOICES, 
+        verbose_name="Рейтинг"
+    )
+    text = models.TextField(verbose_name="Текст отзыва")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    is_approved = models.BooleanField(default=False, verbose_name="Одобрено")
+    is_published = models.BooleanField(default=False, verbose_name="Опубликовано")
+    
+    def __str__(self):
+        return f"{self.name} - {self.rating} звезд"
+    
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
+        ordering = ['-created_at']
+
+

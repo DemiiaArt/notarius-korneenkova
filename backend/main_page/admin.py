@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview
+from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
 
 @admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
@@ -161,6 +161,60 @@ class VideoInterviewAdmin(admin.ModelAdmin):
             return format_html('<video src="{}" style="height:60px;border-radius:4px;object-fit:cover;" controls></video>', obj.video.url)
         return '—'
     video_thumb.short_description = 'Превью'
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['name', 'service', 'rating', 'created_at', 'is_approved', 'is_published', 'review_preview']
+    list_filter = ['is_approved', 'is_published', 'rating', 'service', 'created_at']
+    search_fields = ['name', 'text']
+    readonly_fields = ['created_at']
+    list_editable = ['is_approved', 'is_published']
+    save_on_top = True
+    list_per_page = 25
+    date_hierarchy = 'created_at'
+    
+    fieldsets = (
+        ('Информация об отзыве', {
+            'fields': ('name', 'service', 'rating', 'text'),
+            'description': 'Основная информация об отзыве'
+        }),
+        ('Модерация', {
+            'fields': ('is_approved', 'is_published', 'created_at'),
+            'description': 'Управление публикацией отзыва'
+        }),
+    )
+    
+    def get_queryset(self, request):
+        # Сортируем по дате создания (новые сверху)
+        return super().get_queryset(request).order_by('-created_at')
+    
+    def review_preview(self, obj):
+        """Предпросмотр текста отзыва"""
+        if len(obj.text) > 50:
+            return obj.text[:50] + '...'
+        return obj.text
+    review_preview.short_description = 'Предпросмотр'
+    
+    actions = ['approve_reviews', 'publish_reviews', 'unpublish_reviews']
+    
+    def approve_reviews(self, request, queryset):
+        """Одобрить выбранные отзывы"""
+        updated = queryset.update(is_approved=True)
+        self.message_user(request, f'{updated} отзыв(ов) одобрено.')
+    approve_reviews.short_description = 'Одобрить выбранные отзывы'
+    
+    def publish_reviews(self, request, queryset):
+        """Опубликовать выбранные отзывы"""
+        updated = queryset.update(is_approved=True, is_published=True)
+        self.message_user(request, f'{updated} отзыв(ов) опубликовано.')
+    publish_reviews.short_description = 'Опубликовать выбранные отзывы'
+    
+    def unpublish_reviews(self, request, queryset):
+        """Снять с публикации выбранные отзывы"""
+        updated = queryset.update(is_published=False)
+        self.message_user(request, f'{updated} отзыв(ов) снято с публикации.')
+    unpublish_reviews.short_description = 'Снять с публикации'
 
 
 # Кастомизация брендинга админки

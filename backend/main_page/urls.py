@@ -6,11 +6,22 @@ urlpatterns = [
     path('background-videos/', views.BackgroundVideoView.as_view(), name='background-videos'),
     path('about-me/', views.AboutMeView.as_view(), name='about-me'),
     
-    # Новые эндпоинты
+    # Эндпоинты услуг
     path('services-for/', views.ServicesForListView.as_view(), name='services-for-list'),
+    
+    # Эндпоинты заявок
     path('applications/', views.ApplicationCreateView.as_view(), name='application-create'),
     path('applications/list/', views.ApplicationListView.as_view(), name='application-list'),
     path('applications/<int:pk>/', views.ApplicationDetailView.as_view(), name='application-detail'),
+    
+    # Эндпоинты видео интервью
     path('video-interviews/', views.VideoInterviewListView.as_view(), name='video-interview-list'),
     path('video-interviews/<int:pk>/', views.VideoInterviewDetailView.as_view(), name='video-interview-detail'),
+    
+    # Эндпоинты отзывов
+    path('reviews/', views.ReviewListView.as_view(), name='review-list'),
+    path('reviews/create/', views.ReviewCreateView.as_view(), name='review-create'),
+    path('reviews/stats/', views.ReviewStatsView.as_view(), name='review-stats'),
+    path('reviews/admin/', views.ReviewAdminListView.as_view(), name='review-admin-list'),
+    path('reviews/<int:pk>/', views.ReviewDetailView.as_view(), name='review-detail'),
 ]
