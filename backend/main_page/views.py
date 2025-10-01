@@ -3,6 +3,15 @@ from django.db.models import Count, Avg
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+from django.urls import reverse
+from django.shortcuts import get_object_or_404
+from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
+from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServiceCategorySerializer, ServiceCategoryDetailSerializer
+from django.db.models import Q
 from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
 from .serializer import (
     HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer,
@@ -10,6 +19,8 @@ from .serializer import (
     VideoInterviewSerializer, ReviewSerializer, ReviewCreateSerializer
 )
 
+
+from .utils import inject_services, root_data
 # Create your views here.
 
 class HeaderView(generics.ListAPIView):
@@ -73,6 +84,92 @@ class AboutMeView(generics.ListAPIView):
             })
 
 
+class CKEditorUploadView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+        file_obj = request.data.get('upload') or request.FILES.get('upload')
+        if not file_obj:
+            return Response({"error": {"message": "No file uploaded"}}, status=400)
+
+        saved_path = default_storage.save(f"uploads/{file_obj.name}", ContentFile(file_obj.read()))
+        file_url = settings.MEDIA_URL + saved_path
+        return Response({
+            # CKEditor SimpleUploadAdapter expects this shape
+            "url": file_url
+        })
+
+
+class ServicesCategoryView(APIView):
+    """
+    API endpoint для получения структуры услуг в формате nav-tree.js
+    Возвращает иерархическую структуру категорий услуг из базы данных
+    """
+    
+    def get(self, request, *args, **kwargs):
+
+        try:
+            # Получаем корневые категории (без родителя)
+            root_categories = ServiceCategory.objects.filter(parent__isnull=True, show_in_menu=True).order_by('order')
+            
+            if not root_categories.exists():
+                return Response(root_data)
+            
+            
+            serializer = ServiceCategorySerializer(root_categories, many=True)            
+            response_data = serializer.data            
+            merged_children = inject_services(root_data, response_data)
+            
+            return Response(merged_children)
+            
+        except Exception as e:
+            return Response(root_data)
+
+
+class ServiceCategoryDetailView(APIView):
+    """
+    Детальный просмотр категории услуг по URL-пути из slug'ов (1-3 уровня).
+    Возвращает только титулы и описания на 3 языках.
+    """
+
+    def get(self, request, slug1=None, slug2=None, slug3=None):
+        path_slugs = [s for s in (slug1, slug2, slug3) if s]
+        parent = None
+        current = None
+        try:
+            for s in path_slugs:
+                current = ServiceCategory.objects.filter(parent=parent).filter(
+                    Q(slug_ua=s) | Q(slug_ru=s) | Q(slug_en=s)
+                ).order_by('order').first()
+                if not current:
+                    return Response({"detail": "Not found."}, status=404)
+                parent = current
+        except Exception:
+            return Response({"detail": "Not found."}, status=404)
+
+        serializer = ServiceCategoryDetailSerializer(current)
+        return Response(serializer.data)
+    
+
+# class ServiceCategoryDetailView(APIView):
+#     """
+#     API для получения конкретной категории по цепочке slug'ов (до 3 уровней)
+#     """
+
+#     def get(self, request, slug1=None, slug2=None, slug3=None):
+#         # формируем список slug'ов (убираем None)
+#         slugs = [s for s in [slug1, slug2, slug3] if s]
+
+#         # ищем категорию по цепочке
+#         category = None
+#         parent = None
+
+#         for slug in slugs:
+#             category = get_object_or_404(ServiceCategory, parent=parent, slug_ua=slug)
+#             parent = category
+
+#         serializer = ServiceCategorySerializer(category)
+#         return Response(serializer.data)
 class ServicesForListView(generics.ListAPIView):
     """
     Список категорий "Для кого услуги"

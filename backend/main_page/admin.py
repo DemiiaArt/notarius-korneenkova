@@ -1,4 +1,8 @@
 from django.contrib import admin
+from django import forms
+from mptt.admin import MPTTModelAdmin
+from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.utils.html import format_html
 from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
 
@@ -42,6 +46,16 @@ class BackgroundVideoAdmin(admin.ModelAdmin):
             'description': 'Загрузите фоновое видео для сайта'
         }),
     )
+
+class AboutMeForm(forms.ModelForm):
+    text_uk = forms.CharField(widget=CKEditorUploadingWidget())
+    text_en = forms.CharField(widget=CKEditorUploadingWidget())
+    text_ru = forms.CharField(widget=CKEditorUploadingWidget())
+
+    class Meta:
+        model = AboutMe
+        fields = '__all__'
+
 
 @admin.register(AboutMe)
 class AboutMeAdmin(admin.ModelAdmin):

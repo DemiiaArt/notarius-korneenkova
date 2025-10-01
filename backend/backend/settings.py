@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(os.path.join(BASE_DIR, '.env'))
-print(BASE_DIR,'-----')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -39,6 +38,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://notarius-korneenkova-production.up.railway.app',
     'https://*.railway.app',
     'https://*.up.railway.app',
+    'http://127.0.0.1:8000/',
 ]
 
 # Дополнительные настройки для Railway
@@ -67,9 +67,11 @@ INSTALLED_APPS = [
     'corsheaders',
     'whitenoise.runserver_nostatic',
 
+    'mptt',
     'django_ckeditor_5',
 
     'main_page',
+    'blog',
 ]
 
 MIDDLEWARE = [

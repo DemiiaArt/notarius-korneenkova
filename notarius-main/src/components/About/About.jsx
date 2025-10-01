@@ -2,10 +2,22 @@ import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import { useIsPC } from "@hooks/isPC";
 import "./About.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
+import { useEffect, useState } from "react";
 
 export const About = ({ showBreadcrumbs = false }) => {
   const isPC = useIsPC();
   const { open } = useModal();
+  const [aboutData, setAboutData] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/main_page/about-me/")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("отримані дані:", data)
+        setAboutData(data)
+      })
+      .catch((err) => console.log(err))
+  }, [])
 
   return (
     <>
@@ -17,12 +29,12 @@ export const About = ({ showBreadcrumbs = false }) => {
               <p
                 className={`about-block-greetings fs-italic ${isPC ? "fs-p--20px" : "fs-p--12px"} c1`}
               >
-                Привіт! Мене звати Надія Корнєєнкова.
+                {aboutData ? aboutData.subtitle_uk : ""}
               </p>
               <h1
                 className={`about-block-title fw-light uppercase ${isPC ? "fs-h1--40px" : "fs-h2--20px"} c1`}
               >
-                Ваш надійний нотаріус, медіатор та перекладач.
+                {aboutData?.subtitle_uk}
               </h1>
               <p
                 className={`about-block-text fw-light lh-150 ${isPC ? "fs-p--18px" : "fs-p--14px"} c1`}

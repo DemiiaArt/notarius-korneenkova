@@ -9,6 +9,8 @@ import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
 import "./OtherServicesPage.scss";
 import { useIsPC } from "@hooks/isPC";
 import contentImg from "@media/text-content-img.png";
+import { useEffect } from "react";
+
 const content = [
   {
     type: "paragraph",
@@ -59,9 +61,24 @@ const content = [
     визнаються чинними перед державними органами, судами та іншими
     установами.`,
   },
+  {
+    type: "title",
+    text: "Навіщо потрібен нотаріус?",
+  },
 ];
 
 const OtherServicesPage = () => {
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/main_page/notarialni-inshi", {
+      method: "GET",
+
+    })
+    .then((data) => data.json())
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err))
+  },[])
+
   const isPC = useIsPC();
   return (
     <>
