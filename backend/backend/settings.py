@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'mptt',
 
     'main_page',
+    'blog',
 ]
 
 MIDDLEWARE = [

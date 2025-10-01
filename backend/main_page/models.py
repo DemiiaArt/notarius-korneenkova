@@ -124,7 +124,6 @@ class ServiceCategory(MPTTModel):
         max_length=255,
         verbose_name="Название (EN)"
     )
-
         # Уникальный идентификатор (соответствует id из nav-tree.js)
     nav_id = models.SlugField(
         max_length=255, 
@@ -178,6 +177,10 @@ class ServiceCategory(MPTTModel):
         default=0,
         verbose_name="Порядок сортировки"
     )
+    # Описание (на 3 языках)
+    description_ua = RichTextUploadingField(blank=True, null=True, verbose_name="Описание (UA)")
+    description_ru = RichTextUploadingField(blank=True, null=True, verbose_name="Описание (RU)")
+    description_en = RichTextUploadingField(blank=True, null=True, verbose_name="Описание (EN)")
     
     # Метаданные
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")

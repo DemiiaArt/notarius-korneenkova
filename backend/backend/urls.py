@@ -27,6 +27,7 @@ def health_check(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/main_page/', include('main_page.urls')),
+    path('api/blog/', include('blog.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('health/', health_check, name='health_check'),
     path('', health_check, name='root_health_check'),

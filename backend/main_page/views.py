@@ -7,8 +7,11 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
 from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
-from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServiceCategorySerializer
+from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServiceCategorySerializer, ServiceCategoryDetailSerializer
+from django.db.models import Q
+
 
 from .utils import inject_services, root_data
 # Create your views here.
@@ -114,3 +117,49 @@ class ServicesCategoryView(APIView):
             
         except Exception as e:
             return Response(root_data)
+
+
+class ServiceCategoryDetailView(APIView):
+    """
+    Детальный просмотр категории услуг по URL-пути из slug'ов (1-3 уровня).
+    Возвращает только титулы и описания на 3 языках.
+    """
+
+    def get(self, request, slug1=None, slug2=None, slug3=None):
+        path_slugs = [s for s in (slug1, slug2, slug3) if s]
+        parent = None
+        current = None
+        try:
+            for s in path_slugs:
+                current = ServiceCategory.objects.filter(parent=parent).filter(
+                    Q(slug_ua=s) | Q(slug_ru=s) | Q(slug_en=s)
+                ).order_by('order').first()
+                if not current:
+                    return Response({"detail": "Not found."}, status=404)
+                parent = current
+        except Exception:
+            return Response({"detail": "Not found."}, status=404)
+
+        serializer = ServiceCategoryDetailSerializer(current)
+        return Response(serializer.data)
+    
+
+# class ServiceCategoryDetailView(APIView):
+#     """
+#     API для получения конкретной категории по цепочке slug'ов (до 3 уровней)
+#     """
+
+#     def get(self, request, slug1=None, slug2=None, slug3=None):
+#         # формируем список slug'ов (убираем None)
+#         slugs = [s for s in [slug1, slug2, slug3] if s]
+
+#         # ищем категорию по цепочке
+#         category = None
+#         parent = None
+
+#         for slug in slugs:
+#             category = get_object_or_404(ServiceCategory, parent=parent, slug_ua=slug)
+#             parent = category
+
+#         serializer = ServiceCategorySerializer(category)
+#         return Response(serializer.data)

@@ -82,3 +82,29 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
         # data.pop('id', None)  # Убираем Django ID
         
         return data
+
+
+class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
+    """
+    Детальный сериализатор для категории услуг: только титул и описание (3 языка).
+    """
+    label = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ServiceCategory
+        fields = ['label', 'description']
+
+    def get_label(self, obj):
+        return {
+            'ua': obj.label_ua,
+            'ru': obj.label_ru,
+            'en': obj.label_en,
+        }
+
+    def get_description(self, obj):
+        return {
+            'ua': getattr(obj, 'description_ua', ''),
+            'ru': getattr(obj, 'description_ru', ''),
+            'en': getattr(obj, 'description_en', ''),
+        }
