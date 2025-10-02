@@ -222,9 +222,18 @@ class ServiceCategory(MPTTModel):
         if not self.parent:
             if ServiceCategory.objects.filter(parent__isnull=True).exclude(pk=self.pk).count() > 3:
                 raise ValidationError("Нельзя создавать больше 4 корневых категорий.")
+        
+        # Ограничение количества категорий с kind="Раздел" до 4
+        if self.kind == 'section':
+            existing_sections = ServiceCategory.objects.filter(kind='section').exclude(pk=self.pk).count()
+            if existing_sections >= 4:
+                raise ValidationError("Нельзя создавать больше 4 категорий с типом 'Раздел'.")
+        
+        # Проверка что категории типа "Раздел" могут быть только корневыми
+        if self.kind == 'section' and self.parent is not None:
+            raise ValidationError("Категории с типом 'Раздел' могут быть только корневыми (родительскими) категориями.")
     
-        verbose_name = "Для кого услуги"
-        verbose_name_plural = "Для кого услуги"
+
 
 
 class Application(models.Model):

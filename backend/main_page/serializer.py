@@ -81,6 +81,10 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
         # Добавляем nav_id как id (соответствует структуре nav-tree.js)
         data['id'] = instance.nav_id
         
+        # Переименовываем show_in_menu в showInMenu для соответствия nav-tree.js
+        if 'show_in_menu' in data:
+            data['showInMenu'] = data.pop('show_in_menu')
+        
         # Убираем лишние поля, которые не нужны в JSON
         # data.pop('id', None)  # Убираем Django ID
         
