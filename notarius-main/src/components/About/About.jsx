@@ -2,21 +2,25 @@ import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import { useIsPC } from "@hooks/isPC";
 import "./About.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { apiClient } from "@/config/api";
 
 export const About = ({ showBreadcrumbs = false }) => {
   const isPC = useIsPC();
   const { open } = useModal();
   const [aboutData, setAboutData] = useState(null);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/main_page/about-me/")
-      .then((res) => res.json())
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+    
+    apiClient.get("/about-me/")
       .then((data) => {
         console.log("отримані дані:", data)
         setAboutData(data)
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.log("Error fetching about-me:", err))
   }, [])
 
   return (

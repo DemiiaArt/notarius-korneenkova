@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.db.models import Count, Avg
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Count, Avg, Q
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,14 +8,15 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.urls import reverse
-from django.shortcuts import get_object_or_404
-from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
-from .serializer import HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer, ServiceCategorySerializer, ServiceCategoryDetailSerializer
-from django.db.models import Q
-from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
+
+from .models import (
+    Header, BackgroundVideo, AboutMe, ServiceCategory, 
+    ServicesFor, Application, VideoInterview, Review
+)
 from .serializer import (
     HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer,
-    ServicesForSerializer, ApplicationSerializer, ApplicationCreateSerializer, 
+    ServiceCategorySerializer, ServiceCategoryDetailSerializer,
+    ServicesForSerializer, ApplicationSerializer, ApplicationCreateSerializer,
     VideoInterviewSerializer, ReviewSerializer, ReviewCreateSerializer
 )
 
@@ -117,12 +118,19 @@ class ServicesCategoryView(APIView):
             
             
             serializer = ServiceCategorySerializer(root_categories, many=True)            
-            response_data = serializer.data            
+            response_data = serializer.data
+            
+            # Отладка
+            print(f"DEBUG: root_categories count: {root_categories.count()}")
+            print(f"DEBUG: response_data length: {len(response_data)}")
+            print(f"DEBUG: response_data IDs: {[item['id'] for item in response_data]}")
+            
             merged_children = inject_services(root_data, response_data)
             
             return Response(merged_children)
             
         except Exception as e:
+            print(f"DEBUG: Exception in ServicesCategoryView: {e}")
             return Response(root_data)
 
 

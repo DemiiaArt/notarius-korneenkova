@@ -222,9 +222,6 @@ class ServiceCategory(MPTTModel):
         if not self.parent:
             if ServiceCategory.objects.filter(parent__isnull=True).exclude(pk=self.pk).count() > 3:
                 raise ValidationError("Нельзя создавать больше 4 корневых категорий.")
-    
-        verbose_name = "Для кого услуги"
-        verbose_name_plural = "Для кого услуги"
 
 
 class Application(models.Model):

@@ -3,7 +3,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import { Link } from "react-router-dom";
 import { useLang } from "@nav/use-lang";
 import { buildFullPathForId } from "@nav/nav-utils";
-import { NAV_TREE } from "@nav/nav-tree";
+import { useNav } from "@nav/useNav";
 import { useIsPC } from "@hooks/isPC";
 import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import "./GroupServicesCarousel.scss";
@@ -22,6 +22,7 @@ const GroupServicesCarousel = ({
 }) => {
   const { currentLang } = useLang();
   const isPC = useIsPC();
+  const { navTree } = useNav(); // Отримуємо динамічне дерево навігації
 
   // Знаходимо батьківський елемент та його дочірні елементи
   const findChildren = (node, targetId) => {
@@ -38,7 +39,7 @@ const GroupServicesCarousel = ({
     return null;
   };
 
-  const children = findChildren(NAV_TREE, parentId) || [];
+  const children = findChildren(navTree, parentId) || [];
 
   // Фільтруємо елементи за типом
   const visibleChildren = children.filter(
@@ -57,7 +58,7 @@ const GroupServicesCarousel = ({
 
   // Отримуємо URL для елемента
   const getUrl = (nodeId) => {
-    return buildFullPathForId(NAV_TREE, nodeId, currentLang) || "#";
+    return buildFullPathForId(navTree, nodeId, currentLang) || "#";
   };
 
   // Отримуємо зображення для послуги (можна розширити)

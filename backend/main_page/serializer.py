@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
-from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
+from .models import (
+    Header, BackgroundVideo, AboutMe, ServiceCategory,
+    ServicesFor, Application, VideoInterview, Review
+)
 
 
 
@@ -68,10 +70,11 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
         }
     
     def get_children(self, obj):
-        """Рекурсивно получаем дочерние элементы"""
-        children = obj.get_children().filter(show_in_menu=True).order_by('order')
-        if children.exists():
-            return ServiceCategorySerializer(children, many=True, context=self.context).data
+        """Получаем только прямых дочерних элементов (не всех потомков)"""
+        # Используем children.all() вместо get_children() для получения только прямых детей
+        direct_children = obj.children.filter(show_in_menu=True).order_by('order')
+        if direct_children.exists():
+            return ServiceCategorySerializer(direct_children, many=True, context=self.context).data
         return []
     
     def to_representation(self, instance):

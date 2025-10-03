@@ -3,7 +3,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import { Link, useLocation } from "react-router-dom";
 import { useLang } from "@nav/use-lang";
 import { buildFullPathForId } from "@nav/nav-utils";
-import { NAV_TREE } from "@nav/nav-tree";
+import { useNav } from "@nav/useNav";
 import { useIsPC } from "@hooks/isPC";
 import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import "./ServicesCarousel.scss";
@@ -23,6 +23,7 @@ const ServicesCarousel = ({
   const { currentLang } = useLang();
   const isPC = useIsPC();
   const location = useLocation();
+  const { navTree } = useNav(); // Отримуємо динамічне дерево навігації
 
   // Функция для определения уровня вложенности страницы
   const getPageLevel = (pathname) => {
@@ -108,7 +109,7 @@ const ServicesCarousel = ({
 
     visibleChildren = headerServiceIds
       .map((id) => {
-        const node = findChildren(NAV_TREE, "root").find(
+        const node = findChildren(navTree, "root").find(
           (child) => child.id === id
         );
         return node
@@ -129,7 +130,7 @@ const ServicesCarousel = ({
       );
   } else {
     // Обычная логика для других случаев
-    const children = findChildren(NAV_TREE, targetParentId) || [];
+    const children = findChildren(navTree, targetParentId) || [];
 
     visibleChildren = children.filter(
       (child) =>
@@ -159,7 +160,7 @@ const ServicesCarousel = ({
 
   // Отримуємо URL для елемента
   const getUrl = (nodeId) => {
-    return buildFullPathForId(NAV_TREE, nodeId, currentLang) || "#";
+    return buildFullPathForId(navTree, nodeId, currentLang) || "#";
   };
 
   // Отримуємо зображення для послуги

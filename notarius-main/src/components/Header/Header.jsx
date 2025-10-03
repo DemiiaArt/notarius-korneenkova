@@ -7,7 +7,7 @@ import { useModal } from "@components/ModalProvider/ModalProvider";
 import MegaPanel from "./MegaPanel";
 import { detectLocaleFromPath } from "@nav/nav-utils";
 import { buildPanelDataFromNav } from "@nav/build-panel-from-nav";
-import { NAV_TREE } from "@nav/nav-tree";
+import { useNav } from "@nav/useNav";
 
 export const Header = () => {
   // Константа для управления отображением MegaPanel
@@ -31,6 +31,12 @@ export const Header = () => {
 
   const isPC = useIsPC();
 
+  // Получаем динамическое навигационное дерево
+  const { navTree } = useNav();
+  
+  console.log('Header: navTree received:', navTree);
+  console.log('Header: navTree.children count:', navTree?.children?.length);
+
   useEffect(() => {
     if (isPC) {
       setMenuOpen(false);
@@ -51,10 +57,12 @@ export const Header = () => {
     );
   };
 
-  const panelData = useMemo(
-    () => buildPanelDataFromNav(NAV_TREE, lang),
-    [lang]
-  );
+  const panelData = useMemo(() => {
+    console.log('Header: Building panel data from navTree, lang:', lang);
+    const result = buildPanelDataFromNav(navTree, lang);
+    console.log('Header: panelData built:', result);
+    return result;
+  }, [navTree, lang]);
 
   const hoverTimer = useRef(null);
 
