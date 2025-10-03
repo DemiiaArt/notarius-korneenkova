@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import "./MainVideo.scss";
-import videoAny from "@media/video_test.mov"; // fallback, якщо поки лише .mov
+import videoAny from "@media/video_test.mp4"; // fallback, якщо поки лише .mov
 
 const MainVideo = () => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
