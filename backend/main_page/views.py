@@ -130,13 +130,22 @@ class ServicesCategoryView(APIView):
 class ServiceCategoryDetailView(APIView):
     """
     Детальный просмотр категории услуг по URL-пути из slug'ов (1-3 уровня).
-    Возвращает только титулы и описания на 3 языках.
+    Возвращает титулы, описания, hero_image и особенности услуг на выбранном языке.
+    Поддерживает параметр lang в query string (ua/ru/en, по умолчанию ua).
     """
 
     def get(self, request, slug1=None, slug2=None, slug3=None):
+        # Получаем язык из query параметра, по умолчанию 'ua'
+        lang = request.GET.get('lang', 'ua')
+        
+        # Валидация языка
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        
         path_slugs = [s for s in (slug1, slug2, slug3) if s]
         parent = None
         current = None
+        
         try:
             for s in path_slugs:
                 current = ServiceCategory.objects.filter(parent=parent).filter(
@@ -148,7 +157,8 @@ class ServiceCategoryDetailView(APIView):
         except Exception:
             return Response({"detail": "Not found."}, status=404)
 
-        serializer = ServiceCategoryDetailSerializer(current)
+        # Передаем язык в контекст сериализатора
+        serializer = ServiceCategoryDetailSerializer(current, context={'lang': lang})
         return Response(serializer.data)
     
 

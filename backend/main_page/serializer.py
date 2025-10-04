@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
+from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature
 from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
 
 
@@ -48,7 +48,7 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceCategory
         fields = [
-            'id', 'kind', 'label', 'slug', 'show_in_menu', 'show_mega_panel', 'component', 'children'
+            'id', 'kind', 'label', 'slug', 'card_image', 'show_in_menu', 'show_mega_panel', 'component', 'children'
         ]
     
     def get_label(self, obj):
@@ -96,30 +96,94 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
         return data
 
 
+class ServiceFeatureSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для особенностей услуг (ServiceFeature)
+    Поддерживает выбор языка через контекст
+    """
+    text = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ServiceFeature
+        fields = ['text', 'order']
+
+    def get_text(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем текст на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'text_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.text_ua
+
+
 class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
     """
-    Детальный сериализатор для категории услуг: только титул и описание (3 языка).
+    Детальный сериализатор для категории услуг.
+    Поддерживает выбор языка через параметр lang в контексте.
+    Включает титул, описание, hero_image и особенности услуг.
     """
     label = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
+    hero_image = serializers.ImageField(read_only=True)
+    features = serializers.SerializerMethodField()
 
     class Meta:
         model = ServiceCategory
-        fields = ['label', 'description']
+        fields = ['label', 'description', 'hero_image', 'features']
 
     def get_label(self, obj):
-        return {
-            'ua': obj.label_ua,
-            'ru': obj.label_ru,
-            'en': obj.label_en,
-        }
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем только нужный язык или все языки
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'label_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем все языки
+            return {
+                'ua': obj.label_ua,
+                'ru': obj.label_ru,
+                'en': obj.label_en,
+            }
 
     def get_description(self, obj):
-        return {
-            'ua': getattr(obj, 'description_ua', ''),
-            'ru': getattr(obj, 'description_ru', ''),
-            'en': getattr(obj, 'description_en', ''),
-        }
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем только нужный язык или все языки
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'description_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем все языки
+            return {
+                'ua': getattr(obj, 'description_ua', ''),
+                'ru': getattr(obj, 'description_ru', ''),
+                'en': getattr(obj, 'description_en', ''),
+            }
+
+    def get_features(self, obj):
+        # Получаем особенности услуг для данной категории
+        features = obj.features.all().order_by('order')
+        
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем простой массив строк вместо объектов
+        feature_texts = []
+        for feature in features:
+            if lang in ['ua', 'ru', 'en']:
+                text = getattr(feature, f'text_{lang}', '')
+            else:
+                text = feature.text_ua
+            
+            if text:  # Добавляем только непустые тексты
+                feature_texts.append(text)
+        
+        return feature_texts
+        
 class ServicesForSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServicesFor

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from mptt.admin import MPTTModelAdmin
-from .models import Header, BackgroundVideo, AboutMe, ServiceCategory
+from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.utils.html import format_html
 from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
@@ -231,6 +231,18 @@ class ReviewAdmin(admin.ModelAdmin):
     unpublish_reviews.short_description = 'Снять с публикации'
 
 
+class ServiceFeatureInline(admin.TabularInline):
+    model = ServiceFeature
+    extra = 1
+    fields = ('order', 'text_ua', 'text_ru', 'text_en')
+    ordering = ['order']
+    
+    class Media:
+        css = {
+            'all': ('admin/css/forms.css',)
+        }
+
+
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(MPTTModelAdmin):
     prepopulated_fields = {
@@ -240,6 +252,7 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
         "slug_en": ("label_en",),
     }
     exclude = ('component',)
+    inlines = [ServiceFeatureInline]
 
     list_display = (
         'label_ua',
@@ -296,6 +309,15 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
             return "—"  # Не применимо для дочерних категорий
     show_mega_panel_display.short_description = "Мега-панель"
     show_mega_panel_display.admin_order_field = 'show_mega_panel'
+    
+    def hero_image_preview(self, obj):
+        """
+        Превью главного изображения
+        """
+        if obj.hero_image:
+            return format_html('<img src="{}" style="height:40px;border-radius:4px;object-fit:cover;" />', obj.hero_image.url)
+        return '—'
+    
     
     def save_model(self, request, obj, form, change):
         """

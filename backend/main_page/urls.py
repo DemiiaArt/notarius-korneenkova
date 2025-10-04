@@ -6,9 +6,6 @@ urlpatterns = [
     path('background-videos/', views.BackgroundVideoView.as_view(), name='background-videos'),
     path('about-me/', views.AboutMeView.as_view(), name='about-me'),
     path('services/', views.ServicesCategoryView.as_view(), name='services'),
-    path('<slug:slug1>/', views.ServiceCategoryDetailView.as_view(), name='category_level1'),
-    path('<slug:slug1>/<slug:slug2>/', views.ServiceCategoryDetailView.as_view(), name='category_level2'),
-    path('<slug:slug1>/<slug:slug2>/<slug:slug3>/', views.ServiceCategoryDetailView.as_view(), name='category_level3'),
     
     # Эндпоинты услуг
     path('services-for/', views.ServicesForListView.as_view(), name='services-for-list'),
@@ -28,4 +25,9 @@ urlpatterns = [
     path('reviews/stats/', views.ReviewStatsView.as_view(), name='review-stats'),
     path('reviews/admin/', views.ReviewAdminListView.as_view(), name='review-admin-list'),
     path('reviews/<int:pk>/', views.ReviewDetailView.as_view(), name='review-detail'),
+    
+    # ВАЖНО: Slug паттерны должны быть В КОНЦЕ, так как они catch-all
+    path('services/<slug:slug1>/', views.ServiceCategoryDetailView.as_view(), name='category_level1'),
+    path('services/<slug:slug1>/<slug:slug2>/', views.ServiceCategoryDetailView.as_view(), name='category_level2'),
+    path('services/<slug:slug1>/<slug:slug2>/<slug:slug3>/', views.ServiceCategoryDetailView.as_view(), name='category_level3'),
 ]
