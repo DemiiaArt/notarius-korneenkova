@@ -127,14 +127,22 @@ root_data = {
 
 
 def inject_services(root_data, services_data):
-
-    result = []
+    """
+    Вставляет категории услуг из БД после элемента 'about' в структуру навигации
+    ВАЖНО: создаём копию root_data, чтобы не модифицировать глобальный объект!
+    """
+    # Создаём глубокую копию, чтобы не модифицировать оригинал
+    import copy
+    result_data = copy.deepcopy(root_data)
     
-    for item in root_data['children']:
-        result.append(item)
+    new_children = []
+    
+    for item in result_data['children']:
+        new_children.append(item)
         
+        # После элемента 'about' вставляем категории из БД
         if item.get('id') == 'about':
-            result.extend(services_data)
+            new_children.extend(services_data)
     
-    root_data['children'] = result
-    return root_data
+    result_data['children'] = new_children
+    return result_data

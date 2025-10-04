@@ -5,6 +5,7 @@ import { NAV_TREE } from "./nav-tree";
 // Lazy load pages for better performance
 const MainPage = lazy(() => import("@pages/MainPage/MainPage"));
 const AboutPage = lazy(() => import("@pages/AboutPage/AboutPage"));
+const DynamicServiceCategoryPage = lazy(() => import("@pages/DynamicServiceCategoryPage/DynamicServiceCategoryPage"));
 const ServicesPage = lazy(() => import("@pages/ServicesPage/ServicesPage"));
 const NotaryTranslatePage = lazy(
   () => import("@pages/NotaryTranslatePage/NotaryTranslatePage")
@@ -30,66 +31,31 @@ const ConsultationPage = lazy(
 const ApostillePage = lazy(
   () => import("@pagesSecondLevel/NotaryServices/ApostillePage")
 );
-const PropertyAgreements = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Contract/PropertyAgreements")
-);
-const FamilyAgreements = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Contract/FamilyAgreements")
-);
-const ContractualGuarantees = lazy(
-  () =>
-    import("@pagesSecondLevel/NotaryServices/Contract/ContractualGuarantees")
-);
-const InheritanceAgreements = lazy(
-  () =>
-    import("@pagesSecondLevel/NotaryServices/Contract/InheritanceAgreements")
-);
-const CorporateRightsAgreements = lazy(
-  () =>
-    import(
-      "@pagesSecondLevel/NotaryServices/Contract/CorporateRightsAgreements"
-    )
-);
-const ExecutiveInscription = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Contract/ExecutiveInscription")
-);
-const OtherAgreements = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Contract/OtherAgreements")
-);
+// Следующие компоненты договоров заменены на DynamicServiceCategoryPage:
+// - PropertyAgreements → DynamicServiceCategoryPage (property-agreements)
+// - FamilyAgreements → DynamicServiceCategoryPage (family-agreements)
+// - ContractualGuarantees → DynamicServiceCategoryPage (contractual-guarantees)
+// - InheritanceAgreements → DynamicServiceCategoryPage (inheritance-agreements)
+// - CorporateRightsAgreements → DynamicServiceCategoryPage (corporate-rights-agreements)
+// - ExecutiveInscription → DynamicServiceCategoryPage (executive-inscription)
+// - OtherAgreements → DynamicServiceCategoryPage (other-agreements)
 
 const AttorneyPage = lazy(
   () => import("@pagesSecondLevel/NotaryServices/AttorneyPage")
 );
-const PoaProperty = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Attorney/PoaProperty")
-);
-const PoaRepresentation = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Attorney/PoaRepresentation")
-);
-const PoaSpecial = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Attorney/PoaSpecial")
-);
 
-const Signature = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Signature/Signature")
-);
-const Applications = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Signature/Applications")
-);
+// Следующие компоненты довіреностей заменены на DynamicServiceCategoryPage:
+// - PoaProperty → DynamicServiceCategoryPage (poa-property)
+// - PoaRepresentation → DynamicServiceCategoryPage (poa-representation)
+// - PoaSpecial → DynamicServiceCategoryPage (poa-special)
 
-const Consultations = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Consultation/Consultations")
-);
-const DocumentCopies = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Consultation/DocumentCopies")
-);
-
-const ApostilleDocs = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Apostille/ApostilleDocs")
-);
-const Affidavit = lazy(
-  () => import("@pagesSecondLevel/NotaryServices/Apostille/Affidavit")
-);
+// Следующие компоненты заменены на DynamicServiceCategoryPage:
+// - Signature → DynamicServiceCategoryPage (signatures-consents)
+// - Applications → DynamicServiceCategoryPage (applications)
+// - Consultations → DynamicServiceCategoryPage (consultations)
+// - DocumentCopies → DynamicServiceCategoryPage (document-copies)
+// - ApostilleDocs → DynamicServiceCategoryPage (apostille-docs)
+// - Affidavit → DynamicServiceCategoryPage (affidavit)
 
 // import GiftAgreement from "@pagesSecondLevel/NotaryServices/Contract/GiftAgreement";
 // import LoanAgreement from "@pagesSecondLevel/NotaryServices/Contract/LoanAgreement";
@@ -163,14 +129,23 @@ const components = {
   contacts: ContactsPage,
   trademark: TradeMarkPage,
   blog: MainBlogPage,
-  contracts: ContractPage,
-  "property-agreements": PropertyAgreements,
-  "family-agreements": FamilyAgreements,
-  "contractual-guarantees": ContractualGuarantees,
-  "inheritance-agreements": InheritanceAgreements,
-  "corporate-rights-agreements": CorporateRightsAgreements,
-  "executive-inscription": ExecutiveInscription,
-  "other-agreements": OtherAgreements,
+  
+  // === Динамические категории услуг ===
+  // Эти страницы получают контент из API через DynamicServiceCategoryPage
+  
+  // Апостиль и переклад (верхний уровень услуг)
+  "apostille-documents": DynamicServiceCategoryPage,
+  "services-translation-generic": DynamicServiceCategoryPage,
+  
+  // Договори - группа и её страницы
+  contracts: ContractPage, // у группы своя страница
+  "property-agreements": DynamicServiceCategoryPage,
+  "family-agreements": DynamicServiceCategoryPage,
+  "contractual-guarantees": DynamicServiceCategoryPage,
+  "inheritance-agreements": DynamicServiceCategoryPage,
+  "corporate-rights-agreements": DynamicServiceCategoryPage,
+  "executive-inscription": DynamicServiceCategoryPage,
+  "other-agreements": DynamicServiceCategoryPage,
   // "gift-agreement": GiftAgreement,
   // "loan-agreement": LoanAgreement,
   // "exchange-agreement": ExchangeAgreement,
@@ -198,47 +173,42 @@ const components = {
   // "exec-rent-realestate": ExecRentRealestate,
   // "exec-rent-vehicle": ExecRentVehicle,
   // "corporate-rights-generic": CorporateRightsGeneric,
-  "power-of-attorney": AttorneyPage,
-  "poa-property": PoaProperty,
-  "poa-representation": PoaRepresentation,
-  "poa-special": PoaSpecial,
-  // "poa-movable-funds": PoaMovableFunds,
-  // "poa-combined": PoaCombined,
-  // "poa-bilingual": PoaBilingual,
-  // "poa-revocation": PoaRevocation,
-  "signatures-statements": SignaturePage,
-  // "consent-spouse-child-travel": ConsentSpouseChildTravel,
-  "signatures-consents": Signature,
-  applications: Applications,
-  // "signature-bank-cards": SignatureBankCards,
-  // "signature-charter-protocol": SignatureCharterProtocol,
-  // "exit-participant-llc": ExitParticipantLlc,
-  // "statements-bilingual": StatementsBilingual,
-  "consult-copy-duplicate": ConsultationPage,
-  consultations: Consultations,
-  "document-copies": DocumentCopies,
-  // "notarial-consultation": NotarialConsultation,
-  // "copy-up-to-4pp": CopyUpTo4pp,
-  // "copy-multipage-per-page": CopyMultipagePerPage,
-  // "duplicate-docs": DuplicateDocs,
-  // "duplicates-certificates-consult": DuplicatesCertificatesonsult,
-  "apostille-affidavit": ApostillePage,
-  "apostille-docs": ApostilleDocs,
-  affidavit: Affidavit,
-  // "apostille-any-docs": ApostilleAnyDocs,
-  // "affidavit-person": AffidavitPerson,
-  // "affidavit-translator": AffidavitTranslator,
-
-  // "translator-signature": TranslatorSignature,
-  // "notarial-translation-one-doc": NotarialTranslationOneDoc,
-  // "two-in-one-copy-translation": TwoInOneCopyTranslation,
-
-  // "legal-consultations-with-opinion": LegalConsultationsWithOpinion,
-  // "extracts-real-rights-register": ExtractsRealRightsRegister,
-  // "edr-registration": EdrRegistration,
-  // "register-ownership-real-estate": RegisterOwnershipRealEstate,
-  // "edr-error-correction": EdrErrorCorrection,
-  // "rights-register-for-developers": RightsRegisterForDevelopers,
+  // Довіреності - группа и её страницы
+  "power-of-attorney": AttorneyPage, // у группы своя страница
+  "poa-property": DynamicServiceCategoryPage,
+  "poa-representation": DynamicServiceCategoryPage,
+  "poa-special": DynamicServiceCategoryPage,
+  
+  // Підпис, заява - группа и её страницы
+  "signatures-statements": SignaturePage, // у группы своя страница
+  "signatures-consents": DynamicServiceCategoryPage,
+  applications: DynamicServiceCategoryPage,
+  
+  // Консультація, копії, дублікати - группа и её страницы
+  "consult-copy-duplicate": ConsultationPage, // у группы своя страница
+  "consultations": DynamicServiceCategoryPage,
+  "document-copies": DynamicServiceCategoryPage,
+  
+  // Апостиль та афідевіт - группа и её страницы
+  "apostille-affidavit": ApostillePage, // у группы своя страница
+  "apostille-docs": DynamicServiceCategoryPage,
+  "affidavit": DynamicServiceCategoryPage,
+  
+  // Нотаріальний переклад (отдельная секция)
+  "translator-signature": DynamicServiceCategoryPage,
+  "notarial-translation-one-doc": DynamicServiceCategoryPage,
+  "two-in-one-copy-translation": DynamicServiceCategoryPage,
+  
+  // Допомога військовим
+  "military-help-main": DynamicServiceCategoryPage,
+  
+  // Інші послуги (отдельная секция)
+  "legal-consultations-with-opinion": DynamicServiceCategoryPage,
+  "extracts-real-rights-register": DynamicServiceCategoryPage,
+  "edr-registration": DynamicServiceCategoryPage,
+  "register-ownership-real-estate": DynamicServiceCategoryPage,
+  "edr-error-correction": DynamicServiceCategoryPage,
+  "rights-register-for-developers": DynamicServiceCategoryPage,
 };
 
 function assign(node) {

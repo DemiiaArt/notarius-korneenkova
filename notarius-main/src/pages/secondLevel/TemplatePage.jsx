@@ -13,8 +13,9 @@ import "./TemplatePage.scss";
  * @param {string} props.title - Заголовок страницы
  * @param {Array} props.content - Контент страницы
  *    [{
- *      type: "paragraph" | "title" | "image" | "list",
+ *      type: "paragraph" | "title" | "image" | "list" | "html",
  *      text?: string,
+ *      html?: string,
  *      src?: string,
  *      alt?: string,
  *      items?: string[]
@@ -89,6 +90,16 @@ const TemplatePage = ({ title, content = [], heroImgClass }) => {
                     <div key={i} className="text-content-image">
                       <img src={block.src} alt={block.alt || ""} />
                     </div>
+                  );
+                case "html":
+                  return (
+                    <div
+                      key={i}
+                      className={`text-content-html lh-150 ${
+                        isPC ? "fs-p--16px" : "fs-p--14px"
+                      }`}
+                      dangerouslySetInnerHTML={{ __html: block.html }}
+                    />
                   );
                 default:
                   return null;

@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature
 from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
+from .models import (
+    Header, BackgroundVideo, AboutMe, ServiceCategory,
+    ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs
+)
 
 
 
@@ -290,5 +294,169 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         
         if len(value) > 255:
             raise serializers.ValidationError("Имя не должно превышать 255 символов")
+        
+        return value.strip()
+
+
+class FreeConsultationSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для отображения бесплатных консультаций
+    """
+    class Meta:
+        model = FreeConsultation
+        fields = [
+            'id',
+            'name',
+            'phone_number',
+            'city',
+            'question',
+            'created_at',
+            'is_processed'
+        ]
+        read_only_fields = ['id', 'created_at', 'is_processed']
+
+
+class FreeConsultationCreateSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для создания запроса на бесплатную консультацию
+    """
+    class Meta:
+        model = FreeConsultation
+        fields = ['name', 'phone_number', 'city', 'question']
+    
+    def validate_name(self, value):
+        """
+        Проверка имени
+        """
+        if not value or not value.strip():
+            raise serializers.ValidationError("Имя не может быть пустым")
+        
+        if len(value) < 2:
+            raise serializers.ValidationError("Имя должно содержать минимум 2 символа")
+        
+        if len(value) > 255:
+            raise serializers.ValidationError("Имя не должно превышать 255 символов")
+        
+        return value.strip()
+    
+    def validate_phone_number(self, value):
+        """
+        Проверка номера телефона
+        """
+        if not value or not value.strip():
+            raise serializers.ValidationError("Номер телефона не может быть пустым")
+        
+        # Удаляем пробелы и спецсимволы для проверки
+        cleaned = value.strip().replace(' ', '').replace('-', '').replace('(', '').replace(')', '').replace('+', '')
+        
+        if len(cleaned) < 9:
+            raise serializers.ValidationError("Номер телефона слишком короткий")
+        
+        if len(value) > 20:
+            raise serializers.ValidationError("Номер телефона не должен превышать 20 символов")
+        
+        return value.strip()
+    
+    def validate_city(self, value):
+        """
+        Проверка города
+        """
+        if not value or not value.strip():
+            raise serializers.ValidationError("Город не может быть пустым")
+        
+        if len(value) < 2:
+            raise serializers.ValidationError("Название города должно содержать минимум 2 символа")
+        
+        if len(value) > 255:
+            raise serializers.ValidationError("Название города не должно превышать 255 символов")
+        
+        return value.strip()
+    
+    def validate_question(self, value):
+        """
+        Проверка вопроса
+        """
+        if not value or not value.strip():
+            raise serializers.ValidationError("Вопрос не может быть пустым")
+        
+        if len(value) < 10:
+            raise serializers.ValidationError("Вопрос должен содержать минимум 10 символов")
+        
+        if len(value) > 5000:
+            raise serializers.ValidationError("Вопрос не должен превышать 5000 символов")
+        
+        return value.strip()
+
+
+class ContactUsSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для отображения обращений через форму контактов
+    """
+    class Meta:
+        model = ContactUs
+        fields = [
+            'id',
+            'name',
+            'phone_number',
+            'question',
+            'created_at',
+            'is_processed'
+        ]
+        read_only_fields = ['id', 'created_at', 'is_processed']
+
+
+class ContactUsCreateSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для создания запроса через форму контактов
+    """
+    class Meta:
+        model = ContactUs
+        fields = ['name', 'phone_number', 'question']
+    
+    def validate_name(self, value):
+        """
+        Проверка имени
+        """
+        if not value or not value.strip():
+            raise serializers.ValidationError("Имя не может быть пустым")
+        
+        if len(value) < 2:
+            raise serializers.ValidationError("Имя должно содержать минимум 2 символа")
+        
+        if len(value) > 255:
+            raise serializers.ValidationError("Имя не должно превышать 255 символов")
+        
+        return value.strip()
+    
+    def validate_phone_number(self, value):
+        """
+        Проверка номера телефона
+        """
+        if not value or not value.strip():
+            raise serializers.ValidationError("Номер телефона не может быть пустым")
+        
+        # Удаляем пробелы и спецсимволы для проверки
+        cleaned = value.strip().replace(' ', '').replace('-', '').replace('(', '').replace(')', '').replace('+', '')
+        
+        if len(cleaned) < 9:
+            raise serializers.ValidationError("Номер телефона слишком короткий")
+        
+        if len(value) > 20:
+            raise serializers.ValidationError("Номер телефона не должен превышать 20 символов")
+        
+        return value.strip()
+    
+    def validate_question(self, value):
+        """
+        Проверка вопроса
+        """
+        if not value or not value.strip():
+            raise serializers.ValidationError("Вопрос не может быть пустым")
+        
+        if len(value) < 10:
+            raise serializers.ValidationError("Вопрос должен содержать минимум 10 символов")
+        
+        if len(value) > 5000:
+            raise serializers.ValidationError("Вопрос не должен превышать 5000 символов")
         
         return value.strip()

@@ -7,7 +7,8 @@ import { useModal } from "@components/ModalProvider/ModalProvider";
 import MegaPanel from "./MegaPanel";
 import { detectLocaleFromPath } from "@nav/nav-utils";
 import { buildPanelDataFromNav } from "@nav/build-panel-from-nav";
-import { NAV_TREE } from "@nav/nav-tree";
+import { useNav } from "@nav/useNav";
+import { useHeaderContacts } from "@hooks/useHeaderContacts";
 
 export const Header = () => {
   // Константа для управления отображением MegaPanel
@@ -31,6 +32,16 @@ export const Header = () => {
 
   const isPC = useIsPC();
 
+  // Получаем динамическое навигационное дерево
+  const { navTree } = useNav();
+  
+  // Получаем контакты из API
+  const { contacts, loading: contactsLoading } = useHeaderContacts();
+  
+  console.log('Header: navTree received:', navTree);
+  console.log('Header: navTree.children count:', navTree?.children?.length);
+  console.log('Header: contacts received:', contacts);
+
   useEffect(() => {
     if (isPC) {
       setMenuOpen(false);
@@ -51,10 +62,12 @@ export const Header = () => {
     );
   };
 
-  const panelData = useMemo(
-    () => buildPanelDataFromNav(NAV_TREE, lang),
-    [lang]
-  );
+  const panelData = useMemo(() => {
+    console.log('Header: Building panel data from navTree, lang:', lang);
+    const result = buildPanelDataFromNav(navTree, lang);
+    console.log('Header: panelData built:', result);
+    return result;
+  }, [navTree, lang]);
 
   const hoverTimer = useRef(null);
 
@@ -93,19 +106,23 @@ export const Header = () => {
         <div className="header-info bg4">
           <div className="container">
             <div className="header-info-content fs-p--16px lh-150 text-decoration--none c1">
-              <a className="header-info-email" href="#">
-                nknotary.dnipro@gmail.com
+              <a className="header-info-email" href={`mailto:${contacts.email}`}>
+                {contacts.email || 'nknotary.dnipro@gmail.com'}
               </a>
               <div className="header-info-phones-wrap">
-                <a className="header-info-phones" href="#">
-                  + 38 067 820 07 00
+                <a className="header-info-phones" href={`tel:${contacts.phone_number?.replace(/\s/g, '')}`}>
+                  {contacts.phone_number || '+ 38 067 820 07 00'}
                 </a>
-                <a className="header-info-phones" href="#">
-                  + 38 067 544 07 00
-                </a>
+                {contacts.phone_number_2 && (
+                  <a className="header-info-phones" href={`tel:${contacts.phone_number_2?.replace(/\s/g, '')}`}>
+                    {contacts.phone_number_2}
+                  </a>
+                )}
               </div>
               <a className="header-info-address" href="#">
-                м. Дніпро, пр. Дмитра Яворницького, 2, 49100 
+                {lang === 'ua' && (contacts.address_ua || 'м. Дніпро, пр. Дмитра Яворницького, 2, 49100')}
+                {lang === 'ru' && (contacts.address_ru || 'г. Днепр, пр. Дмитрия Яворницкого, 2, 49100')}
+                {lang === 'en' && (contacts.address_en || 'Dnipro, Dmytra Yavornytskoho Ave, 2, 49100')}
               </a>
             </div>
           </div>
@@ -582,16 +599,28 @@ export const Header = () => {
               >
                 <ul>
                   <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="">+380 67 820 07 00</a>
+                    <a href={`tel:${contacts.phone_number?.replace(/\s/g, '')}`}>
+                      {contacts.phone_number || '+380 67 820 07 00'}
+                    </a>
+                  </li>
+                  {contacts.phone_number_2 && (
+                    <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                      <a href={`tel:${contacts.phone_number_2?.replace(/\s/g, '')}`}>
+                        {contacts.phone_number_2}
+                      </a>
+                    </li>
+                  )}
+                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                    <a href={`mailto:${contacts.email}`}>
+                      {contacts.email || 'nknotary.dnipro@gmail.com'}
+                    </a>
                   </li>
                   <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="">+380 67 544 07 00</a>
-                  </li>
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="">nknotary.dnipro@gmail.com</a>
-                  </li>
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="">м. Дніпро, пр. Дмитра Яворницького, 2, 49100 </a>
+                    <a href="#">
+                      {lang === 'ua' && (contacts.address_ua || 'м. Дніпро, пр. Дмитра Яворницького, 2, 49100')}
+                      {lang === 'ru' && (contacts.address_ru || 'г. Днепр, пр. Дмитрия Яворницкого, 2, 49100')}
+                      {lang === 'en' && (contacts.address_en || 'Dnipro, Dmytra Yavornytskoho Ave, 2, 49100')}
+                    </a>
                   </li>
                 </ul>
               </div>

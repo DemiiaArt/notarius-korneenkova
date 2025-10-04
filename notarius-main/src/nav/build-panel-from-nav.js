@@ -15,13 +15,19 @@ function sentenceCase(str, locale = "uk") {
 }
 
 export function buildSectionPanel(NAV_TREE, sectionId, lang) {
+  console.log(`buildSectionPanel: Looking for section "${sectionId}"`);
   const stack = findPathStackById(NAV_TREE, sectionId);
-  if (!stack || !stack.length) return null;
+  if (!stack || !stack.length) {
+    console.log(`buildSectionPanel: Section "${sectionId}" not found`);
+    return null;
+  }
 
   const section = stack.at(-1);
+  console.log(`buildSectionPanel: Found section "${sectionId}":`, section);
   const kids = Array.isArray(section.children)
     ? section.children.filter(Boolean)
     : [];
+  console.log(`buildSectionPanel: Section "${sectionId}" has ${kids.length} children`);
   const columns = [];
   const quick = {
     id: "quick",
@@ -65,6 +71,7 @@ export function buildSectionPanel(NAV_TREE, sectionId, lang) {
 
   if (quick.items.length) columns.unshift(quick);
 
+  console.log(`buildSectionPanel: Section "${sectionId}" final columns:`, columns);
   return {
     title: sentenceCase(getLabel(section, lang)),
     columns,
