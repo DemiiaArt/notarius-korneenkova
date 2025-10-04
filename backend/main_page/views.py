@@ -11,13 +11,15 @@ from django.urls import reverse
 
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
-    ServicesFor, Application, VideoInterview, Review
+    ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs
 )
 from .serializer import (
     HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer,
     ServiceCategorySerializer, ServiceCategoryDetailSerializer,
     ServicesForSerializer, ApplicationSerializer, ApplicationCreateSerializer,
-    VideoInterviewSerializer, ReviewSerializer, ReviewCreateSerializer
+    VideoInterviewSerializer, ReviewSerializer, ReviewCreateSerializer,
+    FreeConsultationSerializer, FreeConsultationCreateSerializer,
+    ContactUsSerializer, ContactUsCreateSerializer
 )
 
 
@@ -323,3 +325,101 @@ class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+
+class FreeConsultationCreateView(generics.CreateAPIView):
+    """
+    Создание новой заявки на бесплатную консультацию
+    После создания заявка появляется в админке с is_processed=False
+    """
+    queryset = FreeConsultation.objects.all()
+    serializer_class = FreeConsultationCreateSerializer
+    
+    def perform_create(self, serializer):
+        # Сохраняем заявку с is_processed=False (требует обработки)
+        serializer.save(is_processed=False)
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        # Временное логирование для отладки
+        print(f"DEBUG: Received consultation data: {request.data}")
+        
+        if not serializer.is_valid():
+            print(f"DEBUG: Validation errors: {serializer.errors}")
+            return Response({
+                'success': False,
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        self.perform_create(serializer)
+        
+        return Response({
+            'success': True,
+            'message': 'Дякуємо! Ваша заявка прийнята. Ми зв\'яжемося з вами найближчим часом.'
+        }, status=status.HTTP_201_CREATED)
+
+
+class FreeConsultationListView(generics.ListAPIView):
+    """
+    Список всех заявок на бесплатную консультацию (только для админов)
+    """
+    queryset = FreeConsultation.objects.all().order_by('-created_at')
+    serializer_class = FreeConsultationSerializer
+
+
+class FreeConsultationDetailView(generics.RetrieveUpdateAPIView):
+    """
+    Детальная информация о заявке на консультацию и возможность обновления
+    """
+    queryset = FreeConsultation.objects.all()
+    serializer_class = FreeConsultationSerializer
+
+
+class ContactUsCreateView(generics.CreateAPIView):
+    """
+    Создание новой заявки через форму контактов
+    После создания заявка появляется в админке с is_processed=False
+    """
+    queryset = ContactUs.objects.all()
+    serializer_class = ContactUsCreateSerializer
+    
+    def perform_create(self, serializer):
+        # Сохраняем заявку с is_processed=False (требует обработки)
+        serializer.save(is_processed=False)
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        # Временное логирование для отладки
+        print(f"DEBUG: Received contact form data: {request.data}")
+        
+        if not serializer.is_valid():
+            print(f"DEBUG: Validation errors: {serializer.errors}")
+            return Response({
+                'success': False,
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        self.perform_create(serializer)
+        
+        return Response({
+            'success': True,
+            'message': 'Дякуємо за звернення! Ми зв\'яжемося з вами найближчим часом.'
+        }, status=status.HTTP_201_CREATED)
+
+
+class ContactUsListView(generics.ListAPIView):
+    """
+    Список всех обращений через форму контактов (только для админов)
+    """
+    queryset = ContactUs.objects.all().order_by('-created_at')
+    serializer_class = ContactUsSerializer
+
+
+class ContactUsDetailView(generics.RetrieveUpdateAPIView):
+    """
+    Детальная информация об обращении и возможность обновления
+    """
+    queryset = ContactUs.objects.all()
+    serializer_class = ContactUsSerializer

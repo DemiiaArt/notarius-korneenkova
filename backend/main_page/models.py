@@ -239,6 +239,40 @@ class Application(models.Model):
         ordering = ['-created_at']
 
 
+class FreeConsultation(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Имя")
+    phone_number = models.CharField(max_length=20, verbose_name="Номер телефона")
+    city = models.CharField(max_length=255, verbose_name="Город")
+    question = models.TextField(verbose_name="Вопрос")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    is_processed = models.BooleanField(default=False, verbose_name="Обработано")
+    
+    def __str__(self):
+        return f"{self.name} - {self.phone_number}"
+    
+    class Meta:
+        verbose_name = "Бесплатная консультация"
+        verbose_name_plural = "Бесплатные консультации"
+        ordering = ['-created_at']
+    
+
+class ContactUs(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Имя")
+    phone_number = models.CharField(max_length=20, verbose_name="Номер телефона")
+    question = models.TextField(verbose_name="Вопрос")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    is_processed = models.BooleanField(default=False, verbose_name="Обработано")
+    
+    def __str__(self):
+        return f"{self.name} - {self.phone_number}"
+    
+    class Meta:
+
+        verbose_name = "Связаться с нами"
+        verbose_name_plural = "Связаться с нами"
+        ordering = ['-created_at']
+
+
 class Review(models.Model):
     """
     Модель для хранения отзывов клиентов

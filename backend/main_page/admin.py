@@ -1,7 +1,7 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
 from django.utils.html import format_html
-from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServicesFor, Application, VideoInterview, Review
+from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs
 
 @admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
@@ -128,6 +128,110 @@ class ApplicationAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         # Сортируем по дате создания (новые сверху)
         return super().get_queryset(request).order_by('-created_at')
+
+
+@admin.register(FreeConsultation)
+class FreeConsultationAdmin(admin.ModelAdmin):
+    list_display = ['name', 'phone_number', 'city', 'created_at', 'is_processed', 'question_preview']
+    list_filter = ['is_processed', 'created_at', 'city']
+    search_fields = ['name', 'phone_number', 'city', 'question']
+    readonly_fields = ['created_at']
+    list_editable = ['is_processed']
+    save_on_top = True
+    list_per_page = 25
+    date_hierarchy = 'created_at'
+    
+    fieldsets = (
+        ('Информация о клиенте', {
+            'fields': ('name', 'phone_number', 'city'),
+            'description': 'Контактная информация клиента'
+        }),
+        ('Вопрос', {
+            'fields': ('question',),
+            'description': 'Вопрос от клиента'
+        }),
+        ('Статус', {
+            'fields': ('is_processed', 'created_at'),
+            'description': 'Статус обработки заявки'
+        }),
+    )
+    
+    def get_queryset(self, request):
+        # Сортируем по дате создания (новые сверху)
+        return super().get_queryset(request).order_by('-created_at')
+    
+    def question_preview(self, obj):
+        """Предпросмотр вопроса"""
+        if len(obj.question) > 50:
+            return obj.question[:50] + '...'
+        return obj.question
+    question_preview.short_description = 'Предпросмотр вопроса'
+    
+    actions = ['mark_as_processed', 'mark_as_unprocessed']
+    
+    def mark_as_processed(self, request, queryset):
+        """Отметить выбранные заявки как обработанные"""
+        updated = queryset.update(is_processed=True)
+        self.message_user(request, f'{updated} заявк(и) отмечено как обработанные.')
+    mark_as_processed.short_description = 'Отметить как обработанные'
+    
+    def mark_as_unprocessed(self, request, queryset):
+        """Отметить выбранные заявки как необработанные"""
+        updated = queryset.update(is_processed=False)
+        self.message_user(request, f'{updated} заявк(и) отмечено как необработанные.')
+    mark_as_unprocessed.short_description = 'Отметить как необработанные'
+
+
+@admin.register(ContactUs)
+class ContactUsAdmin(admin.ModelAdmin):
+    list_display = ['name', 'phone_number', 'created_at', 'is_processed', 'question_preview']
+    list_filter = ['is_processed', 'created_at']
+    search_fields = ['name', 'phone_number', 'question']
+    readonly_fields = ['created_at']
+    list_editable = ['is_processed']
+    save_on_top = True
+    list_per_page = 25
+    date_hierarchy = 'created_at'
+    
+    fieldsets = (
+        ('Информация о клиенте', {
+            'fields': ('name', 'phone_number'),
+            'description': 'Контактная информация клиента'
+        }),
+        ('Вопрос', {
+            'fields': ('question',),
+            'description': 'Вопрос от клиента'
+        }),
+        ('Статус', {
+            'fields': ('is_processed', 'created_at'),
+            'description': 'Статус обработки обращения'
+        }),
+    )
+    
+    def get_queryset(self, request):
+        # Сортируем по дате создания (новые сверху)
+        return super().get_queryset(request).order_by('-created_at')
+    
+    def question_preview(self, obj):
+        """Предпросмотр вопроса"""
+        if len(obj.question) > 50:
+            return obj.question[:50] + '...'
+        return obj.question
+    question_preview.short_description = 'Предпросмотр вопроса'
+    
+    actions = ['mark_as_processed', 'mark_as_unprocessed']
+    
+    def mark_as_processed(self, request, queryset):
+        """Отметить выбранные обращения как обработанные"""
+        updated = queryset.update(is_processed=True)
+        self.message_user(request, f'{updated} обращени(я/й) отмечено как обработанные.')
+    mark_as_processed.short_description = 'Отметить как обработанные'
+    
+    def mark_as_unprocessed(self, request, queryset):
+        """Отметить выбранные обращения как необработанные"""
+        updated = queryset.update(is_processed=False)
+        self.message_user(request, f'{updated} обращени(я/й) отмечено как необработанные.')
+    mark_as_unprocessed.short_description = 'Отметить как необработанные'
 
 
 @admin.register(VideoInterview)

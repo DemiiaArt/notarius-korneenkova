@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useIsPC } from "@hooks/isPC";
 import "./FreeConsult.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
+import { useFreeConsultations } from "@hooks/useFreeConsultations";
 
 const formName = "freeConsult";
 
@@ -24,9 +25,9 @@ export const FreeConsult = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const isPC = useIsPC();
+  const { submitConsultation, loading: isLoading } = useFreeConsultations();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -54,7 +55,6 @@ export const FreeConsult = () => {
     setFormData({ name: "", tel: "", city: "", question: "" });
     setErrors({ name: "", tel: "", city: "", question: "" });
     setIsSubmitted(false);
-    setIsLoading(false);
   };
 
   const handleChange = (e) => {
@@ -99,22 +99,25 @@ export const FreeConsult = () => {
 
     if (hasError) return;
 
-    setIsLoading(true);
+    // Отправляем данные на сервер через новый API для бесплатных консультаций
+    const result = await submitConsultation({
+      name: formData.name,
+      phone_number: formData.tel,
+      city: formData.city,
+      question: formData.question
+    });
 
-    try {
-      // имитация запроса
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (result.success) {
       setIsSubmitted(true);
-
-      // тестовый лог
-      console.log("Form submitted:", formData);
-    } catch (err) {
+      // Очищаем форму и закрываем модалку через 2 секунды
+      setTimeout(() => {
+        handleClose();
+      }, 2000);
+    } else {
       setErrors((prev) => ({
         ...prev,
-        tel: "Помилка при відправці. Спробуйте ще раз.",
+        tel: result.message || "Помилка при відправці. Спробуйте ще раз.",
       }));
-    } finally {
-      setIsLoading(false);
     }
   };
 

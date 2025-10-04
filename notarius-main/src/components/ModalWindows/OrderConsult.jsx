@@ -3,6 +3,7 @@ import { useIsPC } from "@hooks/isPC";
 import "./FreeConsult.scss";
 import "./OrderConsult.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
+import { useContactUs } from "@hooks/useContactUs";
 
 const formName = "freeOrder";
 
@@ -20,12 +21,12 @@ export const OrderConsult = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const { close, getOpenModalState } = useModal();
   const openModalState = getOpenModalState(formName);
 
   const isPC = useIsPC();
+  const { submitContact, loading: isLoading } = useContactUs();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -53,7 +54,6 @@ export const OrderConsult = () => {
     setFormData({ name: "", tel: "", question: "" });
     setErrors({ name: "", tel: "", question: "" });
     setIsSubmitted(false);
-    setIsLoading(false);
   };
 
   const handleChange = (e) => {
@@ -90,19 +90,24 @@ export const OrderConsult = () => {
 
     if (hasError) return;
 
-    setIsLoading(true);
+    // Отправляем данные на сервер через API для формы "Связаться с нами"
+    const result = await submitContact({
+      name: formData.name,
+      phone_number: formData.tel,
+      question: formData.question
+    });
 
-    try {
-      // имитация запроса
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (result.success) {
       setIsSubmitted(true);
-    } catch (err) {
+      // Очищаем форму и закрываем модалку через 2 секунды
+      setTimeout(() => {
+        handleClose();
+      }, 2000);
+    } else {
       setErrors((prev) => ({
         ...prev,
-        tel: "Помилка при відправці. Спробуйте ще раз.",
+        tel: result.message || "Помилка при відправці. Спробуйте ще раз.",
       }));
-    } finally {
-      setIsLoading(false);
     }
   };
 

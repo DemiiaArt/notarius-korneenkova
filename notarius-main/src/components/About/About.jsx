@@ -4,10 +4,14 @@ import "./About.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
 import { useEffect, useState, useRef } from "react";
 import { apiClient } from "@/config/api";
+import { useLocation } from "react-router-dom";
+import { detectLocaleFromPath } from "@nav/nav-utils";
 
 export const About = ({ showBreadcrumbs = false }) => {
   const isPC = useIsPC();
   const { open } = useModal();
+  const { pathname } = useLocation();
+  const lang = detectLocaleFromPath(pathname);
   const [aboutData, setAboutData] = useState(null);
   const hasFetched = useRef(false);
 
@@ -22,6 +26,14 @@ export const About = ({ showBreadcrumbs = false }) => {
       })
       .catch((err) => console.log("Error fetching about-me:", err))
   }, [])
+  
+  // Получаем данные на нужном языке
+  const getLocalizedField = (field) => {
+    if (!aboutData) return '';
+    const langMap = { ua: 'uk', ru: 'ru', en: 'en' };
+    const suffix = langMap[lang] || 'uk';
+    return aboutData[`${field}_${suffix}`] || aboutData[`${field}_uk`] || '';
+  };
 
   return (
     <>
@@ -33,19 +45,17 @@ export const About = ({ showBreadcrumbs = false }) => {
               <p
                 className={`about-block-greetings fs-italic ${isPC ? "fs-p--20px" : "fs-p--12px"} c1`}
               >
-                {aboutData ? aboutData.subtitle_uk : ""}
+                {getLocalizedField('subtitle')}
               </p>
               <h1
                 className={`about-block-title fw-light uppercase ${isPC ? "fs-h1--40px" : "fs-h2--20px"} c1`}
               >
-                {aboutData?.subtitle_uk}
+                {getLocalizedField('title')}
               </h1>
-              <p
+              <div
                 className={`about-block-text fw-light lh-150 ${isPC ? "fs-p--18px" : "fs-p--14px"} c1`}
-              >
-                Працюю з українцями по всьому світу — допомагаю з документами,
-                перекладами та важливими правовими рішеннями.
-              </p>
+                dangerouslySetInnerHTML={{ __html: getLocalizedField('text') }}
+              />
               <button className="btn-secondary btn-z-style uppercase c1 fs-p--16px ">
                 Детальніше
               </button>

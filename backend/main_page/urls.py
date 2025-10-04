@@ -15,6 +15,16 @@ urlpatterns = [
     path('applications/list/', views.ApplicationListView.as_view(), name='application-list'),
     path('applications/<int:pk>/', views.ApplicationDetailView.as_view(), name='application-detail'),
     
+    # Эндпоинты бесплатных консультаций
+    path('free-consultations/', views.FreeConsultationCreateView.as_view(), name='free-consultation-create'),
+    path('free-consultations/list/', views.FreeConsultationListView.as_view(), name='free-consultation-list'),
+    path('free-consultations/<int:pk>/', views.FreeConsultationDetailView.as_view(), name='free-consultation-detail'),
+    
+    # Эндпоинты формы контактов
+    path('contact-us/', views.ContactUsCreateView.as_view(), name='contact-us-create'),
+    path('contact-us/list/', views.ContactUsListView.as_view(), name='contact-us-list'),
+    path('contact-us/<int:pk>/', views.ContactUsDetailView.as_view(), name='contact-us-detail'),
+    
     # Эндпоинты видео интервью
     path('video-interviews/', views.VideoInterviewListView.as_view(), name='video-interview-list'),
     path('video-interviews/<int:pk>/', views.VideoInterviewDetailView.as_view(), name='video-interview-detail'),

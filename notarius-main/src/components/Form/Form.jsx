@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./Form.scss";
 import { useIsPC } from "@hooks/isPC";
+import { useApplications } from "@hooks/useApplications";
 
 export const Form = () => {
   const [formData, setFormData] = useState({
@@ -14,9 +15,9 @@ export const Form = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const isPC = useIsPC();
+  const { submitApplication, loading: isLoading } = useApplications();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -65,20 +66,24 @@ export const Form = () => {
 
     if (hasError) return;
 
-    setIsLoading(true);
+    // Отправляем заявку на бэкенд
+    const result = await submitApplication({
+      name: formData.name,
+      phone_number: formData.tel
+    });
 
-    try {
-      // имитация запроса
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (result.success) {
       setIsSubmitted(true);
-      console.log("Form submitted:", formData);
-    } catch (err) {
+      // Очищаем форму через 3 секунды после успешной отправки
+      setTimeout(() => {
+        setFormData({ name: "", tel: "" });
+        setIsSubmitted(false);
+      }, 3000);
+    } else {
       setErrors((prev) => ({
         ...prev,
-        tel: "Помилка при відправці. Спробуйте ще раз.",
+        tel: result.message || "Помилка при відправці. Спробуйте ще раз.",
       }));
-    } finally {
-      setIsLoading(false);
     }
   };
 
