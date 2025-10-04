@@ -164,8 +164,14 @@ class ServiceCategory(MPTTModel):
     
     # Показывать ли в меню
     show_in_menu = models.BooleanField(
-        default=False,
+        default=True,
         verbose_name="Показывать в меню"
+    )
+    
+    # Показывать ли в мега-панели
+    show_mega_panel = models.BooleanField(
+        default=True,
+        verbose_name="Показывать в мега-панели"
     )
     
     # Ссылка на React компонент (по умолчанию null)
@@ -232,6 +238,10 @@ class ServiceCategory(MPTTModel):
         # Проверка что категории типа "Раздел" могут быть только корневыми
         if self.kind == 'section' and self.parent is not None:
             raise ValidationError("Категории с типом 'Раздел' могут быть только корневыми (родительскими) категориями.")
+        
+        # Запрет добавления группы к странице
+        if self.kind == 'group' and self.parent and self.parent.kind == 'page':
+            raise ValidationError("Ошибка в поле 'Тип элемента': Нельзя добавлять группу к странице. Группы можно добавлять только к разделам.")
     
 
 

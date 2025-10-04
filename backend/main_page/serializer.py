@@ -48,7 +48,7 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceCategory
         fields = [
-            'id', 'kind', 'label', 'slug', 'show_in_menu', 'component', 'children'
+            'id', 'kind', 'label', 'slug', 'show_in_menu', 'show_mega_panel', 'component', 'children'
         ]
     
     def get_label(self, obj):
@@ -69,7 +69,7 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
     
     def get_children(self, obj):
         """Рекурсивно получаем дочерние элементы"""
-        children = obj.get_children().filter(show_in_menu=True).order_by('order')
+        children = obj.get_children().order_by('order')
         if children.exists():
             return ServiceCategorySerializer(children, many=True, context=self.context).data
         return []
@@ -84,6 +84,11 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
         # Переименовываем show_in_menu в showInMenu для соответствия nav-tree.js
         if 'show_in_menu' in data:
             data['showInMenu'] = data.pop('show_in_menu')
+        
+        if 'show_mega_panel' in data and instance.parent==None:
+            data['showMegaPanel'] = data.pop('show_mega_panel')
+            data.pop('label')
+            data.pop('slug')
         
         # Убираем лишние поля, которые не нужны в JSON
         # data.pop('id', None)  # Убираем Django ID
