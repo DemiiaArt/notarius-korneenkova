@@ -113,39 +113,42 @@ class ServicesCategoryView(APIView):
 
         try:
             # Получаем корневые категории (без родителя)
-            root_categories = ServiceCategory.objects.filter(parent__isnull=True, show_in_menu=True).order_by('order')
+            root_categories = ServiceCategory.objects.filter(parent__isnull=True).order_by('order')
             
             if not root_categories.exists():
-                return Response(root_data)
+                return Response(status=404)
             
             
             serializer = ServiceCategorySerializer(root_categories, many=True)            
-            response_data = serializer.data
+            response_data = serializer.data            
             
-            # Отладка
-            print(f"DEBUG: root_categories count: {root_categories.count()}")
-            print(f"DEBUG: response_data length: {len(response_data)}")
-            print(f"DEBUG: response_data IDs: {[item['id'] for item in response_data]}")
-            
-            merged_children = inject_services(root_data, response_data)
-            
-            return Response(merged_children)
+            return Response(response_data)
             
         except Exception as e:
-            print(f"DEBUG: Exception in ServicesCategoryView: {e}")
-            return Response(root_data)
+            return Response({
+                "error": f"Ошибка при получении структуры услуг: {str(e)}"
+                }, status=500)
 
 
 class ServiceCategoryDetailView(APIView):
     """
     Детальный просмотр категории услуг по URL-пути из slug'ов (1-3 уровня).
-    Возвращает только титулы и описания на 3 языках.
+    Возвращает титулы, описания, hero_image и особенности услуг на выбранном языке.
+    Поддерживает параметр lang в query string (ua/ru/en, по умолчанию ua).
     """
 
     def get(self, request, slug1=None, slug2=None, slug3=None):
+        # Получаем язык из query параметра, по умолчанию 'ua'
+        lang = request.GET.get('lang', 'ua')
+        
+        # Валидация языка
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        
         path_slugs = [s for s in (slug1, slug2, slug3) if s]
         parent = None
         current = None
+        
         try:
             for s in path_slugs:
                 current = ServiceCategory.objects.filter(parent=parent).filter(
@@ -157,7 +160,8 @@ class ServiceCategoryDetailView(APIView):
         except Exception:
             return Response({"detail": "Not found."}, status=404)
 
-        serializer = ServiceCategoryDetailSerializer(current)
+        # Передаем язык в контекст сериализатора
+        serializer = ServiceCategoryDetailSerializer(current, context={'lang': lang})
         return Response(serializer.data)
     
 

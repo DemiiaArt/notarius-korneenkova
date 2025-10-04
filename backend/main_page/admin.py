@@ -1,5 +1,7 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
+from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.utils.html import format_html
 from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs
 
@@ -323,6 +325,18 @@ class ReviewAdmin(admin.ModelAdmin):
     unpublish_reviews.short_description = 'Снять с публикации'
 
 
+class ServiceFeatureInline(admin.TabularInline):
+    model = ServiceFeature
+    extra = 1
+    fields = ('order', 'text_ua', 'text_ru', 'text_en')
+    ordering = ['order']
+    
+    class Media:
+        css = {
+            'all': ('admin/css/forms.css',)
+        }
+
+
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(MPTTModelAdmin):
     prepopulated_fields = {
@@ -331,6 +345,8 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
         "slug_ru": ("label_ua",),
         "slug_en": ("label_en",),
     }
+    exclude = ('component',)
+    inlines = [ServiceFeatureInline]
 
     list_display = (
         'label_ua',
@@ -338,16 +354,88 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
         'kind',
         'show_in_menu',
         'order',
-        'created_at',
-        'updated_at',
+        # 'created_at',
+        # 'updated_at',
     )
-    list_editable = ('kind', 'order', 'show_in_menu',)
+    list_editable = ('parent', 'kind', 'order', 'show_in_menu',)
 
     search_fields = ('label_ua', 'label_ru', 'label_en', 'nav_id')
     list_filter = ('kind', 'show_in_menu',)
 
     # Чтобы дерево можно было редактировать drag&drop
     mptt_level_indent = 30
+    
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """
+        Ограничиваем выбор родительских категорий, исключая категории 3-го уровня
+        """
+        if db_field.name == "parent":
+            # Исключаем категории с level >= 2 (3-й уровень вложенности)
+            kwargs["queryset"] = ServiceCategory.objects.filter(level__lt=2)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Кастомизируем форму в зависимости от того, является ли категория корневой
+        """
+        form = super().get_form(request, obj, **kwargs)
+        
+        # Скрываем поле show_mega_panel для всех категорий, кроме корневых
+        if 'show_mega_panel' in form.base_fields:
+            # Если это существующая категория и она не корневая, скрываем поле
+            if obj and obj.parent is not None:
+                form.base_fields['show_mega_panel'].widget = forms.HiddenInput()
+                form.base_fields['show_mega_panel'].initial = False
+            # Если это новая категория, скрываем поле по умолчанию
+            elif obj is None:
+                form.base_fields['show_mega_panel'].widget = forms.HiddenInput()
+                form.base_fields['show_mega_panel'].initial = False
+        
+        return form
+    
+    def show_mega_panel_display(self, obj):
+        """
+        Показываем поле show_mega_panel только для корневых категорий
+        """
+        if obj.parent is None:
+            return "✓" if obj.show_mega_panel else "✗"
+        else:
+            return "—"  # Не применимо для дочерних категорий
+    show_mega_panel_display.short_description = "Мега-панель"
+    show_mega_panel_display.admin_order_field = 'show_mega_panel'
+    
+    def hero_image_preview(self, obj):
+        """
+        Превью главного изображения
+        """
+        if obj.hero_image:
+            return format_html('<img src="{}" style="height:40px;border-radius:4px;object-fit:cover;" />', obj.hero_image.url)
+        return '—'
+    
+    
+    def save_model(self, request, obj, form, change):
+        """
+        Автоматически управляем show_in_menu для дочерних категорий
+        """
+        # Если это дочерняя категория или новая категория (которая станет дочерней), 
+        # принудительно устанавливаем show_mega_panel = False
+        if obj.parent is not None:
+            obj.show_mega_panel = False
+        
+        # Сохраняем объект
+        super().save_model(request, obj, form, change)
+        
+        # Если убираем галочку show_in_menu у родительской категории
+        if not obj.show_in_menu:
+            # Убираем галочки у всех дочерних категорий
+            descendants = obj.get_descendants()
+            descendants.update(show_in_menu=False)
+            
+        # Если ставим галочку show_in_menu у родительской категории
+        elif obj.show_in_menu:
+            # Ставим галочки у всех дочерних категорий
+            descendants = obj.get_descendants()
+            descendants.update(show_in_menu=True)
 
 # Кастомизация брендинга админки
 admin.site.site_header = 'Панель администратора — Notarius'

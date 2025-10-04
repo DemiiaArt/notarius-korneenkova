@@ -4,52 +4,211 @@ from django.utils.html import strip_tags
 
 
 class BlogCategorySerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    slug = serializers.SerializerMethodField()
+    
     class Meta:
         model = BlogCategory
-        fields = ['id', 'name_ua', 'name_ru', 'name_en', 'slug_ua', 'slug_ru', 'slug_en']
+        fields = ['id', 'name', 'slug', 'show_in_filters']
+    
+    def get_name(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем название на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'name_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.name_ua
+    
+    def get_slug(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем slug на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'slug_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.slug_ua
 
 
 class BlogPostListSerializer(serializers.ModelSerializer):
     categories = BlogCategorySerializer(many=True, read_only=True)
-    excerpt_ua = serializers.SerializerMethodField()
-    excerpt_ru = serializers.SerializerMethodField()
-    excerpt_en = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    slug = serializers.SerializerMethodField()
+    excerpt = serializers.SerializerMethodField()
 
     class Meta:
         model = BlogPost
         fields = [
             'id',
-            'title_ua', 'title_ru', 'title_en',
-            'slug_ua', 'slug_ru', 'slug_en',
-            'excerpt_ua', 'excerpt_ru', 'excerpt_en',
-            'cover', 'published_at', 'categories'
+            'title',
+            'slug',
+            'excerpt',
+            'cover', 'published_at', 'status', 'categories'
         ]
 
     def _short(self, html: str):
         text = strip_tags(html or '')
-        return (text[:200] + ('…' if len(text) > 200 else ''))
+        return (text[:100] + ('…' if len(text) > 100 else ''))
 
-    def get_excerpt_ua(self, obj):
-        return self._short(obj.content_ua)
+    def get_title(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем заголовок на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'title_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.title_ua
+    
+    def get_slug(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем slug на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'slug_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.slug_ua
 
-    def get_excerpt_ru(self, obj):
-        return self._short(obj.content_ru)
-
-    def get_excerpt_en(self, obj):
-        return self._short(obj.content_en)
+    def get_excerpt(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем excerpt на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            content = getattr(obj, f'content_{lang}', '')
+            return self._short(content)
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return self._short(obj.content_ua)
 
 
 class BlogPostDetailSerializer(serializers.ModelSerializer):
     categories = BlogCategorySerializer(many=True, read_only=True)
+    similar_posts = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    slug = serializers.SerializerMethodField()
+    content = serializers.SerializerMethodField()
 
     class Meta:
         model = BlogPost
         fields = [
             'id',
-            'title_ua', 'title_ru', 'title_en',
-            'slug_ua', 'slug_ru', 'slug_en',
-            'content_ua', 'content_ru', 'content_en',
-            'cover', 'published_at', 'categories'
+            'title',
+            'slug',
+            'content',
+            'cover', 'published_at', 'status', 'categories', 'similar_posts'
         ]
+
+    def get_title(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем заголовок на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'title_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.title_ua
+    
+    def get_slug(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем slug на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'slug_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.slug_ua
+
+    def get_content(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем контент на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'content_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.content_ua
+
+    def get_similar_posts(self, obj):
+        """
+        Получает похожие статьи для текущей статьи
+        """
+        similar_posts = obj.get_similar_posts(limit=3)
+        return SimilarArticleSerializer(similar_posts, many=True, context=self.context).data
+
+
+class SimilarArticleSerializer(serializers.ModelSerializer):
+    """
+    Упрощенный сериализатор для похожих статей
+    """
+    title = serializers.SerializerMethodField()
+    slug = serializers.SerializerMethodField()
+    excerpt = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogPost
+        fields = [
+            'id',
+            'title',
+            'slug',
+            'excerpt',
+            'cover', 'published_at'
+        ]
+
+    def _short(self, html: str):
+        text = strip_tags(html or '')
+        return (text[:100] + ('…' if len(text) > 100 else ''))
+
+    def get_title(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем заголовок на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'title_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.title_ua
+    
+    def get_slug(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем slug на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            return getattr(obj, f'slug_{lang}', '')
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return obj.slug_ua
+
+    def get_excerpt(self, obj):
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем excerpt на нужном языке
+        if lang in ['ua', 'ru', 'en']:
+            content = getattr(obj, f'content_{lang}', '')
+            return self._short(content)
+        else:
+            # Если язык не указан или неверный, возвращаем украинский
+            return self._short(obj.content_ua)
+
+
+class BlogListResponseSerializer(serializers.Serializer):
+    """
+    Сериализатор для ответа списка блога с категориями
+    """
+    posts = BlogPostListSerializer(many=True)
+    categories = BlogCategorySerializer(many=True)
 
 

@@ -106,6 +106,51 @@ class ServicesFor(models.Model):
         verbose_name_plural = "Для кого услуги"
 
 
+class ServiceFeature(models.Model):
+    """
+    Модель для хранения преимуществ/особенностей услуг
+    """
+    # Связь с категорией услуг
+    service_category = models.ForeignKey(
+        'ServiceCategory',
+        on_delete=models.CASCADE,
+        related_name='features',
+        verbose_name="Категория услуг"
+    )
+    
+    # Тексты на трех языках
+    text_ua = models.CharField(
+        max_length=255,
+        verbose_name="Текст (UA)"
+    )
+    text_ru = models.CharField(
+        max_length=255,
+        verbose_name="Текст (RU)"
+    )
+    text_en = models.CharField(
+        max_length=255,
+        verbose_name="Текст (EN)"
+    )
+    
+    # Порядок отображения
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Порядок отображения"
+    )
+    
+    # Метаданные
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    
+    class Meta:
+        verbose_name = "Особенность услуги"
+        verbose_name_plural = "Особенности услуг"
+        ordering = ['order', 'text_ua']
+    
+    def __str__(self):
+        return f"{self.service_category.label_ua} - {self.text_ua}"
+
+
 class ServiceCategory(MPTTModel):
     """
     Модель категорий услуг с иерархической структурой
@@ -164,8 +209,30 @@ class ServiceCategory(MPTTModel):
     
     # Показывать ли в меню
     show_in_menu = models.BooleanField(
-        default=False,
+        default=True,
         verbose_name="Показывать в меню"
+    )
+    
+    # Показывать ли в мега-панели
+    show_mega_panel = models.BooleanField(
+        default=True,
+        verbose_name="Показывать в мега-панели"
+    )
+    
+    # Фотография для страницы услуг
+    hero_image = models.ImageField(
+        upload_to='services/',
+        blank=True,
+        null=True,
+        verbose_name="Главное изображение"
+    )
+    
+    # Фотография для карточки в карусели
+    card_image = models.ImageField(
+        upload_to='services/',
+        blank=True,
+        null=True,
+        verbose_name="Изображение карточки"
     )
     
     # Ссылка на React компонент (по умолчанию null)
@@ -222,6 +289,22 @@ class ServiceCategory(MPTTModel):
         if not self.parent:
             if ServiceCategory.objects.filter(parent__isnull=True).exclude(pk=self.pk).count() > 3:
                 raise ValidationError("Нельзя создавать больше 4 корневых категорий.")
+        
+        # Ограничение количества категорий с kind="Раздел" до 4
+        if self.kind == 'section':
+            existing_sections = ServiceCategory.objects.filter(kind='section').exclude(pk=self.pk).count()
+            if existing_sections >= 4:
+                raise ValidationError("Нельзя создавать больше 4 категорий с типом 'Раздел'.")
+        
+        # Проверка что категории типа "Раздел" могут быть только корневыми
+        if self.kind == 'section' and self.parent is not None:
+            raise ValidationError("Категории c типом 'Раздел' могут быть только корневыми (родительскими) категориями.")
+        
+        # Запрет добавления группы к странице
+        if self.kind == 'group' and self.parent and self.parent.kind == 'page':
+            raise ValidationError("Ошибка в поле 'Тип элемента': Нельзя добавлять группу к странице. Группы можно добавлять только к разделам.")
+    
+
 
 
 class Application(models.Model):

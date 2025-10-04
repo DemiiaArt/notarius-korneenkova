@@ -37,7 +37,7 @@ urlpatterns = [
     path('reviews/<int:pk>/', views.ReviewDetailView.as_view(), name='review-detail'),
     
     # ВАЖНО: Slug паттерны должны быть В КОНЦЕ, так как они catch-all
-    path('<slug:slug1>/', views.ServiceCategoryDetailView.as_view(), name='category_level1'),
-    path('<slug:slug1>/<slug:slug2>/', views.ServiceCategoryDetailView.as_view(), name='category_level2'),
-    path('<slug:slug1>/<slug:slug2>/<slug:slug3>/', views.ServiceCategoryDetailView.as_view(), name='category_level3'),
+    path('services/<slug:slug1>/', views.ServiceCategoryDetailView.as_view(), name='category_level1'),
+    path('services/<slug:slug1>/<slug:slug2>/', views.ServiceCategoryDetailView.as_view(), name='category_level2'),
+    path('services/<slug:slug1>/<slug:slug2>/<slug:slug3>/', views.ServiceCategoryDetailView.as_view(), name='category_level3'),
 ]
