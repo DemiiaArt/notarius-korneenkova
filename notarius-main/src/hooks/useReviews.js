@@ -1,126 +1,166 @@
 /**
- * Custom hook for working with reviews API
- * Упрощает работу с API отзывов
+ * Hook для работы с отзывами
+ * Загрузка отзывов и отправка новых отзывов в API
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/config/api';
 
 /**
- * Hook для получения списка опубликованных отзывов
+ * Hook для получения отзывов и статистики рейтинга
+ * @returns {Object} { reviews, ratingStats, loading, error, fetchReviews }
  */
 export const useReviews = () => {
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchReviews = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await apiClient.get('/reviews/');
-      setReviews(data);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching reviews:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchReviews();
-  }, [fetchReviews]);
-
-  return { reviews, loading, error, refetch: fetchReviews };
-};
-
-/**
- * Hook для получения статистики рейтинга
- */
-export const useReviewStats = (dependencies = []) => {
-  const [stats, setStats] = useState({
-    average_rating: 0,
-    total_reviews: 0,
-    rating_counts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  const [ratingStats, setRatingStats] = useState({
+    averageRating: 0,
+    totalVotes: 0,
+    ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchStats = useCallback(async () => {
+  /**
+   * Загрузка отзывов и статистики рейтинга
+   * @param {boolean} forceRefresh - принудительное обновление
+   * @returns {Promise<Object>} Данные отзывов и статистики
+   */
+  const fetchReviews = useCallback(async (forceRefresh = false) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await apiClient.get('/reviews/stats/');
-      setStats(data);
+
+      const data = await apiClient.get('/reviews/');
+      
+      console.log('✅ Отзывы загружены:', data);
+      setReviews(data.reviews || []);
+      setRatingStats(data.rating_stats || {
+        averageRating: 0,
+        totalVotes: 0,
+        ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+      });
+      
+      return data;
     } catch (err) {
-      setError(err.message);
-      console.error('Error fetching review stats:', err);
+      const errorMessage = err.message || 'Помилка при завантаженні відгуків';
+      setError(errorMessage);
+      console.error('❌ Ошибка при загрузке отзывов:', err);
+      
+      // Устанавливаем пустые данные при ошибке
+      setReviews([]);
+      setRatingStats({
+        averageRating: 0,
+        totalVotes: 0,
+        ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+      });
+      throw err;
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // Загружаем данные при первом использовании
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats, ...dependencies]);
+    fetchReviews();
+  }, [fetchReviews]);
 
-  return { stats, loading, error, refetch: fetchStats };
+  return {
+    reviews,
+    ratingStats,
+    loading,
+    error,
+    fetchReviews
+  };
 };
 
 /**
- * Hook для создания отзыва
+ * Hook для отправки нового отзыва
+ * @returns {Object} { submitReview, loading, error, success, reset }
  */
-export const useCreateReview = () => {
+export const useSubmitReview = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const createReview = useCallback(async (reviewData) => {
+  /**
+   * Отправка нового отзыва
+   * @param {Object} reviewData - данные отзыва
+   * @param {string} reviewData.name - имя автора
+   * @param {string} reviewData.service - услуга
+   * @param {number} reviewData.rating - рейтинг (1-5)
+   * @param {string} reviewData.text - текст отзыва
+   * @returns {Promise<Object>} Результат отправки
+   */
+  const submitReview = async (reviewData) => {
     try {
       setLoading(true);
       setError(null);
       setSuccess(false);
 
-      await apiClient.post('/reviews/create/', reviewData);
-      
+      // Валидация данных
+      if (!reviewData.name?.trim()) {
+        throw new Error('Поле "Имя" обязательно');
+      }
+      if (!reviewData.service) {
+        throw new Error('Выберите услугу');
+      }
+      if (!reviewData.rating || reviewData.rating < 1 || reviewData.rating > 5) {
+        throw new Error('Выберите рейтинг от 1 до 5 звезд');
+      }
+      if (!reviewData.text?.trim()) {
+        throw new Error('Напишите отзыв');
+      }
+
+      const response = await apiClient.post('/reviews/', {
+        name: reviewData.name.trim(),
+        service: reviewData.service,
+        rating: reviewData.rating,
+        text: reviewData.text.trim(),
+      });
+
+      console.log('✅ Отзыв успешно отправлен:', response);
       setSuccess(true);
-      return { success: true };
+      return { success: true, data: response, message: 'Ваш отзыв успешно отправлен! Он появится после модерации.' };
+
     } catch (err) {
-      setError(err.message);
-      console.error('Error creating review:', err);
-      return { success: false, error: err.message };
+      const errorMessage = err.message || 'Помилка при відправці відгуку. Спробуйте ще раз.';
+      setError(errorMessage);
+      console.error('❌ Ошибка при отправке отзыва:', err);
+      return { success: false, error: errorMessage, message: errorMessage };
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  const reset = useCallback(() => {
+  const reset = () => {
+    setLoading(false);
     setError(null);
     setSuccess(false);
-    setLoading(false);
-  }, []);
+  };
 
-  return { createReview, loading, error, success, reset };
+  return { submitReview, loading, error, success, reset };
 };
 
 /**
  * Пример использования:
  * 
- * // Получение отзывов
- * const { reviews, loading, error } = useReviews();
+ * // Загрузка отзывов и статистики
+ * const { reviews, ratingStats, loading, error } = useReviews();
  * 
- * // Получение статистики
- * const { stats } = useReviewStats();
- * 
- * // Создание отзыва
- * const { createReview, loading, success } = useCreateReview();
+ * // Отправка нового отзыва
+ * const { submitReview, loading: submitLoading, error: submitError, success } = useSubmitReview();
  * 
  * const handleSubmit = async (formData) => {
- *   const result = await createReview(formData);
+ *   const result = await submitReview({
+ *     name: formData.name,
+ *     service: formData.service,
+ *     rating: formData.rating,
+ *     text: formData.text
+ *   });
+ *   
  *   if (result.success) {
- *     console.log('Review created!');
+ *     // Обновляем список отзывов
+ *     fetchReviews();
  *   }
  * };
  */
-

@@ -74,3 +74,41 @@ export function detectLocaleFromPath(pathname) {
 export function getLabel(node, lang) {
   return (node?.label && node.label[lang]) || "";
 }
+
+// Функция для поиска узла по ID в дереве
+export function findNodeById(tree, id) {
+  if (!tree || typeof tree !== "object") return null;
+
+  if (tree.id === id) {
+    return tree;
+  }
+
+  if (tree.children && Array.isArray(tree.children)) {
+    for (const child of tree.children) {
+      const found = findNodeById(child, id);
+      if (found) return found;
+    }
+  }
+
+  return null;
+}
+
+// Функция для получения всех детей узла
+export function getNodeChildren(tree, nodeId) {
+  const node = findNodeById(tree, nodeId);
+  return node?.children || [];
+}
+
+// Функция для проверки, есть ли у узла дети
+export function hasNodeChildren(tree, nodeId) {
+  const children = getNodeChildren(tree, nodeId);
+  return children.length > 0;
+}
+
+// Функция для получения пути к узлу
+export function getNodePath(tree, nodeId, lang = "ua") {
+  const stack = findPathStackById(tree, nodeId);
+  if (!stack) return null;
+
+  return stack.map((node) => getLabel(node, lang)).filter(Boolean);
+}

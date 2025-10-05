@@ -25,9 +25,10 @@ export const FreeConsult = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const isPC = useIsPC();
-  const { submitConsultation, loading: isLoading } = useFreeConsultations();
+  
+  // Используем хук для отправки заявок на бесплатную консультацию
+  const { submitFreeConsultation, loading: isLoading, error: apiError, success } = useFreeConsultations();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -55,6 +56,7 @@ export const FreeConsult = () => {
     setFormData({ name: "", tel: "", city: "", question: "" });
     setErrors({ name: "", tel: "", city: "", question: "" });
     setIsSubmitted(false);
+    setIsLoading(false);
   };
 
   const handleChange = (e) => {
@@ -99,8 +101,8 @@ export const FreeConsult = () => {
 
     if (hasError) return;
 
-    // Отправляем данные на сервер через новый API для бесплатных консультаций
-    const result = await submitConsultation({
+    // Отправляем заявку на бесплатную консультацию через API
+    const result = await submitFreeConsultation({
       name: formData.name,
       phone_number: formData.tel,
       city: formData.city,
@@ -109,14 +111,11 @@ export const FreeConsult = () => {
 
     if (result.success) {
       setIsSubmitted(true);
-      // Очищаем форму и закрываем модалку через 2 секунды
-      setTimeout(() => {
-        handleClose();
-      }, 2000);
+      console.log("✅ Заявка на бесплатную консультацию отправлена:", result.data);
     } else {
       setErrors((prev) => ({
         ...prev,
-        tel: result.message || "Помилка при відправці. Спробуйте ще раз.",
+        tel: result.error || "Помилка при відправці. Спробуйте ще раз.",
       }));
     }
   };

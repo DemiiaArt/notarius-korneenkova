@@ -13,7 +13,7 @@
     height: 100vh;
     position: fixed;
     top: 0;
-    z-index: 2001;
+    z-index: 3000;
 
     .form-container {
       position: relative;
@@ -105,9 +105,9 @@
           border-bottom: 1px solid map.get($colors, 4);
         }
 
-        &:focus+label,
-        &:not(:placeholder-shown)+label,
-        &:has(option:checked:not(:first-child))+label {
+        &:focus + label,
+        &:not(:placeholder-shown) + label,
+        &:has(option:checked:not(:first-child)) + label {
           transform: translateY(-18px);
           font-size: 10px;
           color: map.get($colors, 4);
@@ -192,4 +192,6 @@
       & textarea {
         font-size: toRem(20px);
       }
-    }}}
+    }
+  }
+}

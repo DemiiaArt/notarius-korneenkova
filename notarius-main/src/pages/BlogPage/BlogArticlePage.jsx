@@ -1,9 +1,28 @@
 import TemplateBlogPage from "./TemplateBlogPage";
 import { getArticleById } from "./blogData";
+import { useBlogArticle } from "@hooks/useBlog";
+import { useParams } from "react-router-dom";
 
 const BlogArticlePage = () => {
-    // Получаем данные статьи по ID (в данном случае "blog-article")
-    const articleData = getArticleById("blog-article");
+    // Получаем slug из URL
+    const { slug } = useParams();
+    
+    // Загружаем статью из API
+    const { article, loading, error } = useBlogArticle(slug);
+    
+    // Fallback данные если API не загрузился
+    const fallbackData = getArticleById("blog-article");
+    
+    // Используем данные из API или fallback
+    const articleData = article || fallbackData;
+
+    if (loading) {
+        return <div>Завантаження статті...</div>;
+    }
+
+    if (error && !fallbackData) {
+        return <div>Помилка при завантаженні статті: {error}</div>;
+    }
 
     return (
         <TemplateBlogPage 
@@ -12,7 +31,7 @@ const BlogArticlePage = () => {
             heroImgClass={articleData.heroImgClass}
             heroImage={articleData.heroImage}
             tags={articleData.tags}
-            publishDate={articleData.publishDate}
+            publishDate={articleData.publishDate || articleData.created_at}
         />
     );
 };

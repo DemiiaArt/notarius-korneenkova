@@ -26,7 +26,9 @@ export const OrderConsult = () => {
   const openModalState = getOpenModalState(formName);
 
   const isPC = useIsPC();
-  const { submitContact, loading: isLoading } = useContactUs();
+  
+  // Используем хук для отправки заявок через форму контактов
+  const { submitContactUs, loading: isLoading, error: apiError, success } = useContactUs();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -54,6 +56,7 @@ export const OrderConsult = () => {
     setFormData({ name: "", tel: "", question: "" });
     setErrors({ name: "", tel: "", question: "" });
     setIsSubmitted(false);
+    setIsLoading(false);
   };
 
   const handleChange = (e) => {
@@ -90,8 +93,8 @@ export const OrderConsult = () => {
 
     if (hasError) return;
 
-    // Отправляем данные на сервер через API для формы "Связаться с нами"
-    const result = await submitContact({
+    // Отправляем заявку через форму контактов
+    const result = await submitContactUs({
       name: formData.name,
       phone_number: formData.tel,
       question: formData.question
@@ -99,14 +102,11 @@ export const OrderConsult = () => {
 
     if (result.success) {
       setIsSubmitted(true);
-      // Очищаем форму и закрываем модалку через 2 секунды
-      setTimeout(() => {
-        handleClose();
-      }, 2000);
+      console.log("✅ Заявка на консультацию отправлена:", result.data);
     } else {
       setErrors((prev) => ({
         ...prev,
-        tel: result.message || "Помилка при відправці. Спробуйте ще раз.",
+        tel: result.error || "Помилка при відправці. Спробуйте ще раз.",
       }));
     }
   };

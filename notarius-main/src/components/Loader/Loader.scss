@@ -1,0 +1,207 @@
+// src/components/Loader/Loader.scss
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__message {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  // Размеры
+  &--small {
+    min-height: 100px;
+
+    .loader__message {
+      font-size: 14px;
+    }
+  }
+
+  &--medium {
+    min-height: 200px;
+
+    .loader__message {
+      font-size: 16px;
+    }
+  }
+
+  &--large {
+    min-height: 300px;
+
+    .loader__message {
+      font-size: 18px;
+    }
+  }
+
+  // Спиннер
+  &__spinner {
+    position: relative;
+    width: 50px;
+    height: 50px;
+  }
+
+  &__spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: loader-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+
+    &:nth-child(1) {
+      animation-delay: -0.45s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: -0.3s;
+      border-top-color: #28a745;
+    }
+
+    &:nth-child(3) {
+      animation-delay: -0.15s;
+      border-top-color: #ffc107;
+    }
+  }
+
+  // Точки
+  &__dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__dot {
+    width: 12px;
+    height: 12px;
+    background: #007bff;
+    border-radius: 50%;
+    animation: loader-bounce 1.4s ease-in-out infinite both;
+
+    &:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0s;
+    }
+  }
+
+  // Пульс
+  &__pulse {
+    position: relative;
+    width: 60px;
+    height: 60px;
+  }
+
+  &__pulse-circle {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #007bff;
+    border-radius: 50%;
+    animation: loader-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+// Анимации
+@keyframes loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+@keyframes loader-pulse {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+// Адаптивность
+@media (max-width: 768px) {
+  .loader {
+    min-height: 150px;
+
+    &--large {
+      min-height: 200px;
+    }
+
+    &__message {
+      font-size: 14px;
+    }
+
+    &__spinner {
+      width: 40px;
+      height: 40px;
+    }
+
+    &__pulse {
+      width: 50px;
+      height: 50px;
+    }
+  }
+}
+
+// Темная тема
+@media (prefers-color-scheme: dark) {
+  .loader {
+    &__message {
+      color: #ccc;
+    }
+
+    &__spinner-ring {
+      border-top-color: #4dabf7;
+
+      &:nth-child(2) {
+        border-top-color: #51cf66;
+      }
+
+      &:nth-child(3) {
+        border-top-color: #ffd43b;
+      }
+    }
+
+    &__dot {
+      background: #4dabf7;
+    }
+
+    &__pulse-circle {
+      background: #4dabf7;
+    }
+  }
+}

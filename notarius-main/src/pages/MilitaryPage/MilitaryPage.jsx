@@ -6,6 +6,7 @@ import QuestionItem from "@components/Questions/Questions";
 import ReviewForm from "@components/ReviewForm/ReviewForm";
 import Form from "@components/Form/Form";
 import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
+import GroupServicesCarousel from "@components/GroupServicesCarousel/GroupServicesCarousel";
 
 import "./MilitaryPage.scss";
 import { useIsPC } from "@hooks/isPC";
@@ -129,6 +130,10 @@ const MilitaryPage = () => {
           </article>
         </div>
       </div>
+      <GroupServicesCarousel
+        parentId={"military-help"}
+        title="Послуги перекладу"
+      />
       <ServicesCarousel parentId="services" title="Інші послуги" kind="group" />
       <HowIWork />
       <Comments />

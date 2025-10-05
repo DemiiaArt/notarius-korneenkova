@@ -280,6 +280,78 @@ class ReviewListView(generics.ListAPIView):
         return Review.objects.filter(is_approved=True, is_published=True).order_by('-created_at')
 
 
+class ReviewListWithStatsView(APIView):
+    """
+    Комбинированный endpoint для получения отзывов и статистики рейтинга
+    Поддерживает GET для получения данных и POST для создания отзыва
+    """
+    def get(self, request):
+        """Получение отзывов и статистики"""
+        # Получаем опубликованные отзывы
+        reviews = Review.objects.filter(is_approved=True, is_published=True).order_by('-created_at')
+        reviews_serializer = ReviewSerializer(reviews, many=True)
+        
+        # Получаем статистику рейтинга
+        stats = self._calculate_rating_stats()
+        
+        return Response({
+            'reviews': reviews_serializer.data,
+            'rating_stats': stats
+        })
+    
+    def post(self, request):
+        """Создание нового отзыва"""
+        serializer = ReviewCreateSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            # Сохраняем отзыв с is_approved=False (требует модерации)
+            review = serializer.save(is_approved=False, is_published=False)
+            
+            return Response({
+                'success': True,
+                'message': 'Отзыв успешно отправлен и будет опубликован после модерации',
+                'data': ReviewSerializer(review).data
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+                'success': False,
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+    def _calculate_rating_stats(self):
+        """Расчет статистики рейтинга"""
+        # Получаем все одобренные отзывы для статистики
+        approved_reviews = Review.objects.filter(is_approved=True, is_published=True)
+        
+        if not approved_reviews.exists():
+            return {
+                'averageRating': 0,
+                'totalVotes': 0,
+                'ratingCounts': {5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
+            }
+        
+        # Подсчитываем количество отзывов по каждой оценке
+        rating_counts = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
+        total_votes = 0
+        total_rating = 0
+        
+        for review in approved_reviews:
+            rating = review.rating
+            if rating in rating_counts:
+                rating_counts[rating] += 1
+                total_votes += 1
+                total_rating += rating
+        
+        # Вычисляем средний рейтинг
+        average_rating = round(total_rating / total_votes, 1) if total_votes > 0 else 0
+        
+        return {
+            'averageRating': average_rating,
+            'totalVotes': total_votes,
+            'ratingCounts': rating_counts
+        }
+
+
 class ReviewStatsView(APIView):
     """
     Статистика рейтинга:

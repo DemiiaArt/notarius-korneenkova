@@ -1,14 +1,13 @@
 // src/routes/AppRoutes.jsx
 import { Routes, Route, useLocation, useParams } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import "../nav/attach-components"; // ❗ ВАЖНО: импортируем ПЕРВЫМ, чтобы компоненты назначились
-import { NAV_TREE } from "../nav/nav-tree";
 import { INDICES } from "../nav/indices"; // содержит pathById/idByPath/parentOf
 import { useLang } from "../nav/use-lang";
+import { useHybridNav } from "../contexts/HybridNavContext";
+import DynamicRenderer from "../components/DynamicRenderer/DynamicRenderer";
+import DynamicChildrenLoader from "../components/DynamicChildrenLoader/DynamicChildrenLoader";
 import BlogArticlePage from "../pages/BlogPage/BlogArticlePage";
-
-// Lazy load для динамических страниц категорий
-const DynamicServiceCategoryPage = lazy(() => import("../pages/DynamicServiceCategoryPage/DynamicServiceCategoryPage"));
+import DynamicPageRenderer from "../components/DynamicPages/DynamicPageRenderer";
 
 // Loading component
 const LoadingSpinner = () => (
@@ -32,35 +31,10 @@ const normalizeForRoute = (p) => {
   return noTrailing === "" ? "/" : noTrailing;
 };
 
-/** Твой «окончательный» makeRouteElement с динамическими пропсами */
+/** Создание элемента маршрута с динамическим рендерингом */
 function makeRouteElement(node, pageProps) {
-  const Comp = node.component;
   const nodeProps = node.componentProps || {};
   const getProps = node.getProps;
-
-  // Защита от пустых компонентов
-  if (!Comp) {
-    console.warn(`No component found for node: ${node.id}`, node);
-    return function RouteElement() {
-      return <div>Page not configured: {node.id}</div>;
-    };
-  }
-
-  // Детальная проверка типа компонента
-  const compType = typeof Comp;
-  const isLazy = Comp?.$$typeof === Symbol.for('react.lazy');
-  const isValid = compType === 'function' || isLazy;
-  
-  if (!isValid) {
-    console.error(`❌ INVALID COMPONENT for ${node.id}:`, {
-      nodeId: node.id,
-      compType,
-      isLazy,
-      hasSymbol: Comp?.$$typeof,
-      component: Comp,
-      node
-    });
-  }
 
   return function RouteElement() {
     const { currentLang } = useLang();
@@ -71,63 +45,126 @@ function makeRouteElement(node, pageProps) {
       ? getProps({ lang: currentLang, params, location, node })
       : {};
 
+    // Если есть компонент в узле, используем его
+    if (node.component) {
+      const Comp = node.component;
+      return (
+        <Suspense fallback={<LoadingSpinner />}>
+          <Comp {...pageProps} {...nodeProps} {...dynamic} />
+        </Suspense>
+      );
+    }
+
+    // Иначе используем динамический рендерер по ID
     return (
-      <Suspense fallback={<LoadingSpinner />}>
-        <Comp {...pageProps} {...nodeProps} {...dynamic} />
-      </Suspense>
+      <DynamicRenderer
+        id={node.id}
+        componentProps={{ ...pageProps, ...nodeProps, ...dynamic }}
+      />
     );
   };
 }
 
 /** Рекурсивно собираем все роуты для текущего языка */
-function collectRoutes(node, lang, pageProps, indices, acc = []) {
+function collectRoutes(node, lang, pageProps, acc = []) {
   if (node.component) {
-    const rawPath = indices.pathById[lang]?.[node.id];
+    const rawPath = INDICES.pathById[lang]?.[node.id];
     const path = normalizeForRoute(rawPath);
     if (path) {
       const Element = makeRouteElement(node, pageProps);
       acc.push({ id: node.id, path, Element });
     }
   }
-  node.children?.forEach((ch) => collectRoutes(ch, lang, pageProps, indices, acc));
+  node.children?.forEach((ch) => collectRoutes(ch, lang, pageProps, acc));
   return acc;
 }
 
 export default function AppRoutes({ pageProps = {} }) {
   const { currentLang } = useLang();
-  
-  // Используем статичные данные
-  const routes = collectRoutes(NAV_TREE, currentLang, pageProps, INDICES);
+  const { navTree, loading, error } = useHybridNav();
+
+  // Показываем загрузку
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          fontSize: "18px",
+        }}
+      >
+        Завантаження навігації...
+      </div>
+    );
+  }
+
+  // Показываем ошибку
+  if (error) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          padding: "20px",
+          textAlign: "center",
+        }}
+      >
+        <h2>Помилка завантаження навігації</h2>
+        <p>{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            marginTop: "20px",
+          }}
+        >
+          Спробувати знову
+        </button>
+      </div>
+    );
+  }
+
+  // Если нет навигационного дерева
+  if (!navTree) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          fontSize: "18px",
+        }}
+      >
+        Навігація не знайдена
+      </div>
+    );
+  }
+
+  const routes = collectRoutes(navTree, currentLang, pageProps);
 
   return (
     <Routes>
-      {/* Сначала статичные роуты из navTree (имеют приоритет) */}
       {routes.map(({ id, path, Element }) => (
         <Route key={`${id}:${path}`} path={path} element={<Element />} />
       ))}
 
-      {/* Blog article route */}
-      <Route path="/blog-article" element={<BlogArticlePage />} />
+      {/* Dynamic routes for 3rd and 4th level pages */}
+      <Route path="/:slug1/:slug2/:slug3" element={<DynamicPageRenderer />} />
+      <Route path="/:slug1/:slug2" element={<DynamicPageRenderer />} />
 
-      {/* Динамические роуты ПОСЛЕ статичных (только для неизвестных путей) */}
-      {/* Эти роуты сработают только если путь не совпал ни с одним из статичных */}
-      <Route path="/:slug1/:slug2/:slug3" element={
-        <Suspense fallback={<LoadingSpinner />}>
-          <DynamicServiceCategoryPage />
-        </Suspense>
-      } />
-      <Route path="/:slug1/:slug2" element={
-        <Suspense fallback={<LoadingSpinner />}>
-          <DynamicServiceCategoryPage />
-        </Suspense>
-      } />
-      <Route path="/:slug1" element={
-        <Suspense fallback={<LoadingSpinner />}>
-          <DynamicServiceCategoryPage />
-        </Suspense>
-      } />
-
-      {/* 404 - самый последний */}
+      {/* 404 */}
       <Route path="*" element={<div>404</div>} />
     </Routes>
   );

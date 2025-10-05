@@ -37,7 +37,6 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-    
     }
 
     .blog-title-h1 {
@@ -64,8 +63,8 @@
       .article-tag {
         display: inline-block;
         padding: 14px 28px;
-        background-color: map.get($colors, 5);  
-        color:map.get($colors, 3); 
+        background-color: map.get($colors, 5);
+        color: map.get($colors, 3);
         font-size: 16px;
         font-weight: 400;
         text-transform: uppercase;
@@ -74,8 +73,8 @@
     }
 
     .text-content {
-     // Отступ для тегов справа
-      
+      // Отступ для тегов справа
+
       &-text {
         margin: 0 0 20px 0;
       }
@@ -113,10 +112,9 @@
       background-size: cover;
     }
 
-    
     &-container {
-        padding-top: 50px;
-      }
+      padding-top: 50px;
+    }
   }
 
   .template-text-content {
@@ -134,7 +132,7 @@
     //   gap: 10px;
     //   align-items: flex-end;
     //   order: 1; // Теги справа от статьи
-      
+
     //   .article-tag {
     //     padding: 14px 28px;
     //     font-size: 16px;
@@ -143,7 +141,7 @@
 
     .text-content {
       margin-right: 0; // Без отступа на планшетах
-      
+
       &-text {
         margin: 0 0 30px 0;
       }
@@ -188,9 +186,8 @@
       flex-direction: row;
       gap: 40px;
       max-width: 1200px;
-    //   margin: 0 auto;
+      //   margin: 0 auto;
     }
-
 
     .article-tags {
       flex: 0 0 auto;
@@ -198,8 +195,8 @@
       flex-direction: column;
       gap: 10px;
       align-items: flex-end;
-      order: 1; 
-      
+      order: 1;
+
       .article-tag {
         padding: 14px 28px;
         font-size: 16px;
@@ -210,7 +207,7 @@
       flex: 1;
       max-width: 1200px;
       margin-right: 0;
-      
+
       &-text {
         margin: 0 0 40px 0;
       }

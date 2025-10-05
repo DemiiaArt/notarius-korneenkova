@@ -1,9 +1,58 @@
 import "./ServicesAccordion.scss";
 import { useState, useEffect } from "react";
 import { useIsPC } from "@hooks/isPC";
-import { useServicesFor } from "@hooks/useServicesFor";
-import { useLocation } from "react-router-dom";
-import { detectLocaleFromPath } from "@nav/nav-utils";
+
+// Данные вынесены в отдельный массив
+const services = [
+  {
+    title: "Для громадян України в Україні та за кордоном",
+    content: [
+      "отримання консультацій",
+      "допомога в оформленні документів",
+      "підтримка у складних життєвих обставинах",
+    ],
+  },
+  {
+    title: "Для бізнесу, підприємців і команд",
+    content: [
+      "юридичні консультації",
+      "підтримка в кризових ситуаціях",
+      "розвиток команди та керівництва",
+    ],
+  },
+  {
+    title: "Для людей у перехідних станах (життєві повороти)",
+    content: [
+      "кар’єрні зміни",
+      "переїзд або зміна країни",
+      "втрата близької людини або роботи",
+    ],
+  },
+  {
+    title: "Для тих, хто навчається або викладає",
+    content: [
+      "підтримка студентів у стресових ситуаціях",
+      "розвиток навичок саморефлексії",
+      "покращення комунікацій у навчальному процесі",
+    ],
+  },
+  {
+    title: 'Для тих, хто вже відчуває себе "більше, ніж професія"',
+    content: [
+      "особистий розвиток",
+      "формування цінностей та цілей",
+      "розкриття потенціалу та внутрішньої мотивації",
+    ],
+  },
+  {
+    title: "Для військових та їхніх родин",
+    content: [
+      "оформлення документів у складних умовах",
+      "підтримка з урахуванням психологічних станів",
+      "опора із повагою, швидкістю та людяністю",
+    ],
+  },
+];
 
 // Иконки вынесены отдельно
 const MinusIcon = () => (
@@ -25,74 +74,31 @@ const PlusIcon = () => (
 );
 
 // Один элемент аккордеона
-const AccordionItem = ({ service, isOpen, onToggle, lang }) => {
+const AccordionItem = ({ service, isOpen, onToggle }) => {
   const isPC = useIsPC();
-  
-  // Получаем данные на нужном языке
-  const langMap = { ua: 'uk', ru: 'ru', en: 'en' };
-  const suffix = langMap[lang] || 'uk';
-  
-  const title = service[`title_${suffix}`] || service.title_uk || service.title;
-  const subtitle = service[`subtitle_${suffix}`] || service.subtitle_uk || '';
-  const description = service[`description_${suffix}`] || service.description_uk || '';
-  
-  // Парсим HTML описание в массив пунктов (для списка)
-  const parseDescription = (html) => {
-    if (!html) return [];
-    // Создаем временный div для парсинга HTML
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    
-    // Ищем li элементы
-    const listItems = div.querySelectorAll('li');
-    if (listItems.length > 0) {
-      return Array.from(listItems).map(li => li.textContent);
-    }
-    
-    // Если нет li, ищем p элементы
-    const paragraphs = div.querySelectorAll('p');
-    if (paragraphs.length > 0) {
-      return Array.from(paragraphs).map(p => p.textContent).filter(text => text.trim());
-    }
-    
-    // Если нет структуры, возвращаем весь текст
-    return [div.textContent];
-  };
-  
-  const content = service.content || parseDescription(description);
-  
   return (
     <div
       className={`accordion-item bg1 ${isOpen ? "open" : ""}`}
+      onClick={onToggle}
     >
-      <div onClick={onToggle} style={{ cursor: 'pointer' }}>
-        <div
-          className={`accordion-header ${isPC ? "fs-p--24px" : "fs-p--18px"} fw-medium`}
-        >
-          <span>{title}</span>
-          <span>{isOpen ? <MinusIcon /> : <PlusIcon />}</span>
-        </div>
-        
-        {/* Subtitle всегда видимый */}
-        {subtitle && (
-          <p className={`accordion-subtitle ${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`} style={{ marginTop: '0.5em', paddingRight: '2em' }}>
-            {subtitle}
-          </p>
-        )}
+      <div
+        className={`accordion-header ${isPC ? "fs-p--24px" : "fs-p--18px"} fw-medium`}
+      >
+        <span>{service.title}</span>
+        <span>{isOpen ? <MinusIcon /> : <PlusIcon />}</span>
       </div>
 
-      {/* Description показывается только при раскрытии */}
       <div
         className="accordion-body"
         style={{
-          maxHeight: isOpen ? `${Math.max(content.length * 3, 10)}em` : "0",
+          maxHeight: isOpen ? `${service.content.length * 3}em` : "0",
           transition: "max-height 0.4s ease",
         }}
       >
         <ul
           className={`accordion-content ${isPC ? "fs-p--16px" : "fs-p--14px"} fw-normal lh-150`}
         >
-          {content.map((point, idx) => (
+          {service.content.map((point, idx) => (
             <li key={idx}>{point}</li>
           ))}
         </ul>
@@ -105,11 +111,6 @@ export const ServicesAccordion = () => {
   const [activeItem, setActiveItem] = useState(null);
   const [showCollapsed, setShowCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
-  const { pathname } = useLocation();
-  const lang = detectLocaleFromPath(pathname);
-  const { servicesFor, loading } = useServicesFor();
-  const isPC = useIsPC();
 
   // проверка размера экрана
   useEffect(() => {
@@ -125,31 +126,10 @@ export const ServicesAccordion = () => {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  const handleToggle = (id) => {
-    setActiveItem((prev) => (prev === id ? null : id));
+  const handleToggle = (title) => {
+    setActiveItem((prev) => (prev === title ? null : title));
   };
-  
-  // Используем данные из API или fallback на пустой массив
-  const services = servicesFor.length > 0 ? servicesFor : [];
-  
-  // Если данные загружаются, показываем заглушку
-  if (loading) {
-    return (
-      <div className="accordion-container bg5">
-        <div className="container">
-          <h2 className={`accordion-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} fw-bold`}>
-            ДЛЯ КОГО ПОСЛУГИ
-          </h2>
-          <p className="fs-p--16px">Завантаження...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  // Если нет данных, не показываем компонент
-  if (services.length === 0) {
-    return null;
-  }
+  const isPC = useIsPC();
 
   return (
     <div className="accordion-container bg5">
@@ -169,11 +149,10 @@ export const ServicesAccordion = () => {
           <div className="open">
             {services.slice(0, 3).map((s) => (
               <AccordionItem
-                key={s.id}
+                key={s.title}
                 service={s}
-                isOpen={activeItem === s.id}
-                onToggle={() => handleToggle(s.id)}
-                lang={lang}
+                isOpen={activeItem === s.title}
+                onToggle={() => handleToggle(s.title)}
               />
             ))}
           </div>
@@ -182,11 +161,10 @@ export const ServicesAccordion = () => {
           <div className={`collapsed ${showCollapsed ? "show" : "hide"}`}>
             {services.slice(3).map((s) => (
               <AccordionItem
-                key={s.id}
+                key={s.title}
                 service={s}
-                isOpen={activeItem === s.id}
-                onToggle={() => handleToggle(s.id)}
-                lang={lang}
+                isOpen={activeItem === s.title}
+                onToggle={() => handleToggle(s.title)}
               />
             ))}
           </div>

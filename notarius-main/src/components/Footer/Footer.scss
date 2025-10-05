@@ -7,7 +7,7 @@ button {
   .footer {
     height: 50vh;
     min-height: 460px;
-    padding: 40px 0 0 0;
+    padding: 40px 0 20px 0;
     transition: padding-bottom 0.3s ease-in-out;
     font-family: "Montserrat", sans-serif !important;
     position: relative;
@@ -123,10 +123,10 @@ button {
 
 @media (min-width: 1024px) {
   .footer {
+    padding: 40px 0;
     &-content {
       display: flex;
       justify-content: space-between;
-      padding: 0 0 40px 0;
     }
     &-social-media {
       margin: 0;

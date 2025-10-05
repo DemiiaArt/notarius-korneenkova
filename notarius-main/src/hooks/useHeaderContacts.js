@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { apiClient, API_BASE_URL } from '@/config/api';
+
+const API_BASE_URL = 'http://localhost:8000/api';
 
 export const useHeaderContacts = () => {
   const [contacts, setContacts] = useState({
@@ -45,7 +46,7 @@ export const useHeaderContacts = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_BASE_URL}/header-contacts/update/`, {
+      const response = await fetch(`${API_BASE_URL}/header/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,21 +1,16 @@
 import arrow from "@media/icons/arrow-header-mobile.svg";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Header.scss";
 import { useIsPC } from "@hooks/isPC";
 import { useModal } from "@components/ModalProvider/ModalProvider";
 import MegaPanel from "./MegaPanel";
-import { detectLocaleFromPath } from "@nav/nav-utils";
+import { detectLocaleFromPath, buildFullPathForId } from "@nav/nav-utils";
 import { buildPanelDataFromNav } from "@nav/build-panel-from-nav";
-import { useNav } from "@nav/useNav";
+import { useHybridNav } from "@contexts/HybridNavContext";
 import { useHeaderContacts } from "@hooks/useHeaderContacts";
 
 export const Header = () => {
-  // Константа для управления отображением MegaPanel
-  // true - только "Нотаріальні послуги" показывают MegaPanel, остальные - обычные ссылки
-  // false - все пункты показывают MegaPanel (как было раньше)
-  const SHOW_MEGAPANEL_ONLY_FOR_SERVICES = true;
-
   const languages = {
     ukr: "UA",
     rus: "RU",
@@ -24,6 +19,21 @@ export const Header = () => {
   const { pathname } = useLocation();
   const lang = detectLocaleFromPath(pathname);
 
+  // Отримуємо навігацію з гібридної системи
+  let navTree, loading, error, mergeComplete;
+  try {
+    const hybridNavData = useHybridNav();
+    navTree = hybridNavData.navTree;
+    loading = hybridNavData.loading;
+    error = hybridNavData.error;
+    mergeComplete = hybridNavData.mergeComplete;
+  } catch (contextError) {
+    console.error("Error accessing HybridNav context:", contextError);
+    navTree = null;
+    loading = false;
+    error = contextError.message;
+    mergeComplete = false;
+  }
   const [currentLang, setCurrentLang] = useState("ukr");
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,16 +41,9 @@ export const Header = () => {
   const { open } = useModal();
 
   const isPC = useIsPC();
-
-  // Получаем динамическое навигационное дерево
-  const { navTree } = useNav();
   
-  // Получаем контакты из API
-  const { contacts, loading: contactsLoading } = useHeaderContacts();
-  
-  console.log('Header: navTree received:', navTree);
-  console.log('Header: navTree.children count:', navTree?.children?.length);
-  console.log('Header: contacts received:', contacts);
+  // Загружаем контактные данные из API
+  const { contacts, loading: contactsLoading, error: contactsError } = useHeaderContacts();
 
   useEffect(() => {
     if (isPC) {
@@ -62,18 +65,41 @@ export const Header = () => {
     );
   };
 
-  const panelData = useMemo(() => {
-    console.log('Header: Building panel data from navTree, lang:', lang);
-    const result = buildPanelDataFromNav(navTree, lang);
-    console.log('Header: panelData built:', result);
-    return result;
-  }, [navTree, lang]);
+  const panelData = useMemo(
+    () => (navTree ? buildPanelDataFromNav(navTree, lang) : null),
+    [navTree, lang]
+  );
+
+  // Функция для проверки showMegaPanel из backend
+  const shouldShowMegaPanel = useCallback(
+    (key) => {
+      if (!navTree) return false;
+
+      // Ищем секцию в navTree
+      const findSection = (nodes, targetId) => {
+        for (const node of nodes) {
+          if (node.id === targetId) {
+            return node;
+          }
+          if (node.children) {
+            const found = findSection(node.children, targetId);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      const section = findSection(navTree.children, key);
+      return section?.showMegaPanel === true;
+    },
+    [navTree]
+  );
 
   const hoverTimer = useRef(null);
 
   const openOnHover = (key) => {
-    // Если включен режим "только для услуг", то открываем MegaPanel только для "services"
-    if (SHOW_MEGAPANEL_ONLY_FOR_SERVICES && key !== "services") {
+    // Проверяем showMegaPanel из backend
+    if (!shouldShowMegaPanel(key)) {
       return;
     }
     clearTimeout(hoverTimer.current);
@@ -86,8 +112,8 @@ export const Header = () => {
   };
 
   const onFocusItem = (key) => {
-    // Если включен режим "только для услуг", то открываем MegaPanel только для "services"
-    if (SHOW_MEGAPANEL_ONLY_FOR_SERVICES && key !== "services") {
+    // Проверяем showMegaPanel из backend
+    if (!shouldShowMegaPanel(key)) {
       return;
     }
     setOpenKey(key);
@@ -98,6 +124,64 @@ export const Header = () => {
     setMenuOpen(false);
   };
 
+  const switchLang = (langKey) => {
+    setCurrentLang(langKey);
+    // Тут можна додати логіку перемикання мови
+  };
+
+  // Функція для отримання URL з навігаційного дерева по ID
+  const getNavUrl = (navId, currentLang = lang) => {
+    if (!navTree || loading) return "#";
+    const url = buildFullPathForId(navTree, navId, currentLang);
+    // Відладочне логування
+    if (process.env.NODE_ENV === "development") {
+      console.log(`getNavUrl: ${navId} (${currentLang}) -> ${url}`);
+    }
+    return url || "#";
+  };
+
+  // Показуємо завантаження якщо навігація ще не завантажена або не об'єднана
+  if (loading || !mergeComplete) {
+    return (
+      <header className="header">
+        <div className="header-info bg4">
+          <div className="container">
+            <div className="header-info-content fs-p--16px lh-150 text-decoration--none c1">
+              <div style={{ textAlign: "center", padding: "20px" }}>
+                {loading
+                  ? "Завантаження навігації..."
+                  : "Об'єднання з backend..."}
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  // Показуємо помилку якщо не вдалося завантажити навігацію
+  if (error || !navTree) {
+    return (
+      <header className="header">
+        <div className="header-info bg4">
+          <div className="container">
+            <div className="header-info-content fs-p--16px lh-150 text-decoration--none c1">
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "20px",
+                  color: "#dc3545",
+                }}
+              >
+                Помилка завантаження навігації
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <>
       <header
@@ -106,24 +190,36 @@ export const Header = () => {
         <div className="header-info bg4">
           <div className="container">
             <div className="header-info-content fs-p--16px lh-150 text-decoration--none c1">
-              <a className="header-info-email" href={`mailto:${contacts.email}`}>
-                {contacts.email || 'nknotary.dnipro@gmail.com'}
-              </a>
-              <div className="header-info-phones-wrap">
-                <a className="header-info-phones" href={`tel:${contacts.phone_number?.replace(/\s/g, '')}`}>
-                  {contacts.phone_number || '+ 38 067 820 07 00'}
-                </a>
-                {contacts.phone_number_2 && (
-                  <a className="header-info-phones" href={`tel:${contacts.phone_number_2?.replace(/\s/g, '')}`}>
-                    {contacts.phone_number_2}
+              {contactsLoading ? (
+                <div style={{ textAlign: "center", padding: "10px" }}>
+                  Завантаження контактів...
+                </div>
+              ) : contactsError ? (
+                <div style={{ textAlign: "center", padding: "10px", color: "#dc3545" }}>
+                  Помилка завантаження контактів
+                </div>
+              ) : (
+                <>
+                  <a className="header-info-email" href={`mailto:${contacts.email}`}>
+                    {contacts.email}
                   </a>
-                )}
-              </div>
-              <a className="header-info-address" href="#">
-                {lang === 'ua' && (contacts.address_ua || 'м. Дніпро, пр. Дмитра Яворницького, 2, 49100')}
-                {lang === 'ru' && (contacts.address_ru || 'г. Днепр, пр. Дмитрия Яворницкого, 2, 49100')}
-                {lang === 'en' && (contacts.address_en || 'Dnipro, Dmytra Yavornytskoho Ave, 2, 49100')}
-              </a>
+                  <div className="header-info-phones-wrap">
+                    <a className="header-info-phones" href={`tel:${contacts.phone_number}`}>
+                      {contacts.phone_number}
+                    </a>
+                    {contacts.phone_number_2 && (
+                      <a className="header-info-phones" href={`tel:${contacts.phone_number_2}`}>
+                        {contacts.phone_number_2}
+                      </a>
+                    )}
+                  </div>
+                  <a className="header-info-address" href="#">
+                    {lang === 'ua' ? contacts.address_ua : 
+                     lang === 'ru' ? contacts.address_ru : 
+                     contacts.address_en}
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -370,141 +466,212 @@ export const Header = () => {
         <nav className="navbar-link-block container fs-p--16px uppercase fw-semi-bold lh-150 c3">
           <Link
             className="navbar-link text-decoration--none c3"
-            to="/notarialni-pro-mene"
+            to={getNavUrl("about")}
           >
             Про мене
           </Link>
 
           {/* Нотаріальні послуги */}
-          <div
-            className={`nav-item nav-item--mega ${openKey === "services" ? "is-open" : ""}`}
-            onMouseEnter={() => openOnHover("services")}
-            onMouseLeave={(e) => {
-              // не закрывать, если уходим на дочернюю панель
-              if (e.currentTarget.contains(e.relatedTarget)) return;
-              closeAfterHover();
-            }}
-            onFocus={() => onFocusItem("services")}
-            onBlur={onBlurZone}
-          >
+          {shouldShowMegaPanel("services") ? (
+            <div
+              className={`nav-item nav-item--mega ${openKey === "services" ? "is-open" : ""}`}
+              onMouseEnter={() => openOnHover("services")}
+              onMouseLeave={(e) => {
+                // не закрывать, если уходим на дочернюю панель
+                if (
+                  e.relatedTarget &&
+                  e.currentTarget.contains(e.relatedTarget)
+                )
+                  return;
+                closeAfterHover();
+              }}
+              onFocus={() => onFocusItem("services")}
+              onBlur={onBlurZone}
+            >
+              <Link
+                className="navbar-link text-decoration--none c3"
+                to={getNavUrl("services")}
+              >
+                Нотаріальні послуги
+              </Link>
+
+              {openKey === "services" && (
+                <div
+                  className="nav__mega"
+                  onMouseEnter={() => clearTimeout(hoverTimer.current)}
+                  onMouseLeave={closeAfterHover}
+                >
+                  <MegaPanel
+                    openKey="services"
+                    data={panelData}
+                    onClose={() => setOpenKey(null)}
+                    lang={lang}
+                    navTree={navTree}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
             <Link
               className="navbar-link text-decoration--none c3"
-              to="/notarialni-poslugy"
+              to={getNavUrl("services")}
             >
               Нотаріальні послуги
             </Link>
-
-            {openKey === "services" && (
-              <div
-                className="nav__mega"
-                onMouseEnter={() => clearTimeout(hoverTimer.current)}
-                onMouseLeave={closeAfterHover}
-              >
-                <MegaPanel
-                  openKey="services"
-                  data={panelData}
-                  onClose={() => setOpenKey(null)}
-                  lang={lang}
-                />
-              </div>
-            )}
-          </div>
+          )}
 
           {/* Нотаріальний переклад */}
-          {SHOW_MEGAPANEL_ONLY_FOR_SERVICES ? (
-            <Link
-              className="navbar-link text-decoration--none c3"
-              to="/notarialni-pereklad"
-            >
-              Нотаріальний переклад
-            </Link>
-          ) : (
+          {shouldShowMegaPanel("notary-translate") ? (
             <div
-              className={`nav-item nav-item--mega ${openKey === "translate" ? "is-open" : ""}`}
-              onMouseEnter={() => openOnHover("translate")}
+              className={`nav-item nav-item--mega ${openKey === "notary-translate" ? "is-open" : ""}`}
+              onMouseEnter={() => openOnHover("notary-translate")}
               onMouseLeave={(e) => {
-                if (e.currentTarget.contains(e.relatedTarget)) return;
+                if (
+                  e.relatedTarget &&
+                  e.currentTarget.contains(e.relatedTarget)
+                )
+                  return;
                 closeAfterHover();
               }}
-              onFocus={() => onFocusItem("translate")}
+              onFocus={() => onFocusItem("notary-translate")}
               onBlur={onBlurZone}
             >
-              <Link className="navbar-link text-decoration--none c3">
+              <Link
+                className="navbar-link text-decoration--none c3"
+                to={getNavUrl("notary-translate")}
+              >
                 Нотаріальний переклад
               </Link>
 
-              {openKey === "translate" && (
+              {openKey === "notary-translate" && (
                 <div
                   className="nav__mega"
                   onMouseEnter={() => clearTimeout(hoverTimer.current)}
                   onMouseLeave={closeAfterHover}
                 >
                   <MegaPanel
-                    openKey="translate"
+                    openKey="notary-translate"
                     data={panelData}
                     onClose={() => setOpenKey(null)}
                     lang={lang}
+                    navTree={navTree}
                   />
                 </div>
               )}
             </div>
+          ) : (
+            <Link
+              className="navbar-link text-decoration--none c3"
+              to={getNavUrl("notary-translate")}
+            >
+              Нотаріальний переклад
+            </Link>
           )}
 
           {/* Інші послуги */}
-          {SHOW_MEGAPANEL_ONLY_FOR_SERVICES ? (
-            <Link
-              className="navbar-link text-decoration--none c3"
-              to="/notarialni-inshi"
-            >
-              Інші послуги
-            </Link>
-          ) : (
+          {shouldShowMegaPanel("other-services") ? (
             <div
-              className={`nav-item nav-item--mega ${openKey === "other" ? "is-open" : ""}`}
-              onMouseEnter={() => openOnHover("other")}
+              className={`nav-item nav-item--mega ${openKey === "other-services" ? "is-open" : ""}`}
+              onMouseEnter={() => openOnHover("other-services")}
               onMouseLeave={(e) => {
-                if (e.currentTarget.contains(e.relatedTarget)) return;
+                if (
+                  e.relatedTarget &&
+                  e.currentTarget.contains(e.relatedTarget)
+                )
+                  return;
                 closeAfterHover();
               }}
-              onFocus={() => onFocusItem("other")}
+              onFocus={() => onFocusItem("other-services")}
               onBlur={onBlurZone}
             >
-              <Link className="navbar-link text-decoration--none c3">
+              <Link
+                className="navbar-link text-decoration--none c3"
+                to={getNavUrl("other-services")}
+              >
                 Інші послуги
               </Link>
 
-              {openKey === "other" && (
+              {openKey === "other-services" && (
                 <div
                   className="nav__mega"
                   onMouseEnter={() => clearTimeout(hoverTimer.current)}
                   onMouseLeave={closeAfterHover}
                 >
                   <MegaPanel
-                    openKey="other"
+                    openKey="other-services"
                     data={panelData}
                     onClose={() => setOpenKey(null)}
                     lang={lang}
+                    navTree={navTree}
                   />
                 </div>
               )}
             </div>
+          ) : (
+            <Link
+              className="navbar-link text-decoration--none c3"
+              to={getNavUrl("other-services")}
+            >
+              Інші послуги
+            </Link>
           )}
 
+          {/* Для військових */}
+          {shouldShowMegaPanel("military-help") ? (
+            <div
+              className={`nav-item nav-item--mega ${openKey === "military-help" ? "is-open" : ""}`}
+              onMouseEnter={() => openOnHover("military-help")}
+              onMouseLeave={(e) => {
+                if (
+                  e.relatedTarget &&
+                  e.currentTarget.contains(e.relatedTarget)
+                )
+                  return;
+                closeAfterHover();
+              }}
+              onFocus={() => onFocusItem("military-help")}
+              onBlur={onBlurZone}
+            >
+              <Link
+                className="navbar-link text-decoration--none c3"
+                to={getNavUrl("military-help")}
+              >
+                Для військових
+              </Link>
+
+              {openKey === "military-help" && (
+                <div
+                  className="nav__mega"
+                  onMouseEnter={() => clearTimeout(hoverTimer.current)}
+                  onMouseLeave={closeAfterHover}
+                >
+                  <MegaPanel
+                    openKey="military-help"
+                    data={panelData}
+                    onClose={() => setOpenKey(null)}
+                    lang={lang}
+                    navTree={navTree}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              className="navbar-link text-decoration--none c3"
+              to={getNavUrl("military-help")}
+            >
+              Для військових
+            </Link>
+          )}
           <Link
             className="navbar-link text-decoration--none c3"
-            to="/notarialni-dopomoga-viyskovim"
-          >
-            Для військових
-          </Link>
-          <Link
-            className="navbar-link text-decoration--none c3"
-            to="/notarialni-blog"
+            to={getNavUrl("blog")}
           >
             Блог
           </Link>
           <Link
             className="navbar-link text-decoration--none c3"
-            to="/notarialni-contacty"
+            to={getNavUrl("contacts")}
           >
             Контакти
           </Link>
@@ -519,7 +686,7 @@ export const Header = () => {
           <ul className="mobile-menu-list">
             <Link
               onClick={closeMenu}
-              to="/notarialni-pro-mene"
+              to={getNavUrl("about")}
               className="mobile-menu-item fs-p--16px fw-medium lh-100 c9"
             >
               Про мене
@@ -549,25 +716,25 @@ export const Header = () => {
               >
                 <ul>
                   <li className="accordion-header-content-item">
-                    <Link onClick={closeMenu} to="/notarialni-poslugy">
+                    <Link onClick={closeMenu} to={getNavUrl("services")}>
                       Нотаріальні послуги
-                    </Link>
-                  </li>
-                  <li className="accordion-header-content-item">
-                    <Link onClick={closeMenu} to="/notarialni-pereklad">
-                      Нотаріальний переклад
                     </Link>
                   </li>
                   <li className="accordion-header-content-item">
                     <Link
                       onClick={closeMenu}
-                      to="/notarialni-dopomoga-viyskovim"
+                      to={getNavUrl("notary-translate")}
                     >
+                      Нотаріальний переклад
+                    </Link>
+                  </li>
+                  <li className="accordion-header-content-item">
+                    <Link onClick={closeMenu} to={getNavUrl("military-help")}>
                       Допомога військовим
                     </Link>
                   </li>
                   <li className="fs-p--16px lh-100">
-                    <Link onClick={closeMenu} to="/notarialni-inshi">
+                    <Link onClick={closeMenu} to={getNavUrl("other-services")}>
                       Інші послуги
                     </Link>
                   </li>
@@ -598,30 +765,36 @@ export const Header = () => {
                 }}
               >
                 <ul>
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href={`tel:${contacts.phone_number?.replace(/\s/g, '')}`}>
-                      {contacts.phone_number || '+380 67 820 07 00'}
-                    </a>
-                  </li>
-                  {contacts.phone_number_2 && (
+                  {contactsLoading ? (
                     <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                      <a href={`tel:${contacts.phone_number_2?.replace(/\s/g, '')}`}>
-                        {contacts.phone_number_2}
-                      </a>
+                      Завантаження...
                     </li>
+                  ) : contactsError ? (
+                    <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                      Помилка завантаження
+                    </li>
+                  ) : (
+                    <>
+                      <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                        <a href={`tel:${contacts.phone_number}`}>{contacts.phone_number}</a>
+                      </li>
+                      {contacts.phone_number_2 && (
+                        <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                          <a href={`tel:${contacts.phone_number_2}`}>{contacts.phone_number_2}</a>
+                        </li>
+                      )}
+                      <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                        <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
+                      </li>
+                      <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                        <a href="#">
+                          {lang === 'ua' ? contacts.address_ua : 
+                           lang === 'ru' ? contacts.address_ru : 
+                           contacts.address_en}
+                        </a>
+                      </li>
+                    </>
                   )}
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href={`mailto:${contacts.email}`}>
-                      {contacts.email || 'nknotary.dnipro@gmail.com'}
-                    </a>
-                  </li>
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="#">
-                      {lang === 'ua' && (contacts.address_ua || 'м. Дніпро, пр. Дмитра Яворницького, 2, 49100')}
-                      {lang === 'ru' && (contacts.address_ru || 'г. Днепр, пр. Дмитрия Яворницкого, 2, 49100')}
-                      {lang === 'en' && (contacts.address_en || 'Dnipro, Dmytra Yavornytskoho Ave, 2, 49100')}
-                    </a>
-                  </li>
                 </ul>
               </div>
             </li>

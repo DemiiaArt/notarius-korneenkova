@@ -5,6 +5,7 @@ import "./NotaryTranslatePage.scss";
 
 import { useIsPC } from "@hooks/isPC";
 import contentImg from "@media/text-content-img.png";
+import GroupServicesCarousel from "@components/GroupServicesCarousel/GroupServicesCarousel";
 
 // Lazy load heavy components
 const Comments = lazy(() => import("@components/Comments/Comments"));
@@ -135,7 +136,11 @@ const NotaryTranslatePage = memo(() => {
           </article>
         </div>
       </div>
-      <ServicesCarousel parentId="services" title="Інші послуги" />
+      <GroupServicesCarousel
+        parentId={"notary-translate"}
+        title="Послуги перекладу"
+      />
+      {/* <ServicesCarousel parentId="services" title="Інші послуги" /> */}
       {/* <Questions /> */}
       <Suspense fallback={<div>Завантаження...</div>}>
         <HowIWork />

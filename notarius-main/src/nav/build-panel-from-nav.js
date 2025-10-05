@@ -15,19 +15,15 @@ function sentenceCase(str, locale = "uk") {
 }
 
 export function buildSectionPanel(NAV_TREE, sectionId, lang) {
-  console.log(`buildSectionPanel: Looking for section "${sectionId}"`);
   const stack = findPathStackById(NAV_TREE, sectionId);
   if (!stack || !stack.length) {
-    console.log(`buildSectionPanel: Section "${sectionId}" not found`);
     return null;
   }
 
   const section = stack.at(-1);
-  console.log(`buildSectionPanel: Found section "${sectionId}":`, section);
-  const kids = Array.isArray(section.children)
+  const children = Array.isArray(section.children)
     ? section.children.filter(Boolean)
     : [];
-  console.log(`buildSectionPanel: Section "${sectionId}" has ${kids.length} children`);
   const columns = [];
   const quick = {
     id: "quick",
@@ -36,18 +32,21 @@ export function buildSectionPanel(NAV_TREE, sectionId, lang) {
     items: [],
   };
 
-  kids.forEach((child) => {
+  children.forEach((child) => {
     if (!child) return;
 
     if (child.kind === "page" && child.showInMenu !== false) {
-      quick.items.push({
+      // Добавляем страницы 3-го уровня напрямую в columns для отображения справа
+      columns.push({
         id: child.id,
-        label: sentenceCase(getLabel(child, lang)),
-        url: buildFullPathForId(NAV_TREE, child.id, lang),
+        title: sentenceCase(getLabel(child, lang)),
+        isQuick: false,
+        items: [], // нет детей 4-го уровня
       });
       return;
     }
 
+    // Обрабатываем группы
     if (child.kind === "group" && Array.isArray(child.children)) {
       const items = child.children
         .filter(Boolean)
@@ -58,12 +57,35 @@ export function buildSectionPanel(NAV_TREE, sectionId, lang) {
           url: buildFullPathForId(NAV_TREE, n.id, lang),
         }));
 
-      if (items.length) {
+      // Добавляем группу в columns только если showInMenu === true
+      if (child.showInMenu === true) {
         columns.push({
           id: child.id, // << важное: ID группы из NAV_TREE
           title: sentenceCase(getLabel(child, lang)),
           isQuick: false,
-          items,
+          items, // может быть пустым массивом для групп без детей
+        });
+      }
+    }
+
+    // Обрабатываем секции (дети 3-го уровня)
+    if (child.kind === "section" && Array.isArray(child.children)) {
+      const items = child.children
+        .filter(Boolean)
+        .filter((n) => n && n.kind === "page" && n.showInMenu !== false)
+        .map((n) => ({
+          id: n.id,
+          label: sentenceCase(getLabel(n, lang)),
+          url: buildFullPathForId(NAV_TREE, n.id, lang),
+        }));
+
+      // Добавляем секцию в columns только если showInMenu === true
+      if (child.showInMenu === true) {
+        columns.push({
+          id: child.id, // << важное: ID секции из NAV_TREE
+          title: sentenceCase(getLabel(child, lang)),
+          isQuick: false,
+          items, // дети 3-го уровня
         });
       }
     }
@@ -71,7 +93,6 @@ export function buildSectionPanel(NAV_TREE, sectionId, lang) {
 
   if (quick.items.length) columns.unshift(quick);
 
-  console.log(`buildSectionPanel: Section "${sectionId}" final columns:`, columns);
   return {
     title: sentenceCase(getLabel(section, lang)),
     columns,
@@ -84,10 +105,13 @@ export function buildPanelDataFromNav(NAV_TREE, lang) {
   if (services) out.services = services;
 
   const translate = buildSectionPanel(NAV_TREE, "notary-translate", lang);
-  if (translate) out.translate = translate;
+  if (translate) out["notary-translate"] = translate;
 
   const other = buildSectionPanel(NAV_TREE, "other-services", lang);
-  if (other) out.other = other;
+  if (other) out["other-services"] = other;
+
+  const military = buildSectionPanel(NAV_TREE, "military-help", lang);
+  if (military) out["military-help"] = military;
 
   return out;
 }

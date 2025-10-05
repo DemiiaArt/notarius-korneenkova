@@ -1,0 +1,128 @@
+.service-group-page {
+  padding: 60px 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+  .service-group-header {
+    text-align: center;
+    margin-bottom: 60px;
+
+    .service-group-title {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    .service-group-description {
+      font-size: 1.2rem;
+      color: #7f8c8d;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+
+      @media (max-width: 768px) {
+        font-size: 1rem;
+        padding: 0 20px;
+      }
+    }
+  }
+
+  .service-group-content {
+    .services-subtitle {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #34495e;
+      text-align: center;
+      margin-bottom: 40px;
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 20px;
+      }
+    }
+  }
+}
+
+.service-card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e8f4f8;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .service-card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    line-height: 1.3;
+  }
+
+  .service-card-description {
+    font-size: 1rem;
+    color: #7f8c8d;
+    line-height: 1.6;
+    margin-bottom: 20px;
+
+    // Стили для HTML контента из backend
+    p {
+      margin-bottom: 10px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    ul,
+    ol {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+  }
+
+  .service-card-link {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+  }
+}

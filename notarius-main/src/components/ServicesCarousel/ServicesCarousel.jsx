@@ -2,8 +2,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Link, useLocation } from "react-router-dom";
 import { useLang } from "@nav/use-lang";
-import { buildFullPathForId } from "@nav/nav-utils";
-import { useNav } from "@nav/useNav";
+import { buildFullPathForId, getLabel, findNodeById } from "@nav/nav-utils";
+import { useHybridNav } from "@contexts/HybridNavContext";
 import { useIsPC } from "@hooks/isPC";
 import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import "./ServicesCarousel.scss";
@@ -23,7 +23,25 @@ const ServicesCarousel = ({
   const { currentLang } = useLang();
   const isPC = useIsPC();
   const location = useLocation();
-  const { navTree } = useNav(); // Отримуємо динамічне дерево навігації
+  const { navTree, loading, error } = useHybridNav();
+
+  // Показуємо завантаження якщо навігація ще не завантажена
+  if (loading) {
+    return (
+      <div className={`services-carousel ${className}`}>
+        <div className="container">
+          <div style={{ textAlign: "center", padding: "20px" }}>
+            Завантаження...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Показуємо помилку якщо не вдалося завантажити навігацію
+  if (error || !navTree) {
+    return null;
+  }
 
   // Функция для определения уровня вложенности страницы
   const getPageLevel = (pathname) => {
@@ -55,20 +73,10 @@ const ServicesCarousel = ({
   //   originalKind: kind,
   // });
 
-  // Знаходимо батьківський елемент та його дочірні елементи
+  // Используем функцию из nav-utils для поиска детей
   const findChildren = (node, targetId) => {
-    if (node.id === targetId) {
-      return node.children || [];
-    }
-
-    if (node.children) {
-      for (const child of node.children) {
-        const result = findChildren(child, targetId);
-        if (result) return result;
-      }
-    }
-
-    return null;
+    const targetNode = findNodeById(node, targetId);
+    return targetNode ? targetNode.children || [] : [];
   };
 
   // Логика выбора данных для карусели

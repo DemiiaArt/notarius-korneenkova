@@ -214,10 +214,12 @@
 import { Link, useLocation } from "react-router-dom";
 import "./BreadCrumbs.scss";
 import { useIsPC } from "@hooks/isPC";
-
-// ⬇️ импортируй из своих файлов
-import { NAV_TREE } from "../../nav/nav-tree"; // <-- поправь путь
-import { INDICES } from "../../nav/indices"; // <-- поправь путь
+import { useHybridNav } from "@contexts/HybridNavContext";
+import {
+  findPathStackById,
+  buildFullPathForId,
+  getLabel,
+} from "@nav/nav-utils";
 
 // Маршруты, которые на ярких страницах подсвечиваем иначе (оставил твоё)
 const brightRoutes = {
@@ -241,23 +243,10 @@ const brightRoutes = {
   ]),
 };
 
-// Небольшой помощник, чтобы достать узел по id из NAV_TREE
-function findNodeById(root, targetId) {
-  let found = null;
-  (function dfs(node) {
-    if (found) return;
-    if (node.id === targetId) {
-      found = node;
-      return;
-    }
-    node.children?.forEach(dfs);
-  })(root);
-  return found;
-}
-
 const Breadcrumbs = () => {
   const isPC = useIsPC();
   const location = useLocation();
+  const { navTree, loading, error, mergeComplete } = useHybridNav();
 
   // Язык и сегменты без префикса языка
   const rawSegments = location.pathname.split("/").filter(Boolean);
@@ -276,19 +265,62 @@ const Breadcrumbs = () => {
   const homeColor = isBright ? "c13" : "c15";
   const baseLinkTyposafe = `${isPC ? "fs-p--14px" : "fs-p--12px"} lh-100`;
 
-  // Метки для "домой" берём из NAV_TREE (узел 'home'), иначе дефолт
-  const homeNode = findNodeById(NAV_TREE, "home");
+  // Показываем загрузку если навигация еще не загружена или не объединена
+  if (loading || !mergeComplete) {
+    return (
+      <nav className="breadcrumbs">
+        <span className={`${baseLinkTyposafe} ${homeColor}`}>
+          {loading ? "Завантаження..." : "Об'єднання з backend..."}
+        </span>
+      </nav>
+    );
+  }
+
+  // Показываем ошибку если не удалось загрузить навигацию
+  if (error || !navTree) {
+    return (
+      <nav className="breadcrumbs">
+        <Link
+          className={`breadcrumbs-link ${baseLinkTyposafe} ${homeColor}`}
+          to={lang === "ua" ? "/" : `/${lang}`}
+        >
+          {lang === "ru" ? "Главная" : lang === "en" ? "Main" : "Головна"}
+        </Link>
+      </nav>
+    );
+  }
+
+  // Метки для "домой" берём из API навигации (узел 'home'), иначе дефолт
+  const homeNode = findPathStackById(navTree, "home")?.at(-1);
   const HOME_LABEL =
-    (homeNode?.label && homeNode.label[lang]) ||
+    getLabel(homeNode, lang) ||
     (lang === "ru" ? "Главная" : lang === "en" ? "Main" : "Головна");
 
   const homeTo = lang === "ua" ? "/" : `/${lang}`;
 
-  // Нормализованный текущий путь с завершающим слешем (так строились INDICES)
-  const normPath = location.pathname.replace(/\/+$/, "/");
-  const currentId = INDICES.idByPath[lang]?.[normPath];
+  // Находим текущий узел по пути
+  const currentPath = location.pathname.replace(/\/+$/, "/");
+  let currentId = null;
 
-  // Если индексы не нашли текущую страницу (например, 404) — покажем только «Домой»
+  // Ищем узел, который соответствует текущему пути
+  function findNodeByPath(node, targetPath) {
+    if (!node || !node.children) return null;
+
+    for (const child of node.children) {
+      const childPath = buildFullPathForId(navTree, child.id, lang);
+      if (childPath === targetPath) {
+        return child.id;
+      }
+
+      const found = findNodeByPath(child, targetPath);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  currentId = findNodeByPath(navTree, currentPath);
+
+  // Если не нашли текущую страницу (например, 404) — покажем только «Домой»
   if (!currentId) {
     return (
       <nav className="breadcrumbs">
@@ -302,30 +334,33 @@ const Breadcrumbs = () => {
     );
   }
 
-  // Собираем цепочку id → крошки (исключаем 'home', т.к. рисуем его отдельно)
-  const chain = [];
-  let cur = currentId;
-  while (cur && cur !== "root") {
-    chain.push(cur);
-    cur = INDICES.parentOf[cur];
+  // Собираем цепочку узлов от текущего до корня
+  const pathStack = findPathStackById(navTree, currentId);
+  if (!pathStack) {
+    return (
+      <nav className="breadcrumbs">
+        <Link
+          className={`breadcrumbs-link ${baseLinkTyposafe} ${homeColor}`}
+          to={homeTo}
+        >
+          {HOME_LABEL}
+        </Link>
+      </nav>
+    );
   }
-  chain.reverse();
 
-  // Превращаем в объекты { to, label }, пропуская 'home'
-  const crumbItems = chain
-    .map((id) => {
-      const node = findNodeById(NAV_TREE, id);
-      if (!node) return null;
-
+  // Превращаем в объекты { to, label }, пропуская 'home' и 'root'
+  const crumbItems = pathStack
+    .filter((node) => node.id !== "home" && node.id !== "root")
+    .map((node) => {
       // Включаємо групи тільки якщо у них є слаг
       if (node.kind === "group" && !node.slug?.[lang]) return null;
 
-      const to = INDICES.pathById[lang][id];
-      const label = (node.label && node.label[lang]) || id;
-      return { id, to, label };
+      const to = buildFullPathForId(navTree, node.id, lang);
+      const label = getLabel(node, lang) || node.id;
+      return { id: node.id, to, label };
     })
-    .filter(Boolean)
-    .filter((c) => c.id !== "home"); // 'Домой' рисуем отдельно
+    .filter(Boolean);
 
   return (
     <nav className="breadcrumbs">

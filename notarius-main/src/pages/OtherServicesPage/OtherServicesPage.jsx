@@ -1,16 +1,14 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
-import ServicesCarousel from "@components/ServicesCarousel/ServicesCarousel";
+// import ServicesCarousel from "@components/ServicesCarousel/ServicesCarousel";
 import Comments from "@components/Comments/Comments";
 import HowIWork from "@components/HowIWork/HowIWork";
-import Questions from "@components/Questions/Questions";
+import GroupServicesCarousel from "@components/GroupServicesCarousel/GroupServicesCarousel";
 import ReviewForm from "@components/ReviewForm/ReviewForm";
 import Form from "@components/Form/Form";
 import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
 import "./OtherServicesPage.scss";
 import { useIsPC } from "@hooks/isPC";
 import contentImg from "@media/text-content-img.png";
-import { useEffect } from "react";
-
 const content = [
   {
     type: "paragraph",
@@ -61,24 +59,9 @@ const content = [
     визнаються чинними перед державними органами, судами та іншими
     установами.`,
   },
-  {
-    type: "title",
-    text: "Навіщо потрібен нотаріус?",
-  },
 ];
 
 const OtherServicesPage = () => {
-
-  useEffect(() => {
-    fetch("http://localhost:8000/api/main_page/notarialni-inshi", {
-      method: "GET",
-
-    })
-    .then((data) => data.json())
-    .then((data) => console.log(data))
-    .catch((err) => console.log(err))
-  },[])
-
   const isPC = useIsPC();
   return (
     <>
@@ -145,7 +128,7 @@ const OtherServicesPage = () => {
           </article>
         </div>
       </div>
-      <ServicesCarousel parentId="services" title="Інші послуги" kind="group" />
+      <GroupServicesCarousel parentId={"other-services"} title="Інші послуги" />
       {/* <Questions /> */}
       <HowIWork />
       <Comments />

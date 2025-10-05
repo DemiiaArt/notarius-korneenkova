@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { apiClient, API_BASE_URL } from '@/config/api';
+
+const API_BASE_URL = 'http://localhost:8000/api';
 
 export const useContacts = () => {
   const [contacts, setContacts] = useState({

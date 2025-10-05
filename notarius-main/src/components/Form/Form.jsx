@@ -15,9 +15,10 @@ export const Form = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const isPC = useIsPC();
-  const { submitApplication, loading: isLoading } = useApplications();
+  
+  // Используем хук для отправки заявок
+  const { submitApplication, loading: isLoading, error: apiError, success } = useApplications();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -52,7 +53,7 @@ export const Form = () => {
     let hasError = false;
 
     if (!formData.name.trim()) {
-      setErrors((prev) => ({ ...prev, name: "Поле ім’я обов’язкове" }));
+      setErrors((prev) => ({ ...prev, name: "Поле ім'я обов'язкове" }));
       hasError = true;
     }
 
@@ -66,7 +67,7 @@ export const Form = () => {
 
     if (hasError) return;
 
-    // Отправляем заявку на бэкенд
+    // Отправляем заявку через API
     const result = await submitApplication({
       name: formData.name,
       phone_number: formData.tel
@@ -74,15 +75,11 @@ export const Form = () => {
 
     if (result.success) {
       setIsSubmitted(true);
-      // Очищаем форму через 3 секунды после успешной отправки
-      setTimeout(() => {
-        setFormData({ name: "", tel: "" });
-        setIsSubmitted(false);
-      }, 3000);
+      console.log("✅ Заявка успешно отправлена:", result.data);
     } else {
       setErrors((prev) => ({
         ...prev,
-        tel: result.message || "Помилка при відправці. Спробуйте ще раз.",
+        tel: result.error || "Помилка при відправці. Спробуйте ще раз.",
       }));
     }
   };

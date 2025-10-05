@@ -1,6 +1,6 @@
 /**
- * Hook для работы с заявками на бесплатные консультации (FreeConsultation)
- * Отправка заявок на бэкенд
+ * Hook для работы с бесплатными консультациями
+ * Отправка заявок на бесплатную консультацию
  */
 
 import { useState } from 'react';
@@ -8,7 +8,7 @@ import { apiClient } from '@/config/api';
 
 /**
  * Hook для создания заявки на бесплатную консультацию
- * @returns {Object} { submitConsultation, loading, error, success }
+ * @returns {Object} { submitFreeConsultation, loading, error, success }
  */
 export const useFreeConsultations = () => {
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ export const useFreeConsultations = () => {
   const [success, setSuccess] = useState(false);
 
   /**
-   * Отправка заявки на консультацию на бэкенд
+   * Отправка заявки на бесплатную консультацию
    * @param {Object} data - Данные заявки
    * @param {string} data.name - Имя клиента
    * @param {string} data.phone_number - Номер телефона
@@ -24,7 +24,7 @@ export const useFreeConsultations = () => {
    * @param {string} data.question - Вопрос
    * @returns {Promise<Object>} Результат отправки
    */
-  const submitConsultation = async (data) => {
+  const submitFreeConsultation = async (data) => {
     try {
       setLoading(true);
       setError(null);
@@ -55,19 +55,19 @@ export const useFreeConsultations = () => {
         question: data.question.trim(),
       });
       
-      console.log('✅ Заявка на консультацію успішно відправлена:', response);
+      console.log('✅ Заявка на бесплатную консультацию успешно отправлена:', response);
       setSuccess(true);
       
       return {
         success: true,
         data: response,
-        message: response.message || 'Дякуємо! Ваша заявка прийнята. Ми зв\'яжемося з вами найближчим часом.'
+        message: 'Ваша заявка на безкоштовну консультацію успішно відправлена! Ми зв\'яжемося з вами найближчим часом.'
       };
       
     } catch (err) {
       const errorMessage = err.message || 'Помилка при відправці заявки. Спробуйте ще раз.';
       setError(errorMessage);
-      console.error('❌ Помилка при відправці заявки на консультацію:', err);
+      console.error('❌ Ошибка при отправке заявки на бесплатную консультацию:', err);
       
       return {
         success: false,
@@ -90,7 +90,7 @@ export const useFreeConsultations = () => {
   };
 
   return {
-    submitConsultation,
+    submitFreeConsultation,
     loading,
     error,
     success,
@@ -101,10 +101,10 @@ export const useFreeConsultations = () => {
 /**
  * Пример использования:
  * 
- * const { submitConsultation, loading, error, success } = useFreeConsultations();
+ * const { submitFreeConsultation, loading, error, success } = useFreeConsultations();
  * 
  * const handleSubmit = async (formData) => {
- *   const result = await submitConsultation({
+ *   const result = await submitFreeConsultation({
  *     name: formData.name,
  *     phone_number: formData.tel,
  *     city: formData.city,
@@ -112,12 +112,11 @@ export const useFreeConsultations = () => {
  *   });
  *   
  *   if (result.success) {
- *     console.log('Заявка відправлена!');
+ *     console.log('Заявка на бесплатную консультацию отправлена!');
  *     // Показать сообщение об успехе
  *   } else {
- *     console.error('Помилка:', result.error);
+ *     console.error('Ошибка:', result.error);
  *     // Показать сообщение об ошибке
  *   }
  * };
  */
-

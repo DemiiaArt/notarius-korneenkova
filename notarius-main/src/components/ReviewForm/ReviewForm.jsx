@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useIsPC } from "@hooks/isPC";
-import { apiClient } from "@/config/api";
 import "./ReviewForm.scss";
+import { useReviews, useSubmitReview } from "@hooks/useReviews";
 
 export const ReviewForm = () => {
   const isPC = useIsPC();
@@ -14,17 +14,13 @@ export const ReviewForm = () => {
   const [text, setText] = useState("");
   const [selectedService, setSelectedService] = useState("");
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
   const [isOpen, setIsOpen] = useState(false);
 
-  // Состояние для статистики рейтинга
-  const [ratingStats, setRatingStats] = useState({
-    average_rating: 0,
-    total_reviews: 0,
-    rating_counts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-  });
+  // Загружаем отзывы и статистику рейтинга
+  const { ratingStats, loading: reviewsLoading, error: reviewsError, fetchReviews } = useReviews();
+  
+  // Hook для отправки отзыва
+  const { submitReview, loading: submitLoading, error: submitError, success: submitSuccess, reset: resetSubmit } = useSubmitReview();
 
   // список услуг
   const services = [
@@ -44,21 +40,8 @@ export const ReviewForm = () => {
     },
   ];
 
-  // Загрузка статистики рейтинга с бэкенда
-  useEffect(() => {
-    const fetchRatingStats = async () => {
-      try {
-        const data = await apiClient.get('/reviews/stats/');
-        setRatingStats(data);
-      } catch (error) {
-        console.error('Ошибка при загрузке статистики рейтинга:', error);
-      }
-    };
-
-    fetchRatingStats();
-  }, [isSubmitted]); // Обновляем статистику после отправки нового отзыва
-
-  const { average_rating: averageRating, total_reviews: totalVotes, rating_counts: ratingCounts } = ratingStats;
+  // Динамические данные рейтинга из API
+  const { ratingCounts, totalVotes, averageRating } = ratingStats;
 
   // управление звездами
   const handleClick = (value) => setSelectedRating(value);
@@ -98,33 +81,26 @@ export const ReviewForm = () => {
       return;
     }
 
-    setIsLoading(true);
+    // Отправляем отзыв через API
+    const result = await submitReview({
+      name: name.trim(),
+      service: selectedService,
+      rating: selectedRating,
+      text: text.trim()
+    });
 
-    try {
-      await apiClient.post('/reviews/create/', {
-        name: name.trim(),
-        service: selectedService,
-        rating: selectedRating,
-        text: text.trim(),
-      });
-
-      setIsSubmitted(true);
-
-      // очистка полей после отправки
+    if (result.success) {
+      // Очистка полей после успешной отправки
       setName("");
       setText("");
       setSelectedRating(0);
       setSelectedService("");
-
-      // Автоматически скрываем сообщение об успехе через 5 секунд
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 5000);
-    } catch (err) {
-      console.error('Ошибка при отправке отзыва:', err);
-      alert("Помилка при відправці. Спробуйте ще раз.");
-    } finally {
-      setIsLoading(false);
+      setIsOpen(false);
+      
+      // Обновляем статистику рейтинга
+      fetchReviews();
+    } else {
+      alert(result.message || "Помилка при відправці. Спробуйте ще раз.");
     }
   };
 
@@ -155,43 +131,59 @@ export const ReviewForm = () => {
           <h2 className={`${isPC ? "fs-p--28px" : "fs-p--18px"} fw-semi-bold`}>
             Рейтинг
           </h2>
-          <div className="rate-wrap">
-            <div className="rate-score-wrap">
-              <div
-                className={`rating-score fw-bold ${isPC ? "fs-p--40px" : "fs-p--24px"} c3`}
-              >
-                {averageRating}
-              </div>
-              <div
-                className={`votes ${isPC ? "fs-p--16px" : "fs-p--10px"} lh-150 c3`}
-              >
-                {totalVotes} {getReviewWord(totalVotes)}
-              </div>
+          {reviewsLoading ? (
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              <p className={`${isPC ? "fs-p--16px" : "fs-p--12px"} c3`}>
+                Завантаження рейтингу...
+              </p>
             </div>
-            <div className="stars c7" id="averageStars">
-              {renderAverageStars(averageRating)}
+          ) : reviewsError ? (
+            <div style={{ textAlign: "center", padding: "20px", color: "#dc3545" }}>
+              <p className={`${isPC ? "fs-p--16px" : "fs-p--12px"} c3`}>
+                Помилка завантаження рейтингу
+              </p>
             </div>
-          </div>
-          <div className="rating-bars">
-            {[5, 4, 3, 2, 1].map((rating) => {
-              const count = ratingCounts[rating] || 0;
-              const percent = totalVotes > 0 ? (count / totalVotes) * 100 : 0;
-
-              return (
-                <div className="bar" key={rating}>
-                  <span className={`${isPC ? "fs-p--18px" : "fs-p--10px"}`}>
-                    {rating}
-                  </span>
-                  <div className="bar-container">
-                    <div
-                      className="bar-fill"
-                      style={{ width: `${percent}%` }}
-                    ></div>
-                  </div>
+          ) : (
+            <div className="rate-wrap">
+              <div className="rate-score-wrap">
+                <div
+                  className={`rating-score fw-bold ${isPC ? "fs-p--40px" : "fs-p--24px"} c3`}
+                >
+                  {averageRating}
                 </div>
-              );
-            })}
-          </div>
+                <div
+                  className={`votes ${isPC ? "fs-p--16px" : "fs-p--10px"} lh-150 c3`}
+                >
+                  {totalVotes} {getReviewWord(totalVotes)}
+                </div>
+              </div>
+              <div className="stars c7" id="averageStars">
+                {renderAverageStars(averageRating)}
+              </div>
+            </div>
+          )}
+          {!reviewsLoading && !reviewsError && (
+            <div className="rating-bars">
+              {[5, 4, 3, 2, 1].map((rating) => {
+                const count = ratingCounts[rating] || 0;
+                const percent = totalVotes > 0 ? (count / totalVotes) * 100 : 0;
+
+                return (
+                  <div className="bar" key={rating}>
+                    <span className={`${isPC ? "fs-p--18px" : "fs-p--10px"}`}>
+                      {rating}
+                    </span>
+                    <div className="bar-container">
+                      <div
+                        className="bar-fill"
+                        style={{ width: `${percent}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Форма отзыва */}
@@ -237,7 +229,7 @@ export const ReviewForm = () => {
                 placeholder="Ім'я"
                 autoComplete="on"
                 required
-                disabled={isSubmitted}
+                disabled={submitSuccess}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -250,7 +242,7 @@ export const ReviewForm = () => {
             >
               <div
                 className={`c14 custom-select ${isOpen ? "open" : ""}`}
-                onClick={() => !isSubmitted && setIsOpen(!isOpen)}
+                onClick={() => !submitSuccess && setIsOpen(!isOpen)}
               >
                 <div
                   className={`c3 custom-select__trigger ${!selectedService ? "placeholder" : ""}`}
@@ -297,7 +289,7 @@ export const ReviewForm = () => {
                   e.target.style.height = `${e.target.scrollHeight - 10}px`;
                 }}
                 rows={1}
-                disabled={isSubmitted}
+                disabled={submitSuccess}
               />
               <label htmlFor="message">Ваше враження</label>
             </div>
@@ -306,7 +298,7 @@ export const ReviewForm = () => {
             <button
               type="submit"
               className={`btn-submit ${
-                isSubmitted
+                submitSuccess
                   ? isPC
                     ? "fs-p--16px"
                     : "fs-p--10px"
@@ -314,11 +306,11 @@ export const ReviewForm = () => {
                     ? "fs-p--16px"
                     : "fs-p--12px"
               } bg4 c1 fw-normal uppercase`}
-              disabled={isSubmitted || isLoading}
+              disabled={submitSuccess || submitLoading}
             >
-              {isSubmitted
-                ? "Дякуємо! Ваш відгук з’явиться після модерації"
-                : isLoading
+              {submitSuccess
+                ? "Дякуємо! Ваш відгук з'явиться після модерації"
+                : submitLoading
                   ? "Відправка..."
                   : "ВІДПРАВИТИ"}
             </button>

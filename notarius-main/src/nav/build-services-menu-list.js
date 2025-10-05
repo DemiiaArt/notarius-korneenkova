@@ -1,6 +1,5 @@
 // src/nav/buildServicesMenuList.js
-import { NAV_TREE } from "./nav-tree";
-import { INDICES } from "./indices"; // содержит pathById/idByPath/parentOf для всех узлов
+import { findPathStackById, buildFullPathForId, getLabel } from "./nav-utils";
 
 function findNodeById(root, targetId) {
   let found = null;
@@ -15,13 +14,13 @@ function findNodeById(root, targetId) {
   return found;
 }
 
-function pagesToItems(node, lang) {
+function pagesToItems(node, navTree, lang) {
   if (!node?.children) return [];
   return node.children
     .filter((ch) => ch.kind === "page")
     .map((ch) => ({
-      text: ch.label?.[lang] || ch.id,
-      link: INDICES.pathById[lang]?.[ch.id] || "",
+      text: getLabel(ch, lang) || ch.id,
+      link: buildFullPathForId(navTree, ch.id, lang) || "",
     }));
 }
 
@@ -33,8 +32,10 @@ function pagesToItems(node, lang) {
  * - КОНСУЛЬТАЦІЯ...     -> consult-copy-duplicate
  * - АПОСТИЛЬ ТА АФІДЕВІТ -> apostille-affidavit
  */
-export function buildServicesMenuList(lang = "ua") {
-  const servicesSection = findNodeById(NAV_TREE, "services");
+export function buildServicesMenuList(navTree, lang = "ua") {
+  if (!navTree) return { items: [] };
+
+  const servicesSection = findNodeById(navTree, "services");
   if (!servicesSection) return { items: [] };
 
   const getGroup = (id) => findNodeById(servicesSection, id);
@@ -50,8 +51,8 @@ export function buildServicesMenuList(lang = "ua") {
     .map(({ id, titleOverride }) => {
       const g = getGroup(id);
       return {
-        title: titleOverride ?? (g?.label?.[lang] || ""),
-        items: pagesToItems(g, lang),
+        title: titleOverride ?? getLabel(g, lang),
+        items: pagesToItems(g, navTree, lang),
       };
     })
     .filter((g) => g.items.length > 0);
@@ -65,26 +66,30 @@ export function buildServicesMenuList(lang = "ua") {
   return {
     items: [
       {
-        title: getGroup("contracts")?.label?.[lang] || "ДОГОВОРИ",
+        title: getLabel(getGroup("contracts"), lang) || "ДОГОВОРИ",
         subMenu: contractsGroups,
       },
       {
-        text: poaGroup?.label?.[lang] || "ДОВІРЕНІСТЬ",
-        subMenu: [{ title: "", items: pagesToItems(poaGroup, lang) }],
+        text: getLabel(poaGroup, lang) || "ДОВІРЕНІСТЬ",
+        subMenu: [{ title: "", items: pagesToItems(poaGroup, navTree, lang) }],
       },
       {
-        text: signGroup?.label?.[lang] || "ПІДПИС, ЗАЯВА (на бланках)",
-        subMenu: [{ title: "", items: pagesToItems(signGroup, lang) }],
+        text: getLabel(signGroup, lang) || "ПІДПИС, ЗАЯВА (на бланках)",
+        subMenu: [{ title: "", items: pagesToItems(signGroup, navTree, lang) }],
       },
       {
         text:
-          consultGroup?.label?.[lang] ||
+          getLabel(consultGroup, lang) ||
           "КОНСУЛЬТАЦІЯ. КОПІЯ ДОКУМЕНТІВ. ПОВТОРНЕ ОТРИМАННЯ СВІДОЦТВ.",
-        subMenu: [{ title: "", items: pagesToItems(consultGroup, lang) }],
+        subMenu: [
+          { title: "", items: pagesToItems(consultGroup, navTree, lang) },
+        ],
       },
       {
-        text: apostilleGroup?.label?.[lang] || "АПОСТИЛЬ ТА АФІДЕВІТ",
-        subMenu: [{ title: "", items: pagesToItems(apostilleGroup, lang) }],
+        text: getLabel(apostilleGroup, lang) || "АПОСТИЛЬ ТА АФІДЕВІТ",
+        subMenu: [
+          { title: "", items: pagesToItems(apostilleGroup, navTree, lang) },
+        ],
       },
     ],
   };

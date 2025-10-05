@@ -6,7 +6,7 @@ import HowIWork from "@components/HowIWork/HowIWork";
 import Questions from "@components/Questions/Questions";
 import ReviewForm from "@components/ReviewForm/ReviewForm";
 import Form from "@components/Form/Form";
-import contentImg from "@media/text-content-img.png"; 
+import contentImg from "@media/text-content-img.png";
 import "./ServicesPage.scss";
 import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
 import { useIsPC } from "@hooks/isPC";

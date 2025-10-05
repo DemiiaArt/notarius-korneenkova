@@ -1,14 +1,14 @@
 /**
- * Hook для работы с формой "Связаться с нами" (ContactUs)
- * Отправка обращений на бэкенд
+ * Hook для работы с формой "Связаться с нами"
+ * Отправка заявок через форму контактов
  */
 
 import { useState } from 'react';
 import { apiClient } from '@/config/api';
 
 /**
- * Hook для создания обращения через форму контактов
- * @returns {Object} { submitContact, loading, error, success }
+ * Hook для создания заявки через форму контактов
+ * @returns {Object} { submitContactUs, loading, error, success }
  */
 export const useContactUs = () => {
   const [loading, setLoading] = useState(false);
@@ -16,14 +16,14 @@ export const useContactUs = () => {
   const [success, setSuccess] = useState(false);
 
   /**
-   * Отправка обращения через форму контактов на бэкенд
-   * @param {Object} data - Данные обращения
+   * Отправка заявки через форму контактов
+   * @param {Object} data - Данные заявки
    * @param {string} data.name - Имя клиента
    * @param {string} data.phone_number - Номер телефона
    * @param {string} data.question - Вопрос
    * @returns {Promise<Object>} Результат отправки
    */
-  const submitContact = async (data) => {
+  const submitContactUs = async (data) => {
     try {
       setLoading(true);
       setError(null);
@@ -49,19 +49,19 @@ export const useContactUs = () => {
         question: data.question.trim(),
       });
       
-      console.log('✅ Звернення успішно відправлено:', response);
+      console.log('✅ Заявка через форму контактов успешно отправлена:', response);
       setSuccess(true);
       
       return {
         success: true,
         data: response,
-        message: response.message || 'Дякуємо за звернення! Ми зв\'яжемося з вами найближчим часом.'
+        message: 'Ваше повідомлення успішно відправлено! Ми зв\'яжемося з вами найближчим часом.'
       };
       
     } catch (err) {
-      const errorMessage = err.message || 'Помилка при відправці звернення. Спробуйте ще раз.';
+      const errorMessage = err.message || 'Помилка при відправці повідомлення. Спробуйте ще раз.';
       setError(errorMessage);
-      console.error('❌ Помилка при відправці звернення:', err);
+      console.error('❌ Ошибка при отправке заявки через форму контактов:', err);
       
       return {
         success: false,
@@ -84,7 +84,7 @@ export const useContactUs = () => {
   };
 
   return {
-    submitContact,
+    submitContactUs,
     loading,
     error,
     success,
@@ -95,22 +95,21 @@ export const useContactUs = () => {
 /**
  * Пример использования:
  * 
- * const { submitContact, loading, error, success } = useContactUs();
+ * const { submitContactUs, loading, error, success } = useContactUs();
  * 
  * const handleSubmit = async (formData) => {
- *   const result = await submitContact({
+ *   const result = await submitContactUs({
  *     name: formData.name,
  *     phone_number: formData.tel,
  *     question: formData.question
  *   });
  *   
  *   if (result.success) {
- *     console.log('Звернення відправлено!');
+ *     console.log('Заявка через форму контактов отправлена!');
  *     // Показать сообщение об успехе
  *   } else {
- *     console.error('Помилка:', result.error);
+ *     console.error('Ошибка:', result.error);
  *     // Показать сообщение об ошибке
  *   }
  * };
  */
-

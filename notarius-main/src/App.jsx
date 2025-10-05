@@ -6,12 +6,12 @@ import ScrollToTop from "@components/ScrollToTop/ScrollToTop";
 import FreeConsult from "@components/ModalWindows/FreeConsult";
 import OrderConsult from "@components/ModalWindows/OrderConsult";
 import AppRoutes from "./routes/AppRoutes";
-import { NavProvider } from "@nav/NavProvider";
+import { HybridNavProvider } from "./contexts/HybridNavContext";
 import "./nav/attach-components";
 
 function App() {
   return (
-    <NavProvider>
+    <HybridNavProvider>
       <Header />
       <main className="main">
         <ScrollToTop behavior="smooth" />
@@ -22,7 +22,7 @@ function App() {
       <Footer />
       <FreeConsult />
       <OrderConsult />
-    </NavProvider>
+    </HybridNavProvider>
   );
 }
 
