@@ -17,8 +17,8 @@ class Header(models.Model):
         return self.email
     
     class Meta:
-        verbose_name = "Шапка профиля"
-        verbose_name_plural = "Шапки профиля"
+        verbose_name = "Контакты в шапке профиля"
+        verbose_name_plural = "Контакты в шапке профиля"
 
 
 class BackgroundVideo(models.Model):
@@ -400,3 +400,34 @@ class Review(models.Model):
         ordering = ['-created_at']
 
 
+
+class FrequentlyAskedQuestion(models.Model):
+    """
+    Частые вопросы (FAQ) для блока на главной странице.
+    Хранит вопрос/ответ на трех языках, порядок и флаг публикации.
+    """
+    # Вопросы на трех языках
+    question_ua = models.CharField(max_length=255, verbose_name="Питання (UA)")
+    question_ru = models.CharField(max_length=255, verbose_name="Вопрос (RU)")
+    question_en = models.CharField(max_length=255, verbose_name="Question (EN)")
+
+    # Ответы на трех языках
+    answer_ua = models.TextField(verbose_name="Відповідь (UA)")
+    answer_ru = models.TextField(verbose_name="Ответ (RU)")
+    answer_en = models.TextField(verbose_name="Answer (EN)")
+
+    # Порядок отображения и публикация
+    order = models.PositiveIntegerField(default=0, verbose_name="Порядок отображения")
+    is_published = models.BooleanField(default=True, verbose_name="Опубликовано")
+
+    # Метаданные
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Частый вопрос"
+        verbose_name_plural = "Частые вопросы"
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return self.question_ua

@@ -20,13 +20,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
 from main_page.views import CKEditorUploadView
+from main_page.admin import admin_site
 
 def health_check(request):
     """Простая проверка здоровья приложения"""
     return JsonResponse({"status": "ok", "message": "Django app is running"})
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin_site.urls),  # Используем кастомный админ-сайт
     path('api/blog/', include('blog.urls')),
     path('api/', include('main_page.urls')),
     path('ckeditor5/', include('django_ckeditor_5.urls')),

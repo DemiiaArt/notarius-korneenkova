@@ -3,22 +3,39 @@ from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFe
 from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory,
-    ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs
+    ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs,
+    FrequentlyAskedQuestion
 )
 
 
 
 class HeaderSerializer(serializers.ModelSerializer):
+    # Многоязычное поле адреса, выбор через контекст (lang)
+    address = serializers.SerializerMethodField()
+
     class Meta:
         model = Header
         fields = [
             'email', 
             'phone_number', 
             'phone_number_2', 
-            'address_ua', 
-            'address_en', 
-            'address_ru'
+            'address'
         ]
+
+    def get_address(self, obj):
+        """Возвращает адрес в зависимости от выбранного языка.
+        Если lang некорректный/не передан — возвращаем словарь всех языков.
+        """
+        lang = self.context.get('lang', 'ua')
+        if lang in ['ua', 'ru', 'en']:
+            mapping = {
+                'ua': 'address_ua',
+                'ru': 'address_ru',
+                'en': 'address_en',
+            }
+            return getattr(obj, mapping[lang], '')
+        # По умолчанию возвращаем украинский
+        return obj.address_ua
 
 class BackgroundVideoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,15 +43,65 @@ class BackgroundVideoSerializer(serializers.ModelSerializer):
         fields = ['id', 'video_name', 'video']
 
 class AboutMeSerializer(serializers.ModelSerializer):
+    # Агрегированные поля с выбором языка через контекст
+    subtitle = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    text = serializers.SerializerMethodField()
+
+    # Возвращаем абсолютный URL для фото
+    photo = serializers.SerializerMethodField()
+
     class Meta:
         model = AboutMe
         fields = [
-            'id', 
-            'subtitle_uk', 'subtitle_en', 'subtitle_ru',
-            'title_uk', 'title_en', 'title_ru',
-            'text_uk', 'text_en', 'text_ru',
+            'id',
+            'subtitle',
+            'title',
+            'text',
             'photo'
         ]
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_subtitle(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'subtitle_uk',
+            'ru': 'subtitle_ru',
+            'en': 'subtitle_en',
+        }
+        return getattr(obj, mapping[lang], '')
+
+    def get_title(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'title_uk',
+            'ru': 'title_ru',
+            'en': 'title_en',
+        }
+        return getattr(obj, mapping[lang], '')
+
+    def get_text(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'text_uk',
+            'ru': 'text_ru',
+            'en': 'text_en',
+        }
+        return getattr(obj, mapping[lang], '')
+
+    def get_photo(self, obj):
+        # Строим абсолютный URL картинки для фронтенда
+        request = self.context.get('request')
+        try:
+            if obj.photo and hasattr(obj.photo, 'url'):
+                url = obj.photo.url
+                return request.build_absolute_uri(url) if request else url
+        except Exception:
+            return None
+        return None
 
 
 class ServiceCategorySerializer(serializers.ModelSerializer):
@@ -189,14 +256,50 @@ class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
         return feature_texts
         
 class ServicesForSerializer(serializers.ModelSerializer):
+    # Агрегированные поля с выбором языка через контекст
+    title = serializers.SerializerMethodField()
+    subtitle = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
     class Meta:
         model = ServicesFor
         fields = [
             'id',
-            'title_uk', 'title_en', 'title_ru',
-            'subtitle_uk', 'subtitle_en', 'subtitle_ru',
-            'description_uk', 'description_en', 'description_ru'
+            'title',
+            'subtitle',
+            'description'
         ]
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_title(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'title_uk',
+            'ru': 'title_ru',
+            'en': 'title_en',
+        }
+        return getattr(obj, mapping[lang], '')
+
+    def get_subtitle(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'subtitle_uk',
+            'ru': 'subtitle_ru',
+            'en': 'subtitle_en',
+        }
+        return getattr(obj, mapping[lang], '')
+
+    def get_description(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'description_uk',
+            'ru': 'description_ru',
+            'en': 'description_en',
+        }
+        return getattr(obj, mapping[lang], '')
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -219,14 +322,40 @@ class ApplicationCreateSerializer(serializers.ModelSerializer):
 
 
 class VideoInterviewSerializer(serializers.ModelSerializer):
+    # Агрегированные поля с выбором языка через контекст
+    title = serializers.SerializerMethodField()
+    text = serializers.SerializerMethodField()
+
     class Meta:
         model = VideoInterview
         fields = [
             'id',
-            'title_video_uk', 'title_video_en', 'title_video_ru',
-            'text_video_uk', 'text_video_en', 'text_video_ru',
+            'title',
+            'text',
             'video'
         ]
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_title(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'title_video_uk',
+            'ru': 'title_video_ru',
+            'en': 'title_video_en',
+        }
+        return getattr(obj, mapping[lang], '')
+
+    def get_text(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'text_video_uk',
+            'ru': 'text_video_ru',
+            'en': 'text_video_en',
+        }
+        return getattr(obj, mapping[lang], '')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -427,6 +556,31 @@ class ContactUsCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Имя не должно превышать 255 символов")
         
         return value.strip()
+
+
+class FrequentlyAskedQuestionSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для часто задаваемых вопросов с поддержкой выбора языка.
+    Возвращает { title, text, order } для фронтенда.
+    """
+    title = serializers.SerializerMethodField()
+    text = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FrequentlyAskedQuestion
+        fields = ['title', 'text', 'order']
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_title(self, obj):
+        lang = self._get_lang()
+        return getattr(obj, f'question_{lang}', '')
+
+    def get_text(self, obj):
+        lang = self._get_lang()
+        return getattr(obj, f'answer_{lang}', '')
     
     def validate_phone_number(self, value):
         """

@@ -11,7 +11,8 @@ from django.urls import reverse
 
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
-    ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs
+    ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs,
+    FrequentlyAskedQuestion
 )
 from .serializer import (
     HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer,
@@ -19,7 +20,7 @@ from .serializer import (
     ServicesForSerializer, ApplicationSerializer, ApplicationCreateSerializer,
     VideoInterviewSerializer, ReviewSerializer, ReviewCreateSerializer,
     FreeConsultationSerializer, FreeConsultationCreateSerializer,
-    ContactUsSerializer, ContactUsCreateSerializer
+    ContactUsSerializer, ContactUsCreateSerializer, FrequentlyAskedQuestionSerializer
 )
 
 
@@ -38,17 +39,20 @@ class HeaderView(generics.ListAPIView):
         # Получаем первый объект Header (предполагаем, что он один)
         header_data = Header.objects.first()
         
+        # Получаем язык из query параметра, по умолчанию 'ua'
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        
         if header_data:
-            serializer = self.get_serializer(header_data)
+            serializer = self.get_serializer(header_data, context={'lang': lang})
             return Response(serializer.data)
         else:
             return Response({
                 'email': '',
                 'phone_number': '',
                 'phone_number_2': '',
-                'address_ua': '',
-                'address_en': '',
-                'address_ru': ''
+                'address': ''
             })
 
 class BackgroundVideoView(generics.ListAPIView):
@@ -74,15 +78,20 @@ class AboutMeView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         # Получаем последнюю запись AboutMe (самую новую по ID)
         about_me_data = AboutMe.objects.last()
+
+        # Определяем язык из query параметра
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
         
         if about_me_data:
-            serializer = self.get_serializer(about_me_data)
+            serializer = self.get_serializer(about_me_data, context={'lang': lang, 'request': request})
             return Response(serializer.data)
         else:
             return Response({
-                'subtitle_uk': '', 'subtitle_en': '', 'subtitle_ru': '',
-                'title_uk': '', 'title_en': '', 'title_ru': '',
-                'text_uk': '', 'text_en': '', 'text_ru': '',
+                'subtitle': '',
+                'title': '',
+                'text': '',
                 'photo': None
             })
 
@@ -191,6 +200,16 @@ class ServicesForListView(generics.ListAPIView):
     queryset = ServicesFor.objects.all()
     serializer_class = ServicesForSerializer
 
+    def list(self, request, *args, **kwargs):
+        # Определяем язык из query параметра
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
+        return Response(serializer.data)
+
 
 class ApplicationCreateView(generics.CreateAPIView):
     """
@@ -225,6 +244,16 @@ class VideoInterviewListView(generics.ListAPIView):
     """
     queryset = VideoInterview.objects.all()
     serializer_class = VideoInterviewSerializer
+
+    def list(self, request, *args, **kwargs):
+        # Определяем язык из query параметра
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
+        return Response(serializer.data)
 
 
 class VideoInterviewDetailView(generics.RetrieveAPIView):
@@ -278,7 +307,6 @@ class ReviewListView(generics.ListAPIView):
     def get_queryset(self):
         # Возвращаем только одобренные и опубликованные отзывы
         return Review.objects.filter(is_approved=True, is_published=True).order_by('-created_at')
-
 
 class ReviewListWithStatsView(APIView):
     """
@@ -350,7 +378,6 @@ class ReviewListWithStatsView(APIView):
             'totalVotes': total_votes,
             'ratingCounts': rating_counts
         }
-
 
 class ReviewStatsView(APIView):
     """
@@ -499,3 +526,21 @@ class ContactUsDetailView(generics.RetrieveUpdateAPIView):
     """
     queryset = ContactUs.objects.all()
     serializer_class = ContactUsSerializer
+
+
+class FrequentlyAskedQuestionListView(generics.ListAPIView):
+    """
+    Список опубликованных частых вопросов. Поддерживает параметр lang (ua/ru/en).
+    """
+    serializer_class = FrequentlyAskedQuestionSerializer
+
+    def get_queryset(self):
+        return FrequentlyAskedQuestion.objects.filter(is_published=True).order_by('order', 'created_at')
+
+    def list(self, request, *args, **kwargs):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
+        return Response(serializer.data)

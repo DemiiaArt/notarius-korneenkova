@@ -2,8 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # ===== ОСНОВНЫЕ ДАННЫЕ САЙТА =====
-    
     # Контактные данные для шапки сайта (телефоны, email, адреса на 3 языках)
     path('header/', views.HeaderView.as_view(), name='header-data'),
     
@@ -15,35 +13,35 @@ urlpatterns = [
     
     # Иерархическая структура всех услуг (MPTT дерево)
     path('services/', views.ServicesCategoryView.as_view(), name='services'),
-    
+
     # ===== УСЛУГИ =====
     
     # Услуги сгруппированные по целевой аудитории (военные, бизнес, частные лица)
     path('services-for/', views.ServicesForListView.as_view(), name='services-for-list'),
-    
+
     # ===== ФОРМЫ И ЗАЯВКИ =====
     
     # Общие заявки с сайта (имя + телефон) - используется в Form.jsx
     path('applications/', views.ApplicationCreateView.as_view(), name='application-create'),
     path('applications/list/', views.ApplicationListView.as_view(), name='application-list'),  # Админка
     path('applications/<int:pk>/', views.ApplicationDetailView.as_view(), name='application-detail'),  # Админка
-    
+
     # Заявки на бесплатные консультации (имя + телефон + город + вопрос) - используется в FreeConsult.jsx
     path('free-consultations/', views.FreeConsultationCreateView.as_view(), name='free-consultation-create'),
     path('free-consultations/list/', views.FreeConsultationListView.as_view(), name='free-consultation-list'),  # Админка
     path('free-consultations/<int:pk>/', views.FreeConsultationDetailView.as_view(), name='free-consultation-detail'),  # Админка
-    
+
     # Форма "Связаться с нами" (имя + телефон + вопрос) - используется в OrderConsult.jsx
     path('contact-us/', views.ContactUsCreateView.as_view(), name='contact-us-create'),
     path('contact-us/list/', views.ContactUsListView.as_view(), name='contact-us-list'),  # Админка
     path('contact-us/<int:pk>/', views.ContactUsDetailView.as_view(), name='contact-us-detail'),  # Админка
-    
+
     # ===== ВИДЕО ИНТЕРВЬЮ =====
     
     # Список видео интервью
     path('video-interviews/', views.VideoInterviewListView.as_view(), name='video-interview-list'),
     path('video-interviews/<int:pk>/', views.VideoInterviewDetailView.as_view(), name='video-interview-detail'),
-    
+
     # ===== ОТЗЫВЫ И РЕЙТИНГ =====
     
     # Комбинированный endpoint: отзывы + статистика рейтинга (GET/POST) - используется в ReviewForm.jsx и Comments.jsx
@@ -63,7 +61,7 @@ urlpatterns = [
     
     # Детали отзыва, обновление, удаление (админка)
     path('reviews/<int:pk>/', views.ReviewDetailView.as_view(), name='review-detail'),
-    
+
     # ===== ДЕТАЛЬНЫЕ СТРАНИЦЫ УСЛУГ =====
     # ВАЖНО: Slug паттерны должны быть В КОНЦЕ, так как они catch-all
     
@@ -75,4 +73,7 @@ urlpatterns = [
     
     # Детальная страница услуги 3-го уровня
     path('services/<slug:slug1>/<slug:slug2>/<slug:slug3>/', views.ServiceCategoryDetailView.as_view(), name='category_level3'),
+
+    # Эндпоинты часто задаваемых вопросов
+    path('faqs/', views.FrequentlyAskedQuestionListView.as_view(), name='faq-list'),
 ]
