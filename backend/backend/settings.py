@@ -53,9 +53,13 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Настройки для статических файлов
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+_static_dir = BASE_DIR / "static"
+if _static_dir.exists():
+    STATICFILES_DIRS = [
+        _static_dir,
+    ]
+else:
+    STATICFILES_DIRS = []
 
 # Application definition
 
@@ -124,12 +128,16 @@ database_url = (
 )
 
 if database_url:
+    parsed_db = dj_database_url.config(
+        default=database_url,
+        conn_max_age=600,
+        ssl_require=True,
+    )
+    # Если в URL отсутствует имя БД, подставим из env
+    if not parsed_db.get('NAME'):
+        parsed_db['NAME'] = os.getenv('PGDATABASE') or os.getenv('POSTGRES_DB') or ''
     DATABASES = {
-        'default': dj_database_url.config(
-            default=database_url,
-            conn_max_age=600,
-            ssl_require=True,
-        )
+        'default': parsed_db
     }
 else:
     # Fallback к отдельным PG* переменным (Railway обычно предоставляет PGDATABASE, PGUSER, PGPASSWORD, PGHOST, PGPORT)
