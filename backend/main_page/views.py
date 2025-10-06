@@ -21,7 +21,8 @@ from .serializer import (
     ServicesForSerializer, ApplicationSerializer, ApplicationCreateSerializer,
     VideoInterviewSerializer, ReviewSerializer, ReviewCreateSerializer,
     FreeConsultationSerializer, FreeConsultationCreateSerializer,
-    ContactUsSerializer, ContactUsCreateSerializer, FrequentlyAskedQuestionSerializer
+    ContactUsSerializer, ContactUsCreateSerializer, FrequentlyAskedQuestionSerializer,
+    ContactsSerializer
 )
 
 
@@ -66,47 +67,84 @@ class ContactsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        header = Header.objects.first()
-        if not header:
-            # Возвращаем пустые значения, чтобы фронт не падал
-            return Response({
-                'email': '',
-                'phone_number': '',
-                'phone_number_2': '',
-                'address': ''
-            })
-
-        # Язык как в HeaderView
         lang = request.GET.get('lang', 'ua')
-        serializer = HeaderSerializer(header, context={'lang': lang})
-        return Response(serializer.data)
+        # Предпочтительно возвращаем расширенную модель Contacts
+        contacts = Header.objects.order_by('-id').first()
+        if contacts:
+            serializer = ContactsSerializer(contacts, context={'lang': lang})
+            return Response(serializer.data)
+
+        # Фолбэк к Header для совместимости
+        header = Header.objects.first()
+        if header:
+            serializer = HeaderSerializer(header, context={'lang': lang})
+            data = serializer.data
+            data.update({
+                'working_hours': 'Пн-Пт 9:00–18:00',
+                'instagram_url': None,
+                'facebook_url': None,
+                'twitter_url': None,
+                'x_url': None,
+                'telegram_url': None,
+            })
+            return Response(data)
+
+        return Response({
+            'email': '',
+            'phone_number': '',
+            'phone_number_2': '',
+            'address': '',
+            'working_hours': 'Пн-Пт 9:00–18:00',
+            'instagram_url': None,
+            'facebook_url': None,
+            'twitter_url': None,
+            'x_url': None,
+            'telegram_url': None,
+        })
 
     def post(self, request):
-        """Обновление контактов (используется фронтендом в /contacts/update/)."""
+        """Обновление/создание контактов с расширенными полями."""
         data = request.data or {}
-        header = Header.objects.first()
-        if not header:
-            header = Header.objects.create(
+        contacts = Header.objects.order_by('-id').first()
+        if not contacts:
+            contacts = Header.objects.create(
                 email=data.get('email', ''),
                 phone_number=data.get('phone_number', ''),
                 phone_number_2=data.get('phone_number_2', ''),
                 address_ua=data.get('address', ''),
                 address_en=data.get('address', ''),
                 address_ru=data.get('address', ''),
+                working_hours_ua=data.get('working_hours', ''),
+                working_hours_en=data.get('working_hours', ''),
+                working_hours_ru=data.get('working_hours', ''),
+                instagram_url=data.get('instagram_url'),
+                facebook_url=data.get('facebook_url'),
+                twitter_url=data.get('twitter_url'),
+                x_url=data.get('x_url'),
+                telegram_url=data.get('telegram_url'),
             )
         else:
-            header.email = data.get('email', header.email)
-            header.phone_number = data.get('phone_number', header.phone_number)
-            header.phone_number_2 = data.get('phone_number_2', header.phone_number_2)
-            # Одно поле address приходит с фронта — пишем во все языки
+            contacts.email = data.get('email', contacts.email)
+            contacts.phone_number = data.get('phone_number', contacts.phone_number)
+            contacts.phone_number_2 = data.get('phone_number_2', contacts.phone_number_2)
             addr = data.get('address')
             if addr is not None:
-                header.address_ua = addr
-                header.address_en = addr
-                header.address_ru = addr
-            header.save()
+                contacts.address_ua = addr
+                contacts.address_en = addr
+                contacts.address_ru = addr
+            hours = data.get('working_hours')
+            if hours is not None:
+                contacts.working_hours_ua = hours
+                contacts.working_hours_en = hours
+                contacts.working_hours_ru = hours
+            contacts.instagram_url = data.get('instagram_url', contacts.instagram_url)
+            contacts.facebook_url = data.get('facebook_url', contacts.facebook_url)
+            contacts.twitter_url = data.get('twitter_url', contacts.twitter_url)
+            contacts.x_url = data.get('x_url', contacts.x_url)
+            contacts.telegram_url = data.get('telegram_url', contacts.telegram_url)
+            contacts.save()
 
-        serializer = HeaderSerializer(header, context={'lang': request.GET.get('lang', 'ua')})
+        serializer = ContactsSerializer(contacts, context={'lang': request.GET.get('lang', 'ua')})
         return Response(serializer.data)
 
 class BackgroundVideoView(generics.ListAPIView):

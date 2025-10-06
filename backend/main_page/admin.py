@@ -194,9 +194,18 @@ class DateRangeFilter(SimpleListFilter):
             return queryset.filter(created_at__date__gte=month_ago)
 
 class HeaderAdmin(admin.ModelAdmin):
-    list_display = ['email', 'phone_number', 'phone_number_2', 'address_ua', 'address_en', 'address_ru']
+    list_display = [
+        'email', 'phone_number', 'phone_number_2',
+        'address_ua', 'address_en', 'address_ru',
+        'working_hours_ua', 'instagram_url', 'facebook_url', 'twitter_url', 'x_url', 'telegram_url'
+    ]
     list_filter = ['email']
-    search_fields = ['email', 'phone_number', 'phone_number_2', 'address_ua', 'address_en', 'address_ru']
+    search_fields = [
+        'email', 'phone_number', 'phone_number_2',
+        'address_ua', 'address_en', 'address_ru',
+        'working_hours_ua', 'working_hours_ru', 'working_hours_en',
+        'instagram_url', 'facebook_url', 'twitter_url', 'x_url', 'telegram_url'
+    ]
     save_on_top = True
     list_per_page = 25
     
@@ -207,6 +216,13 @@ class HeaderAdmin(admin.ModelAdmin):
         ('Адреса', {
             'fields': ('address_ua', 'address_en', 'address_ru'),
             'description': 'Адреса на разных языках'
+        }),
+        ('Години роботи', {
+            'fields': ('working_hours_ua', 'working_hours_en', 'working_hours_ru'),
+            'description': 'Локализованные часы работы'
+        }),
+        ('Социальные сети', {
+            'fields': ('instagram_url', 'facebook_url', 'twitter_url', 'x_url', 'telegram_url')
         }),
     )
     

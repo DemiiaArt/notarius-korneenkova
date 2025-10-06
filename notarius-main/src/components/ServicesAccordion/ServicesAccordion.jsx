@@ -1,59 +1,11 @@
 import "./ServicesAccordion.scss";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
+import { API_BASE_URL } from "../../config/api";
+import { useLanguage } from "@hooks/useLanguage";
 
-// Данные вынесены в отдельный массив
-const services = [
-  {
-    title: "Для громадян України в Україні та за кордоном",
-    content: [
-      "отримання консультацій",
-      "допомога в оформленні документів",
-      "підтримка у складних життєвих обставинах",
-    ],
-  },
-  {
-    title: "Для бізнесу, підприємців і команд",
-    content: [
-      "юридичні консультації",
-      "підтримка в кризових ситуаціях",
-      "розвиток команди та керівництва",
-    ],
-  },
-  {
-    title: "Для людей у перехідних станах (життєві повороти)",
-    content: [
-      "кар’єрні зміни",
-      "переїзд або зміна країни",
-      "втрата близької людини або роботи",
-    ],
-  },
-  {
-    title: "Для тих, хто навчається або викладає",
-    content: [
-      "підтримка студентів у стресових ситуаціях",
-      "розвиток навичок саморефлексії",
-      "покращення комунікацій у навчальному процесі",
-    ],
-  },
-  {
-    title: 'Для тих, хто вже відчуває себе "більше, ніж професія"',
-    content: [
-      "особистий розвиток",
-      "формування цінностей та цілей",
-      "розкриття потенціалу та внутрішньої мотивації",
-    ],
-  },
-  {
-    title: "Для військових та їхніх родин",
-    content: [
-      "оформлення документів у складних умовах",
-      "підтримка з урахуванням психологічних станів",
-      "опора із повагою, швидкістю та людяністю",
-    ],
-  },
-];
+// Данные теперь приходят из backend: /api/services-for/?lang=ua|ru|en
 
 // Иконки вынесены отдельно
 const MinusIcon = () => (
@@ -77,6 +29,7 @@ const PlusIcon = () => (
 // Один элемент аккордеона
 const AccordionItem = ({ service, isOpen, onToggle }) => {
   const isPC = useIsPC();
+  const bodyRef = useRef(null);
   return (
     <div
       className={`accordion-item bg1 ${isOpen ? "open" : ""}`}
@@ -91,18 +44,34 @@ const AccordionItem = ({ service, isOpen, onToggle }) => {
 
       <div
         className="accordion-body"
+        ref={bodyRef}
         style={{
-          maxHeight: isOpen ? `${service.content.length * 3}em` : "0",
+          maxHeight: isOpen ? `${bodyRef.current?.scrollHeight || 0}px` : "0",
           transition: "max-height 0.4s ease",
         }}
       >
-        <ul
+        <div
           className={`accordion-content ${isPC ? "fs-p--16px" : "fs-p--14px"} fw-normal lh-150`}
         >
-          {service.content.map((point, idx) => (
-            <li key={idx}>{point}</li>
-          ))}
-        </ul>
+          {/* Закрыто: показываем подзаголовок */}
+          {!isOpen && service.subtitle && (
+            <p className="accordion-subtitle">{service.subtitle}</p>
+          )}
+          {/* Открыто: показываем подзаголовок + описание */}
+          {isOpen && (
+            <div>
+              {service.subtitle && (
+                <p className="accordion-subtitle fw-medium">{service.subtitle}</p>
+              )}
+              {service.description && (
+                <div
+                  className="accordion-description"
+                  dangerouslySetInnerHTML={{ __html: service.description }}
+                />
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -113,6 +82,10 @@ export const ServicesAccordion = ({ title = "ДЛЯ КОГО ПОСЛУГИ" }) 
   const [showCollapsed, setShowCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { t } = useTranslation("components.ServicesAccordion");
+  const { currentLang } = useLanguage();
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Функция для получения переведенного заголовка
   const getTranslatedTitle = (originalTitle) => {
@@ -135,6 +108,29 @@ export const ServicesAccordion = ({ title = "ДЛЯ КОГО ПОСЛУГИ" }) 
     window.addEventListener("resize", checkScreen);
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
+
+  // загрузка данных ServicesFor с backend
+  useEffect(() => {
+    let isCancelled = false;
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const resp = await fetch(`${API_BASE_URL}/services-for/?lang=${encodeURIComponent(currentLang || "ua")}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (!isCancelled) setServices(Array.isArray(data) ? data : []);
+      } catch (e) {
+        if (!isCancelled) setError(e.message || "Failed to load services");
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentLang]);
 
   const handleToggle = (title) => {
     setActiveItem((prev) => (prev === title ? null : title));

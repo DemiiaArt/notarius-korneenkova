@@ -2,12 +2,18 @@ import { useState, useEffect } from 'react';
 
 import { API_BASE_URL } from "../config/api";
 
-export const useContacts = () => {
+export const useContacts = (lang = 'ua') => {
   const [contacts, setContacts] = useState({
     email: '',
     phone_number: '',
     phone_number_2: '',
-    address: ''
+    address: '',
+    working_hours: '',
+    instagram_url: null,
+    facebook_url: null,
+    twitter_url: null,
+    x_url: null,
+    telegram_url: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +23,7 @@ export const useContacts = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_BASE_URL}/contacts/`);
+      const response = await fetch(`${API_BASE_URL}/contacts/?lang=${encodeURIComponent(lang)}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,7 +40,13 @@ export const useContacts = () => {
         email: 'nknotary.dnipro@gmail.com',
         phone_number: '+ 38 067 820 07 00',
         phone_number_2: '+ 38 067 544 07 00',
-        address: 'м. Дніпро, бул. Слави, 2-Б, 49100'
+        address: 'м. Дніпро, бул. Слави, 2-Б, 49100',
+        working_hours: 'Пн-Пт 9:00–18:00',
+        instagram_url: null,
+        facebook_url: null,
+        twitter_url: null,
+        x_url: null,
+        telegram_url: null,
       });
     } finally {
       setLoading(false);
@@ -72,7 +84,7 @@ export const useContacts = () => {
 
   useEffect(() => {
     fetchContacts();
-  }, []);
+  }, [lang]);
 
   return {
     contacts,

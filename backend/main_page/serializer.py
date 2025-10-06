@@ -6,6 +6,7 @@ from .models import (
     ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs,
     FrequentlyAskedQuestion
 )
+from .models import Header
 
 
 
@@ -36,6 +37,44 @@ class HeaderSerializer(serializers.ModelSerializer):
             return getattr(obj, mapping[lang], '')
         # По умолчанию возвращаем украинский
         return obj.address_ua
+
+
+class ContactsSerializer(serializers.ModelSerializer):
+    address = serializers.SerializerMethodField()
+    working_hours = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Header
+        fields = [
+            'email', 'phone_number', 'phone_number_2',
+            'address',
+            'working_hours',
+            'instagram_url', 'facebook_url', 'twitter_url', 'x_url', 'telegram_url'
+        ]
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_address(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'address_ua',
+            'ru': 'address_ru',
+            'en': 'address_en',
+        }
+        return getattr(obj, mapping[lang], '')
+
+    def get_working_hours(self, obj):
+        lang = self._get_lang()
+        mapping = {
+            'ua': 'working_hours_ua',
+            'ru': 'working_hours_ru',
+            'en': 'working_hours_en',
+        }
+        value = getattr(obj, mapping[lang], None)
+        # дефолт
+        return value or 'Пн-Пт 9:00–18:00'
 
 class BackgroundVideoSerializer(serializers.ModelSerializer):
     class Meta:
