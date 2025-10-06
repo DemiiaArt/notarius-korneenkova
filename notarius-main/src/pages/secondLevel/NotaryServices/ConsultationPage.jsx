@@ -1,8 +1,8 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
 import GroupServicesCarousel from "@components/GroupServicesCarousel/GroupServicesCarousel";
-import Comments from "@components/Comments 2/Comments";
+import Comments from "@components/Comments/Comments";
 import HowIWork from "@components/HowIWork/HowIWork";
-import ReviewForm from "@components/ReviewForm 2/ReviewForm";
+import ReviewForm from "@components/ReviewForm/ReviewForm";
 import Form from "@components/Form/Form";
 
 import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
