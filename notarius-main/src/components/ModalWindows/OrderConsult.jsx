@@ -3,7 +3,6 @@ import { useIsPC } from "@hooks/isPC";
 import "./FreeConsult.scss";
 import "./OrderConsult.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
-import { useContactUs } from "@hooks/useContactUs";
 
 const formName = "freeOrder";
 
@@ -21,14 +20,12 @@ export const OrderConsult = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { close, getOpenModalState } = useModal();
   const openModalState = getOpenModalState(formName);
 
   const isPC = useIsPC();
-  
-  // Используем хук для отправки заявок через форму контактов
-  const { submitContactUs, loading: isLoading, error: apiError, success } = useContactUs();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -93,21 +90,19 @@ export const OrderConsult = () => {
 
     if (hasError) return;
 
-    // Отправляем заявку через форму контактов
-    const result = await submitContactUs({
-      name: formData.name,
-      phone_number: formData.tel,
-      question: formData.question
-    });
+    setIsLoading(true);
 
-    if (result.success) {
+    try {
+      // имитация запроса
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsSubmitted(true);
-      console.log("✅ Заявка на консультацию отправлена:", result.data);
-    } else {
+    } catch (err) {
       setErrors((prev) => ({
         ...prev,
-        tel: result.error || "Помилка при відправці. Спробуйте ще раз.",
+        tel: "Помилка при відправці. Спробуйте ще раз.",
       }));
+    } finally {
+      setIsLoading(false);
     }
   };
 

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useApiNavTree } from "../hooks/useApiNavTree";
 import { attachComponentsToTree } from "../nav/component-registry";
 import { updateIndices } from "../nav/indices";
+import { useLanguage } from "../hooks/useLanguage";
 
 const ApiNavContext = createContext();
 
@@ -16,7 +17,7 @@ export const useApiNav = () => {
 export const ApiNavProvider = ({ children }) => {
   const { navTree, loading, error, refreshNavTree, clearCache } =
     useApiNavTree();
-  const [currentLang, setCurrentLang] = useState("ua");
+  const { currentLang } = useLanguage();
   const [navTreeWithComponents, setNavTreeWithComponents] = useState(null);
 
   // Прикріпляємо компоненти до навігаційного дерева та оновлюємо індекси
@@ -45,7 +46,6 @@ export const ApiNavProvider = ({ children }) => {
     loading,
     error,
     currentLang,
-    setCurrentLang,
     refreshNavTree,
     clearCache,
   };

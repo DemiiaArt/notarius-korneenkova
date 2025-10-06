@@ -1,8 +1,14 @@
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 import "./HowIWork.scss";
 
 const HowIWork = () => {
   const isPC = useIsPC(1200);
+  const { getTranslations } = useTranslation("components.HowIWork");
+
+  // Получаем переводы для компонента
+  const translations = getTranslations();
+  const { title, steps } = translations;
 
   return (
     <div className="how-i-work">
@@ -11,7 +17,7 @@ const HowIWork = () => {
           <h2
             className={`how-i-work-title uppercase fw-bold ${isPC ? "fs-h2--32px" : "fs-p--20px"} c1`}
           >
-            Як я працюю
+            {title || "Як я працюю"}
           </h2>
           <div className="how-i-work-block bg4">
             <article className="how-i-work-block-item">
@@ -23,7 +29,7 @@ const HowIWork = () => {
               <p
                 className={`how-i-work-block-item-text fw-normal ${isPC ? "fs-p--18px lh-150" : "fs-p--14px lh-100"}  c8`}
               >
-                Ви залишаєте заявку або телефонуєте
+                {steps?.step1 || "Ви залишаєте заявку або телефонуєте"}
               </p>
             </article>
             <article className="how-i-work-block-item">
@@ -35,7 +41,8 @@ const HowIWork = () => {
               <p
                 className={`how-i-work-block-item-text fw-normal ${isPC ? "fs-p--18px lh-150" : "fs-p--14px lh-100"}  c8`}
               >
-                Безкоштовна консультація та перевірка документів
+                {steps?.step2 ||
+                  "Безкоштовна консультація та перевірка документів"}
               </p>
             </article>
             <article className="how-i-work-block-item">
@@ -47,7 +54,7 @@ const HowIWork = () => {
               <p
                 className={`how-i-work-block-item-text fw-normal ${isPC ? "fs-p--18px lh-150" : "fs-p--14px lh-100"}  c8`}
               >
-                Підготовка та оформлення необхідних паперів
+                {steps?.step3 || "Підготовка та оформлення необхідних паперів"}
               </p>
             </article>
             <article className="how-i-work-block-item">
@@ -59,7 +66,7 @@ const HowIWork = () => {
               <p
                 className={`how-i-work-block-item-text fw-normal ${isPC ? "fs-p--18px lh-150" : "fs-p--14px lh-100"}  c8`}
               >
-                Засвідчення документів і передача їх клієнту
+                {steps?.step4 || "Засвідчення документів і передача їх клієнту"}
               </p>
             </article>
           </div>

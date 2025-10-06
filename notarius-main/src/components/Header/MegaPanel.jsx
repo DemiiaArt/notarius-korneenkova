@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "./MegaPanel.scss";
 import { buildFullPathForId } from "@nav/nav-utils";
+import { useLanguage } from "@hooks/useLanguage";
 
 const MERGE_TO_CONTRACTS_IDS = new Set([
   "contracts",
@@ -99,10 +100,14 @@ export default function MegaPanel({
   openKey,
   onClose,
   data,
-  lang = "ua",
+  lang = "ua", // Оставляем для обратной совместимости
   navTree = null,
 }) {
   const ref = useRef(null);
+  const { currentLang } = useLanguage();
+
+  // Используем currentLang из контекста вместо переданного параметра
+  const activeLang = currentLang || lang;
 
   // — hooks всегда вызываются —
   useEffect(() => {
@@ -127,16 +132,35 @@ export default function MegaPanel({
   // Функция для получения URL секции
   const getSectionUrl = (sectionId) => {
     if (!navTree) return "#";
-    return buildFullPathForId(navTree, sectionId, lang) || "#";
+    return buildFullPathForId(navTree, sectionId, activeLang) || "#";
   };
 
-  // Определяем базовый путь в зависимости от секции
-  const getBasePath = (sectionId) => {
-    if (sectionId === "services") return "notarialni-poslugy";
-    if (sectionId === "notary-translate") return "notarialni-pereklad";
-    if (sectionId === "other-services") return "notarialni-inshi";
-    if (sectionId === "military-help") return "notarialni-dopomoga-viyskovim";
-    return "notarialni-poslugy"; // fallback
+  // Определяем базовый путь в зависимости от секции и языка
+  const getBasePath = (sectionId, lang = activeLang) => {
+    const paths = {
+      ua: {
+        services: "notarialni-poslugy",
+        "notary-translate": "notarialni-pereklad",
+        "other-services": "notarialni-inshi",
+        "military-help": "notarialni-dopomoga-viyskovim",
+      },
+      ru: {
+        services: "notarialni-poslugy",
+        "notary-translate": "notarialni-pereklad",
+        "other-services": "notarialni-inshi",
+        "military-help": "notarialni-pomosch-voennym",
+      },
+      en: {
+        services: "notary-services",
+        "notary-translate": "notary-translate",
+        "other-services": "notary-other",
+        "military-help": "notary-military-help",
+      },
+    };
+
+    return (
+      paths[lang]?.[sectionId] || paths.ua[sectionId] || "notarialni-poslugy"
+    );
   };
   // ----- данные панели -----
   const section = openKey ? data?.[openKey] : null;
@@ -165,14 +189,14 @@ export default function MegaPanel({
     if (MERGE_TO_CONTRACTS_IDS.has(col.id)) {
       const b = buckets.get("contracts");
       if (!b.title && col.id === "contracts")
-        b.title = col.title || fallbackTitle("contracts", lang);
+        b.title = col.title || fallbackTitle("contracts", activeLang);
       b.items.push(...(col.items || []));
       return;
     }
 
     if (buckets.has(col.id)) {
       const b = buckets.get(col.id);
-      if (!b.title) b.title = col.title || fallbackTitle(col.id, lang);
+      if (!b.title) b.title = col.title || fallbackTitle(col.id, activeLang);
       b.items.push(...(col.items || []));
     }
   });
@@ -194,7 +218,7 @@ export default function MegaPanel({
     .map((id) => {
       const b = buckets.get(id);
       if (!b) return null;
-      const title = b.title || fallbackTitle(id, lang);
+      const title = b.title || fallbackTitle(id, activeLang);
 
       // Для секций как "services": если есть группы с детьми, показываем все группы слева
       // Для других секций: показываем только группы с детьми
@@ -263,7 +287,7 @@ export default function MegaPanel({
                           to={
                             g.id.includes("-section-title")
                               ? getSectionUrl(openKey)
-                              : `/${lang === "ua" ? "" : lang + "/"}${getBasePath(openKey)}/${getSlugForGroup(g.id, lang, navTree)}`
+                              : `/${activeLang === "ua" ? "" : activeLang + "/"}${getBasePath(openKey, activeLang)}/${getSlugForGroup(g.id, activeLang, navTree)}`
                           }
                           className={`mega__leftItem ${i === activeIdx ? "is-active" : ""}`}
                           onMouseEnter={() => setActiveIdx(i)}
@@ -280,7 +304,7 @@ export default function MegaPanel({
                           to={
                             g.id.includes("-section-title")
                               ? getSectionUrl(openKey)
-                              : `/${lang === "ua" ? "" : lang + "/"}${getBasePath(openKey)}/${getSlugForGroup(g.id, lang, navTree)}`
+                              : `/${activeLang === "ua" ? "" : activeLang + "/"}${getBasePath(openKey, activeLang)}/${getSlugForGroup(g.id, activeLang, navTree)}`
                           }
                           className="mega__leftSpan fs-p--16px fw-semi-bold c3"
                           style={{ opacity: "0.7" }}
@@ -303,7 +327,7 @@ export default function MegaPanel({
                   ? cols.map((col) => (
                       <Link
                         key={col.id}
-                        to={`/${lang === "ua" ? "" : lang + "/"}${getBasePath(openKey)}/${getSlugForGroup(col.id, lang, navTree)}`}
+                        to={`/${activeLang === "ua" ? "" : activeLang + "/"}${getBasePath(openKey, activeLang)}/${getSlugForGroup(col.id, activeLang, navTree)}`}
                         className="mega__link fs-p--12px fw-normal"
                         onClick={onClose}
                       >

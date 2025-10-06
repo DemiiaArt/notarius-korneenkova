@@ -1,8 +1,8 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
 import GroupServicesCarousel from "@components/GroupServicesCarousel/GroupServicesCarousel";
-import Comments from "@components/Comments/Comments";
+import Comments from "@components/Comments 2/Comments";
 import HowIWork from "@components/HowIWork/HowIWork";
-import ReviewForm from "@components/ReviewForm/ReviewForm";
+import ReviewForm from "@components/ReviewForm 2/ReviewForm";
 import Form from "@components/Form/Form";
 import contentImg from "@media/text-content-img.png";
 
@@ -127,7 +127,10 @@ const AttorneyPage = () => {
           </article>
         </div>
       </div>
-      <GroupServicesCarousel parentId="power-of-attorney" title="Категорії довіреностей" />
+      <GroupServicesCarousel
+        parentId="power-of-attorney"
+        title="Категорії довіреностей"
+      />
       <HowIWork />
       <Comments />
       <ReviewForm />

@@ -17,7 +17,7 @@ export const useContacts = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_BASE_URL}/header/`);
+      const response = await fetch(`${API_BASE_URL}/contacts/`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

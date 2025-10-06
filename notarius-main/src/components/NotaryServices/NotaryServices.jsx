@@ -3,13 +3,16 @@ import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import "./NotaryServices.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
 
-const NotaryServices = ({ title, listItems }) => {
+const NotaryServices = ({ title, listItems, heroImageUrl }) => {
   const isPC = useIsPC();
   const { open } = useModal();
+  const backgroundStyle = heroImageUrl
+    ? { backgroundImage: `url(http://localhost:8000${heroImageUrl})` }
+    : undefined;
 
   return (
     <div className="services-page-shadow-target">
-      <div className="services-page">
+      <div className="services-page" style={backgroundStyle}>
         <div className="container">
           <div className="services-page-content">
             <Breadcrumbs />
@@ -25,7 +28,7 @@ const NotaryServices = ({ title, listItems }) => {
                 isPC ? "fs-p--16px" : "fs-p--14px"
               } uppercase c1`}
             >
-              {listItems.map((item, index) => (
+              {listItems?.map((item, index) => (
                 <li key={index} className="services-page-list-item">
                   {item}
                 </li>

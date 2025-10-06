@@ -132,7 +132,7 @@ const MilitaryPage = () => {
       </div>
       <GroupServicesCarousel
         parentId={"military-help"}
-        title="Послуги перекладу"
+        title="Послуги допомога військовим"
       />
       <ServicesCarousel parentId="services" title="Інші послуги" kind="group" />
       <HowIWork />

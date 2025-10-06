@@ -38,10 +38,28 @@ export function findPathStackById(root, id) {
 export function buildFullPathForId(root, id, lang) {
   const stack = findPathStackById(root, id);
   if (!stack) return null;
-  const segments = stack
-    .filter((n) => n.kind !== "group" || n.slug?.[lang]) // Включаємо групи тільки якщо у них є слаг
-    .map((n) => (n.slug?.[lang] || "").trim())
-    .filter(Boolean);
+
+  const segments = [];
+
+  // Проходим по стеку от корня до целевого элемента
+  for (const node of stack) {
+    // Пропускаем корневой элемент
+    if (node.id === "root") continue;
+
+    // Если у узла есть слаг для данного языка, добавляем его
+    if (node.slug && node.slug[lang] && node.slug[lang].trim()) {
+      segments.push(node.slug[lang].trim());
+    }
+    // Если это группа без слага, пропускаем её
+    else if (node.kind === "group") {
+      continue;
+    }
+    // Для страниц без слага тоже пропускаем
+    else if (node.kind === "page") {
+      continue;
+    }
+  }
+
   return withLangPrefix(lang, segments.join("/"));
 }
 

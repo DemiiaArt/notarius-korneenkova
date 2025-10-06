@@ -1,11 +1,16 @@
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 
 import "./ContactsPage.scss";
 import VideoBlock from "@components/VideoBock/VideoBlock";
 
 const ContactsPage = () => {
   const isPC = useIsPC();
+  const { getTranslations } = useTranslation("pages.ContactsPage");
+
+  // Получаем все переводы для страницы
+  const translations = getTranslations();
   return (
     <div className="contacts-page bg1">
       <div className="container">
@@ -16,14 +21,14 @@ const ContactsPage = () => {
               <h2
                 className={`${isPC ? "fs-p--40px" : "fs-h2--24px"} fw-bold uppercase`}
               >
-                Контакти
+                {translations.title || "Контакти"}
               </h2>
               <ul className="contacts-info">
                 <li>
                   <h4
                     className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
                   >
-                    Зателефонуйте нам
+                    {translations.callUs || "Зателефонуйте нам"}
                   </h4>
                   <a
                     href="tel:+380678200700"
@@ -42,7 +47,7 @@ const ContactsPage = () => {
                   <h4
                     className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
                   >
-                    Електронна пошта
+                    {translations.email || "Електронна пошта"}
                   </h4>
                   <a
                     href="mailto:nknotary.dnipro@gmail.com"
@@ -55,25 +60,26 @@ const ContactsPage = () => {
                   <h4
                     className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
                   >
-                    Час роботи
+                    {translations.workingHours || "Час роботи"}
                   </h4>
                   <p
                     className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold`}
                   >
-                    Пн-Пт 9:00-18:00
+                    {translations.workingHoursTime || "Пн-Пт 9:00-18:00"}
                   </p>
                 </li>
                 <li>
                   <h4
                     className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
                   >
-                    Наша адреса
+                    {translations.ourAddress || "Наша адреса"}
                   </h4>
                   <a
                     href="#"
                     className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold`}
                   >
-                    м. Дніпро, пр. Дмитра Яворницького, 2, 49100 
+                    {translations.address ||
+                      "м. Дніпро, пр. Дмитра Яворницького, 2, 49100"}
                   </a>
                 </li>
               </ul>
@@ -82,7 +88,7 @@ const ContactsPage = () => {
               <h4
                 className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
               >
-                Слідкуйте за нами в соцмережах
+                {translations.followUs || "Слідкуйте за нами в соцмережах"}
               </h4>
               <ul className="socials">
                 <li className="socials-item">
@@ -183,10 +189,7 @@ const ContactsPage = () => {
           </div>
         </div>
       </div>
-      <VideoBlock
-        title="Як нас знайти"
-        description="Маршрут до нас — покроково у відео"
-      />
+      <VideoBlock pageType="contactsPage" />
     </div>
   );
 };

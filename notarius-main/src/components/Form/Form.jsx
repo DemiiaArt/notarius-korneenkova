@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import "./Form.scss";
 import { useIsPC } from "@hooks/isPC";
-import { useApplications } from "@hooks/useApplications";
+import { useTranslation } from "@hooks/useTranslation";
+import { apiClient } from "@/config/api";
 
 export const Form = () => {
   const [formData, setFormData] = useState({
@@ -15,10 +16,15 @@ export const Form = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   const isPC = useIsPC();
-  
-  // Используем хук для отправки заявок
-  const { submitApplication, loading: isLoading, error: apiError, success } = useApplications();
+  const { getTranslations } = useTranslation("components.Form");
+
+  // Получаем переводы для компонента
+  const translations = getTranslations();
+  const { title, description, fields, validation, buttons } = translations;
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -49,38 +55,62 @@ export const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({ name: "", tel: "" });
+    setSubmitError("");
 
     let hasError = false;
 
     if (!formData.name.trim()) {
-      setErrors((prev) => ({ ...prev, name: "Поле ім'я обов'язкове" }));
+      setErrors((prev) => ({
+        ...prev,
+        name: validation?.nameRequired || "Поле ім'я обов'язкове",
+      }));
       hasError = true;
     }
 
     if (!validatePhone(formData.tel)) {
       setErrors((prev) => ({
         ...prev,
-        tel: "Введіть номер у форматі: +380....",
+        tel: validation?.phoneInvalid || "Введіть номер у форматі: +380....",
       }));
       hasError = true;
     }
 
     if (hasError) return;
 
-    // Отправляем заявку через API
-    const result = await submitApplication({
-      name: formData.name,
-      phone_number: formData.tel
-    });
+    setIsLoading(true);
 
-    if (result.success) {
+    try {
+      // Отправляем данные на бэкенд
+      const response = await apiClient.post("/applications/", {
+        name: formData.name.trim(),
+        phone_number: formData.tel.trim(),
+      });
+
+      console.log("✅ Заявка успешно отправлена:", response);
+
+      // Очищаем форму и показываем успех
       setIsSubmitted(true);
-      console.log("✅ Заявка успешно отправлена:", result.data);
-    } else {
+      setFormData({ name: "", tel: "" });
+
+      // Сбрасываем статус через 5 секунд, чтобы можно было отправить еще раз
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 5000);
+    } catch (err) {
+      console.error("❌ Ошибка при отправке заявки:", err);
+
+      const errorMessage =
+        err.message ||
+        validation?.submitError ||
+        "Помилка при відправці. Спробуйте ще раз.";
+      setSubmitError(errorMessage);
+
       setErrors((prev) => ({
         ...prev,
-        tel: result.error || "Помилка при відправці. Спробуйте ще раз.",
+        tel: errorMessage,
       }));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -90,22 +120,32 @@ export const Form = () => {
         <div className="form-container bg3 c1 uppercase">
           <div className="form-content">
             <h2 className={`fw-bold ${isPC ? "fs-p--30px" : "fs-p--16px"}`}>
-              Не знаєте з чого почати? <br />
-              Залиште заявку.
+              {title?.line1 || "Не знаєте з чого почати?"} <br />
+              {title?.line2 || "Залиште заявку."}
             </h2>
             <p
               className={`${
                 isPC ? "fs-p--24px" : "fs-p--14px"
               } lh-150 uppercase`}
             >
-              Ваша ситуація – <span className="fw-bold">не глухий кут</span>.
+              {description?.line1 || "Ваша ситуація –"}{" "}
+              <span className="fw-bold">
+                {description?.highlight1 || "не глухий кут"}
+              </span>
+              .
               <br />
-              Заповніть форму і ви отримаєте
+              {description?.line2 || "Заповніть форму і ви отримаєте"}
               <br />
-              <span className="fw-bold">Перший крок до вирішення</span>.
+              <span className="fw-bold">
+                {description?.line3 || "Перший крок до вирішення"}
+              </span>
+              .
             </p>
           </div>
-          <form className="application-form input-black" onSubmit={handleSubmit}>
+          <form
+            className="application-form input-black"
+            onSubmit={handleSubmit}
+          >
             <div
               className={`input-group ${
                 isPC ? "fs-p--18px" : "fs-p--10px"
@@ -117,7 +157,7 @@ export const Form = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Ім'я"
+                placeholder={fields?.name?.placeholder || "Ім'я"}
                 className={`c1 ${errors.name ? "error" : ""}`}
                 autoComplete="on"
                 disabled={isSubmitted}
@@ -125,7 +165,7 @@ export const Form = () => {
               {errors.name ? (
                 <span className="error-label">{errors.name}</span>
               ) : (
-                <label htmlFor="name">Ім’я</label>
+                <label htmlFor="name">{fields?.name?.label || "Ім'я"}</label>
               )}
             </div>
             <div
@@ -139,7 +179,7 @@ export const Form = () => {
                 name="tel"
                 value={formData.tel}
                 onChange={handleChange}
-                placeholder="Номер телефону"
+                placeholder={fields?.phone?.placeholder || "Номер телефону"}
                 className={`c1 ${errors.tel ? "error" : ""}`}
                 autoComplete="on"
                 disabled={isSubmitted}
@@ -147,9 +187,20 @@ export const Form = () => {
               {errors.tel ? (
                 <span className="error-label">{errors.tel}</span>
               ) : (
-                <label htmlFor="tel">Номер телефону</label>
+                <label htmlFor="tel">
+                  {fields?.phone?.label || "Номер телефону"}
+                </label>
               )}
             </div>
+
+            {submitError && (
+              <div
+                className={`error-message ${isPC ? "fs-p--14px" : "fs-p--12px"}`}
+                style={{ color: "#ff4444", marginTop: "10px" }}
+              >
+                {submitError}
+              </div>
+            )}
 
             <button
               type="submit"
@@ -159,10 +210,10 @@ export const Form = () => {
               disabled={isSubmitted || isLoading}
             >
               {isSubmitted
-                ? "Ваша заявка успішно відправлена"
+                ? buttons?.success || "Ваша заявка успішно відправлена"
                 : isLoading
-                ? "Відправка..."
-                : "ВІДПРАВИТИ"}
+                  ? buttons?.loading || "Відправка..."
+                  : buttons?.submit || "ВІДПРАВИТИ"}
             </button>
           </form>
         </div>

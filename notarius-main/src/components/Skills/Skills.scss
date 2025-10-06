@@ -17,7 +17,7 @@
 
     &-list {
       display: grid;
-      grid-template-columns: repeat(2, minmax(200px, 416px));
+      grid-template-columns: repeat(2, minmax(100px, 416px));
       gap: 32px;
       justify-content: center;
     }
@@ -38,7 +38,7 @@
 @media (min-width: 420px) {
   .skills {
     &-list {
-      grid-template-columns: repeat(2, minmax(250px, 416px));
+      grid-template-columns: repeat(2, minmax(100px, 416px));
       gap: 32px;
     }
   }
@@ -65,7 +65,7 @@
       gap: 16px;
     }
     &-list {
-      grid-template-columns: repeat(2, minmax(300px, 416px));
+      grid-template-columns: repeat(2, minmax(200px, 416px));
       gap: 32px;
     }
   }

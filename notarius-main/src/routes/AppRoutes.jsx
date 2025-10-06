@@ -81,76 +81,7 @@ function collectRoutes(node, lang, pageProps, acc = []) {
 
 export default function AppRoutes({ pageProps = {} }) {
   const { currentLang } = useLang();
-  const { navTree, loading, error } = useHybridNav();
-
-  // Показываем загрузку
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          fontSize: "18px",
-        }}
-      >
-        Завантаження навігації...
-      </div>
-    );
-  }
-
-  // Показываем ошибку
-  if (error) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          padding: "20px",
-          textAlign: "center",
-        }}
-      >
-        <h2>Помилка завантаження навігації</h2>
-        <p>{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            marginTop: "20px",
-          }}
-        >
-          Спробувати знову
-        </button>
-      </div>
-    );
-  }
-
-  // Если нет навигационного дерева
-  if (!navTree) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          fontSize: "18px",
-        }}
-      >
-        Навігація не знайдена
-      </div>
-    );
-  }
+  const { navTree } = useHybridNav();
 
   const routes = collectRoutes(navTree, currentLang, pageProps);
 

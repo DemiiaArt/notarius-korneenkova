@@ -11,6 +11,8 @@ import { Link } from "react-router-dom";
 
 import "./Footer.scss";
 import { useIsPC } from "@hooks/isPC";
+import { useLanguage } from "@hooks/useLanguage";
+import { useTranslation } from "@hooks/useTranslation";
 
 const navigationLinks = {
   ua: [
@@ -59,6 +61,8 @@ const helpLinks = {
 
 const Footer = () => {
   const LANG_UI_TO_ROUTE = { ukr: "ua", rus: "ru", eng: "en" };
+  const { currentLang, switchLanguage } = useLanguage();
+  const { t } = useTranslation("components.Footer");
 
   const languages = {
     ukr: "UA",
@@ -66,7 +70,25 @@ const Footer = () => {
     eng: "EN",
   };
 
-  const [currentLang, setCurrentLang] = useState("ukr");
+  // Маппинг языков для Footer
+  const langMap = {
+    ua: "ukr",
+    ru: "rus",
+    en: "eng",
+  };
+
+  const footerLang = langMap[currentLang] || "ukr";
+
+  const switchLang = (langKey) => {
+    // Маппинг старых ключей на новые
+    const langMap = {
+      ukr: "ua",
+      rus: "ru",
+      eng: "en",
+    };
+    const newLang = langMap[langKey] || langKey;
+    switchLanguage(newLang);
+  };
 
   const [openIndex, setOpenIndex] = useState(null);
 
@@ -111,7 +133,7 @@ const Footer = () => {
               <p
                 className={`footer-contacts-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
               >
-                Контакти
+                {t("contacts")}
               </p>
               <a
                 className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -142,8 +164,8 @@ const Footer = () => {
                   {Object.entries(languages).map(([key, label]) => (
                     <button
                       key={key}
-                      className={`footer-change-lang ${currentLang == key ? "c1" : "c16"}`}
-                      onClick={() => setCurrentLang(key)}
+                      className={`footer-change-lang ${footerLang == key ? "c1" : "c16"}`}
+                      onClick={() => switchLang(key)}
                     >
                       {label}
                     </button>
@@ -155,9 +177,9 @@ const Footer = () => {
               <p
                 className={`footer-navigation-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
               >
-                Навігація
+                {t("navigation")}
               </p>
-              {navigationLinks[LANG_UI_TO_ROUTE[currentLang]].map(
+              {navigationLinks[LANG_UI_TO_ROUTE[footerLang]].map(
                 ({ link, label }) => (
                   <Link
                     key={link}
@@ -173,9 +195,9 @@ const Footer = () => {
               <p
                 className={`footer-help-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
               >
-                Допомога
+                {t("help")}
               </p>
-              {helpLinks[LANG_UI_TO_ROUTE[currentLang]].map(
+              {helpLinks[LANG_UI_TO_ROUTE[footerLang]].map(
                 ({ link, label }) => (
                   <Link
                     key={link}
@@ -240,8 +262,8 @@ const Footer = () => {
             {Object.entries(languages).map(([key, label]) => (
               <button
                 key={key}
-                className={`footer-change-lang ${currentLang == key ? "c1" : "c16"}`}
-                onClick={() => setCurrentLang(key)}
+                className={`footer-change-lang ${footerLang == key ? "c1" : "c16"}`}
+                onClick={() => switchLang(key)}
               >
                 {label}
               </button>
@@ -256,6 +278,7 @@ const Footer = () => {
 
 const FooterAccordion = ({ openIndex, setOpenIndex }) => {
   const isPC = useIsPC();
+  const { t } = useTranslation("components.Footer");
 
   const toggleAccordion = (index) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -263,7 +286,7 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
 
   const items = [
     {
-      title: "Контакти",
+      title: t("contacts"),
       content: (
         <>
           <a
@@ -279,46 +302,46 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
           <a
             className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
           >
-            м.Дніпро, пр. Дмитра Яворницького, 2
+            {t("address")}
           </a>
           <a
             className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
           >
-            Пн-Нд: 09:00 - 18:00
-          </a>
-        </>
-      ),
-    },
-    {
-      title: "Навігація",
-      content: (
-        <>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            Головна
-          </a>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            Про нас
+            {t("workingHours")}
           </a>
         </>
       ),
     },
     {
-      title: "Допомога",
+      title: t("navigation"),
       content: (
         <>
           <a
             className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
           >
-            Часті запитання
+            {t("home")}
           </a>
           <a
             className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
           >
-            Підтримка
+            {t("aboutUs")}
+          </a>
+        </>
+      ),
+    },
+    {
+      title: t("help"),
+      content: (
+        <>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
+            {t("faq")}
+          </a>
+          <a
+            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+          >
+            {t("support")}
           </a>
         </>
       ),

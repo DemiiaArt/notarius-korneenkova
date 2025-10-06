@@ -3,8 +3,8 @@
  * Загрузка отзывов и отправка новых отзывов в API
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { apiClient } from '@/config/api';
+import { useState, useEffect, useCallback } from "react";
+import { apiClient } from "@/config/api";
 
 /**
  * Hook для получения отзывов и статистики рейтинга
@@ -15,7 +15,7 @@ export const useReviews = () => {
   const [ratingStats, setRatingStats] = useState({
     averageRating: 0,
     totalVotes: 0,
-    ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+    ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,28 +30,38 @@ export const useReviews = () => {
       setLoading(true);
       setError(null);
 
-      const data = await apiClient.get('/reviews/');
-      
-      console.log('✅ Отзывы загружены:', data);
-      setReviews(data.reviews || []);
-      setRatingStats(data.rating_stats || {
-        averageRating: 0,
-        totalVotes: 0,
-        ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
-      });
-      
+      const data = await apiClient.get("/reviews/");
+
+      // Проверяем формат данных - может быть массив или объект с полем reviews
+      let reviewsList = [];
+      if (Array.isArray(data)) {
+        reviewsList = data;
+      } else if (data && data.reviews) {
+        reviewsList = data.reviews;
+      }
+
+      setReviews(reviewsList);
+
+      setRatingStats(
+        data.rating_stats || {
+          averageRating: 0,
+          totalVotes: 0,
+          ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+        }
+      );
+
       return data;
     } catch (err) {
-      const errorMessage = err.message || 'Помилка при завантаженні відгуків';
+      const errorMessage = err.message || "Помилка при завантаженні відгуків";
       setError(errorMessage);
-      console.error('❌ Ошибка при загрузке отзывов:', err);
-      
+      console.error("❌ Ошибка при загрузке отзывов:", err);
+
       // Устанавливаем пустые данные при ошибке
       setReviews([]);
       setRatingStats({
         averageRating: 0,
         totalVotes: 0,
-        ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+        ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
       });
       throw err;
     } finally {
@@ -69,7 +79,7 @@ export const useReviews = () => {
     ratingStats,
     loading,
     error,
-    fetchReviews
+    fetchReviews,
   };
 };
 
@@ -102,30 +112,38 @@ export const useSubmitReview = () => {
         throw new Error('Поле "Имя" обязательно');
       }
       if (!reviewData.service) {
-        throw new Error('Выберите услугу');
+        throw new Error("Выберите услугу");
       }
-      if (!reviewData.rating || reviewData.rating < 1 || reviewData.rating > 5) {
-        throw new Error('Выберите рейтинг от 1 до 5 звезд');
+      if (
+        !reviewData.rating ||
+        reviewData.rating < 1 ||
+        reviewData.rating > 5
+      ) {
+        throw new Error("Выберите рейтинг от 1 до 5 звезд");
       }
       if (!reviewData.text?.trim()) {
-        throw new Error('Напишите отзыв');
+        throw new Error("Напишите отзыв");
       }
 
-      const response = await apiClient.post('/reviews/', {
+      const response = await apiClient.post("/reviews/", {
         name: reviewData.name.trim(),
         service: reviewData.service,
         rating: reviewData.rating,
         text: reviewData.text.trim(),
       });
 
-      console.log('✅ Отзыв успешно отправлен:', response);
+      console.log("✅ Отзыв успешно отправлен:", response);
       setSuccess(true);
-      return { success: true, data: response, message: 'Ваш отзыв успешно отправлен! Он появится после модерации.' };
-
+      return {
+        success: true,
+        data: response,
+        message: "Ваш отзыв успешно отправлен! Он появится после модерации.",
+      };
     } catch (err) {
-      const errorMessage = err.message || 'Помилка при відправці відгуку. Спробуйте ще раз.';
+      const errorMessage =
+        err.message || "Помилка при відправці відгуку. Спробуйте ще раз.";
       setError(errorMessage);
-      console.error('❌ Ошибка при отправке отзыва:', err);
+      console.error("❌ Ошибка при отправке отзыва:", err);
       return { success: false, error: errorMessage, message: errorMessage };
     } finally {
       setLoading(false);
@@ -143,13 +161,13 @@ export const useSubmitReview = () => {
 
 /**
  * Пример использования:
- * 
+ *
  * // Загрузка отзывов и статистики
  * const { reviews, ratingStats, loading, error } = useReviews();
- * 
+ *
  * // Отправка нового отзыва
  * const { submitReview, loading: submitLoading, error: submitError, success } = useSubmitReview();
- * 
+ *
  * const handleSubmit = async (formData) => {
  *   const result = await submitReview({
  *     name: formData.name,
@@ -157,7 +175,7 @@ export const useSubmitReview = () => {
  *     rating: formData.rating,
  *     text: formData.text
  *   });
- *   
+ *
  *   if (result.success) {
  *     // Обновляем список отзывов
  *     fetchReviews();

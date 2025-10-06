@@ -50,7 +50,6 @@ const API_BASE_URL = "http://127.0.0.1:8000/api";
 // Функция для загрузки полного дерева с backend
 const fetchAllServicesFromBackend = async () => {
   try {
-    console.log(`🌐 Fetching from: ${API_BASE_URL}/services/`);
     const response = await fetch(`${API_BASE_URL}/services/`);
 
     if (!response.ok) {
@@ -58,7 +57,6 @@ const fetchAllServicesFromBackend = async () => {
     }
 
     const data = await response.json();
-    console.log("📦 Raw API response:", data);
 
     // Backend возвращает данные в формате { value: [...] }
     let result = [];
@@ -68,11 +66,8 @@ const fetchAllServicesFromBackend = async () => {
       result = data;
     }
 
-    console.log("✅ Processed API data:", result);
-
     return result;
   } catch (error) {
-    console.error(`❌ Error fetching all services:`, error);
     throw error;
   }
 };
@@ -99,8 +94,6 @@ const getChildrenByParentId = (backendTree, parentId) => {
 
 // Простая функция для объединения статического дерева с backend данными
 const mergeStaticWithBackendData = (staticTree, backendData) => {
-  console.log("🔗 Starting merge with backend data:", backendData);
-
   // Создаем карту backend данных по ID для быстрого поиска
   const backendMap = {};
   const buildBackendMap = (nodes) => {
@@ -115,7 +108,6 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
   };
 
   buildBackendMap(backendData);
-  console.log("🗺️ Backend map created:", Object.keys(backendMap));
 
   const mergeNode = (node) => {
     const mergedNode = { ...node };
@@ -134,11 +126,6 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
       // Обрабатываем children отдельно
       if (backendNode.children) {
         mergedNode.children = [...backendNode.children];
-        console.log(`✅ Merged backend properties for ${node.id}:`, {
-          showMegaPanel: mergedNode.showMegaPanel,
-          showInMenu: mergedNode.showInMenu,
-          childrenCount: mergedNode.children.length,
-        });
       }
     } else if (node.children) {
       // Иначе рекурсивно обрабатываем статических детей
@@ -149,7 +136,6 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
   };
 
   const result = mergeNode(staticTree);
-  console.log("🎯 Final merged tree:", result);
   return result;
 };
 
@@ -166,11 +152,6 @@ export const useHybridNavTree = () => {
     throw new Error("NAV_TREE is not properly imported");
   }
 
-  // Логируем полное дерево NAV_TREE только один раз
-  useEffect(() => {
-    console.log("Initial NAV_TREE:", NAV_TREE);
-  }, []);
-
   // Инициализация статического дерева
   useEffect(() => {
     try {
@@ -182,7 +163,6 @@ export const useHybridNavTree = () => {
       try {
         staticTreeWithComponents = attachComponentsToTree(NAV_TREE);
       } catch (componentError) {
-        console.error("Error attaching components:", componentError);
         staticTreeWithComponents = NAV_TREE; // Используем без компонентов
       }
 
@@ -190,13 +170,11 @@ export const useHybridNavTree = () => {
       try {
         updateIndices(NAV_TREE);
       } catch (indexError) {
-        console.error("Error updating indices:", indexError);
         // Продолжаем без обновления индексов
       }
 
       setNavTree(staticTreeWithComponents);
     } catch (err) {
-      console.error("Error initializing static nav tree:", err);
       setError(err.message);
       setNavTree(NAV_TREE); // Используем без компонентов
     } finally {
@@ -206,8 +184,6 @@ export const useHybridNavTree = () => {
 
   // Функция для загрузки полного дерева с backend
   const loadBackendTree = useCallback(async (forceRefresh = false) => {
-    console.log("🔄 Loading backend tree...", { forceRefresh });
-
     // Кеширование отключено
     // if (!forceRefresh) {
     //   const cachedTree = getChildrenFromCache("backend_tree");
@@ -220,9 +196,7 @@ export const useHybridNavTree = () => {
     // }
 
     try {
-      console.log("🌐 Fetching from API...");
       const tree = await fetchAllServicesFromBackend();
-      console.log("✅ Backend tree loaded:", tree);
 
       // Сохраняем в состояние
       setBackendTree(tree);
@@ -233,7 +207,6 @@ export const useHybridNavTree = () => {
 
       return tree;
     } catch (error) {
-      console.error("❌ Error loading backend tree:", error);
       throw error;
     }
   }, []);
@@ -242,16 +215,8 @@ export const useHybridNavTree = () => {
   const mergeWithBackendData = useCallback(
     async (forceRefresh = false) => {
       try {
-        console.log("🔗 Starting merge process...", {
-          backendLoaded,
-          forceRefresh,
-        });
-
         // Загружаем backend данные напрямую, не полагаясь на состояние
-        console.log("📥 Loading backend tree directly...");
         const freshBackendData = await loadBackendTree(forceRefresh);
-
-        console.log("🔄 Fresh backend data for merge:", freshBackendData);
 
         // Объединяем статическое дерево с backend данными
         const mergedTree = mergeStaticWithBackendData(
@@ -269,10 +234,8 @@ export const useHybridNavTree = () => {
         // Обновляем индексы на основе объединенного дерева
         updateIndices(mergedTree);
 
-        console.log("✅ Successfully merged static tree with backend data");
         return treeWithComponents;
       } catch (err) {
-        console.error("❌ Error merging with backend data:", err);
         setError(err.message);
         throw err;
       }
@@ -291,7 +254,7 @@ export const useHybridNavTree = () => {
         // Загружаем и объединяем данные с backend
         await mergeWithBackendData();
       } catch (error) {
-        console.error("Error loading and merging backend data:", error);
+        // Обрабатываем ошибку молча
       }
     };
 

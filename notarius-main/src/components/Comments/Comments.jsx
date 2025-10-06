@@ -6,20 +6,31 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 import { useIsPC } from "@hooks/isPC";
 import { useReviews } from "@hooks/useReviews";
+import { useTranslation } from "@hooks/useTranslation";
 import "swiper/css/navigation";
 import "swiper/css";
 import "./Comments.scss";
 
-const Comments = () => {
+const Comments = ({ title = "Відгуки" }) => {
   const isPC = useIsPC();
-  
+
+  const { t } = useTranslation("components.Comments");
+
+  // Функция для получения переведенного заголовка
+  const getTranslatedTitle = (originalTitle) => {
+    const titles = t("titles");
+    return titles && titles[originalTitle]
+      ? titles[originalTitle]
+      : originalTitle;
+  };
+
   // Загружаем отзывы из API
   const { reviews, loading, error } = useReviews();
-  
+
   // Fallback данные (если API не работает)
   const fallbackComments = [
     {
-      index:'1',
+      index: "1",
       imgSrc: userIcon,
       imgAlt: "user-icon.jpg",
       userName: "Оксана",
@@ -33,7 +44,7 @@ const Comments = () => {
                     Рекомендую Надію як надійного фахівця з великим досвідом!`,
     },
     {
-      index:'2',
+      index: "2",
       imgSrc: userIcon,
       imgAlt: "user-icon.jpg",
       userName: "Оксана",
@@ -47,7 +58,7 @@ const Comments = () => {
                     Рекомендую Надію як надійного фахівця з великим досвідом!`,
     },
     {
-      index:'3',
+      index: "3",
       imgSrc: userIcon,
       imgAlt: "user-icon.jpg",
       userName: "Оксана",
@@ -61,7 +72,7 @@ const Comments = () => {
                     Рекомендую Надію як надійного фахівця з великим досвідом!`,
     },
     {
-      index:'4',
+      index: "4",
       imgSrc: userIcon,
       imgAlt: "user-icon.jpg",
       userName: "Оксана",
@@ -77,16 +88,18 @@ const Comments = () => {
   ];
 
   // Преобразуем отзывы из API в формат для карусели
-  const apiComments = reviews.map((review, index) => ({
-    index: review.id?.toString() || index.toString(),
-    imgSrc: userIcon, // Используем дефолтную иконку
-    imgAlt: "user-icon.jpg",
-    userName: review.name || "Анонім",
-    userSurName: "", // В модели нет фамилии
-    userService: review.service_display || review.service || "Послуга",
-    userComment: review.text || "",
-    rating: review.rating || 5, // Добавляем рейтинг для отображения звезд
-  }));
+  const apiComments = Array.isArray(reviews)
+    ? reviews.map((review, index) => ({
+        index: review.id?.toString() || index.toString(),
+        imgSrc: userIcon, // Используем дефолтную иконку
+        imgAlt: "user-icon.jpg",
+        userName: review.name || "Анонім",
+        userSurName: "", // В модели нет фамилии
+        userService: review.service_display || review.service || "Послуга",
+        userComment: review.text || "",
+        rating: review.rating || 5, // Добавляем рейтинг для отображения звезд
+      }))
+    : [];
 
   // Используем API отзывы если есть, иначе fallback
   const comments = apiComments.length > 0 ? apiComments : fallbackComments;
@@ -94,7 +107,11 @@ const Comments = () => {
   return (
     <div className="comments">
       <div className="container">
-        <h2 className={`comments-title ${isPC? "fs-h2--32px" : "fs-h2--20px"} fw-bold uppercase c3`}>Відгуки</h2>
+        <h2
+          className={`comments-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} fw-bold uppercase c3`}
+        >
+          {getTranslatedTitle(title)}
+        </h2>
         {loading ? (
           <div style={{ textAlign: "center", padding: "40px" }}>
             <p className={`${isPC ? "fs-p--18px" : "fs-p--14px"} c3`}>
@@ -102,11 +119,16 @@ const Comments = () => {
             </p>
           </div>
         ) : error ? (
-          <div style={{ textAlign: "center", padding: "40px", color: "#dc3545" }}>
+          <div
+            style={{ textAlign: "center", padding: "40px", color: "#dc3545" }}
+          >
             <p className={`${isPC ? "fs-p--18px" : "fs-p--14px"} c3`}>
               Помилка завантаження відгуків
             </p>
-            <p className={`${isPC ? "fs-p--16px" : "fs-p--12px"} c3`} style={{ marginTop: "10px" }}>
+            <p
+              className={`${isPC ? "fs-p--16px" : "fs-p--12px"} c3`}
+              style={{ marginTop: "10px" }}
+            >
               Показуємо демонстраційні відгуки
             </p>
           </div>
@@ -166,7 +188,7 @@ const CommentsCarousel = ({ comments }) => {
         watchOverflow={true}
         breakpoints={{
           0: { slidesPerView: 1 },
-          768: {slidesPerView: 2},
+          768: { slidesPerView: 2 },
           1200: { slidesPerView: 3 },
         }}
         loop={false}
@@ -191,15 +213,26 @@ const CommentsCarousel = ({ comments }) => {
                     alt={imgAlt}
                   />
                   <div className="comments-carousel-card-text-wrap">
-                    <p className={`comments-carousel-card-user-name ${isPC ? "fs-p--20px" : "fs-p--16px"} fw-semi-bold c3`}>
+                    <p
+                      className={`comments-carousel-card-user-name ${isPC ? "fs-p--20px" : "fs-p--16px"} fw-semi-bold c3`}
+                    >
                       {userName} {userSurName}
                     </p>
-                    <p className={`comments-carousel-card-service ${isPC ? "fs-p--16px" : "fs-p--12px"} lh-150 c3`}>
+                    <p
+                      className={`comments-carousel-card-service ${isPC ? "fs-p--16px" : "fs-p--12px"} lh-150 c3`}
+                    >
                       {userService}
                     </p>
                     {/* Отображение рейтинга звездами */}
                     {rating && (
-                      <div className="comments-carousel-card-rating" style={{ display: "flex", gap: "2px", marginTop: "4px" }}>
+                      <div
+                        className="comments-carousel-card-rating"
+                        style={{
+                          display: "flex",
+                          gap: "2px",
+                          marginTop: "4px",
+                        }}
+                      >
                         {renderStars(rating)}
                       </div>
                     )}
@@ -210,7 +243,9 @@ const CommentsCarousel = ({ comments }) => {
                     alt={quotes}
                   />
                 </div>
-                <p className={`comments-carousel-card-text ${isPC ? "fs-p--18px" : "fs-p--14px"} lh-150 c3`}>
+                <p
+                  className={`comments-carousel-card-text ${isPC ? "fs-p--18px" : "fs-p--14px"} lh-150 c3`}
+                >
                   {userComment}
                 </p>
               </div>

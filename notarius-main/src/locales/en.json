@@ -11,5 +11,267 @@
   "notaryTranslatePage": {},
   "otherServicesPage": {},
   "servicesPage": {},
-  "footer": {}
+  "footer": {},
+  "components": {
+    "HowIWork": {
+      "title": "How I work",
+      "steps": {
+        "step1": "You leave a request or call",
+        "step2": "Free consultation and document verification",
+        "step3": "Preparation and execution of necessary papers",
+        "step4": "Document certification and delivery to the client"
+      }
+    },
+    "Certificates": {
+      "title": "Qualification and experience",
+      "tabs": {
+        "certificates": "Certificates",
+        "diploma": "Diploma"
+      },
+      "modal": {
+        "close": "×",
+        "altText": "Certificate full size"
+      },
+      "carousel": {
+        "altText": "Certificate",
+        "prevAlt": "arrow left",
+        "nextAlt": "arrow right"
+      }
+    },
+    "Form": {
+      "title": {
+        "line1": "Don't know where to start?",
+        "line2": "Leave an application."
+      },
+      "description": {
+        "line1": "Your situation is",
+        "highlight1": "not a dead end",
+        "line2": "Fill out the form and you will get",
+        "line3": "The first step to solving"
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Name"
+        },
+        "phone": {
+          "label": "Phone number",
+          "placeholder": "Phone number"
+        }
+      },
+      "validation": {
+        "nameRequired": "Name field is required",
+        "phoneInvalid": "Enter number in format: +380....",
+        "submitError": "Error sending. Try again."
+      },
+      "buttons": {
+        "submit": "SEND",
+        "loading": "Sending...",
+        "success": "Your application has been successfully sent"
+      }
+    },
+    "Goals": {
+      "title": "Goals and ideas",
+      "goals": {
+        "part1": {
+          "title": "Protection",
+          "text": "Help Ukrainians around the world stay strong and protected."
+        },
+        "part2": {
+          "title": "Support",
+          "text": "Be a point of support for people in complex life issues. Create a sense of confidence where uncertainty reigns."
+        },
+        "part3": {
+          "title": "Space",
+          "text": "Create a space where legal services are not just about documents, but also about trust, development and clarity."
+        }
+      }
+    },
+    "Skills": {
+      "main": {
+        "mainTitleFirstWord": "Professional",
+        "mainTitleSecondWord": "Facts",
+        "experience": {
+          "count": 2000,
+          "preCountText": "since ",
+          "postCountText": "",
+          "title": "In the legal field",
+          "text": "Experience in judicial, litigation, arbitration and other legal work"
+        },
+        "history": {
+          "count": 2011,
+          "preCountText": "since ",
+          "postCountText": "",
+          "title": "In the notary profession",
+          "text": "Experience in judicial, litigation, arbitration and other legal work"
+        },
+        "diploms": {
+          "count": 4,
+          "preCountText": "",
+          "postCountText": "",
+          "title": "Diplomas",
+          "text": "Economics, law, accounting, English"
+        },
+        "happy": {
+          "count": "10 000+",
+          "preCountText": "",
+          "postCountText": "",
+          "title": "Satisfied clients",
+          "text": "Experience in judicial, litigation, arbitration and other legal work"
+        }
+      },
+      "about": {
+        "mainTitleFirstWord": "Professional",
+        "mainTitleSecondWord": "Principles",
+        "experience": {
+          "count": "01",
+          "preCountText": "",
+          "postCountText": "",
+          "title": "Individual approach",
+          "text": "Each client is unique, so we listen carefully and select solutions that match their specific life situation."
+        },
+        "history": {
+          "count": "02",
+          "preCountText": "",
+          "postCountText": "",
+          "title": "Confidentiality",
+          "text": "All received information remains strictly confidential — client trust is paramount to us."
+        },
+        "diploms": {
+          "count": "03",
+          "preCountText": "",
+          "postCountText": "",
+          "title": "Legality and accuracy",
+          "text": "In our work we are guided by current legislation and maintain maximum accuracy in every detail."
+        },
+        "happy": {
+          "count": "04",
+          "preCountText": "",
+          "postCountText": "",
+          "title": "Ethics",
+          "text": "We adhere to high ethical standards, respecting the dignity of every person and acting with honesty and fairness."
+        }
+      }
+    },
+    "VideoBlock": {
+      "playButton": "Watch video",
+      "mainPage": {
+        "title": "NADIA — YOUR RELIABLE SUPPORT IN NOTARIAL AFFAIRS",
+        "description": "Learn more about the professional path and values of private notary Nadia in a short video interview."
+      },
+      "aboutPage": {
+        "title": "Video introduction to Nadia",
+        "description": "Learn more about the professional path and values of private notary Nadia in a short video interview."
+      },
+      "contactsPage": {
+        "title": "How to find us",
+        "description": "Route to us — step by step in video"
+      }
+    },
+    "ReviewForm": {
+      "rating": "Rating",
+      "reviews": {
+        "one": "review",
+        "few": "reviews",
+        "many": "reviews"
+      },
+      "leaveReview": "Leave your review",
+      "setRating": "Set your rating:",
+      "name": "Name",
+      "service": "Service you contacted for",
+      "services": {
+        "certification": "Certification of document copies and signatures.",
+        "realEstateTransactions": "Notarial support of real estate transactions.",
+        "heritage": "Inheritance and will registration.",
+        "attorney": "Power of attorney and consent certification.",
+        "agreements": "Certification of purchase-sale, donation, lease agreements."
+      },
+      "impression": "Your impression",
+      "submit": "SUBMIT",
+      "submitting": "Submitting...",
+      "submitted": "Thank you! Your review will appear after moderation",
+      "validation": {
+        "rateRequired": "Rate the service by selecting stars",
+        "serviceRequired": "Please select a service",
+        "nameRequired": "Name field is required",
+        "textRequired": "Write your review",
+        "submitError": "Error submitting. Please try again."
+      }
+    },
+    "GroupServicesCarousel": {
+      "loading": "Loading...",
+      "titles": {
+        "ВИДИ НОТАРІАЛЬНИХ ПОСЛУГ": "TYPES OF NOTARIAL SERVICES",
+        "ВИДЫ НОТАРИАЛЬНЫХ УСЛУГ": "TYPES OF NOTARIAL SERVICES",
+        "TYPES OF NOTARIAL SERVICES": "TYPES OF NOTARIAL SERVICES",
+        "Послуги перекладу": "Translation Services",
+        "Услуги перевода": "Translation Services",
+        "Translation Services": "Translation Services",
+        "Послуги допомога військовим": "Military Support Services",
+        "Услуги помощь военным": "Military Support Services",
+        "Military Support Services": "Military Support Services"
+      }
+    },
+    "ServicesCarousel": {
+      "loading": "Loading...",
+      "titles": {
+        "ПОСЛУГИ": "SERVICES",
+        "УСЛУГИ": "SERVICES",
+        "SERVICES": "SERVICES",
+        "Послуги": "Services",
+        "Услуги": "Services",
+        "Services": "Services",
+        "Інші послуги": "Other Services",
+        "Другие услуги": "Other Services",
+        "Other Services": "Other Services"
+      }
+    },
+    "OftenQuestions": {
+      "titles": {
+        "Часті запитання": "Frequently Asked Questions",
+        "Частые вопросы": "Frequently Asked Questions",
+        "Frequently Asked Questions": "Frequently Asked Questions"
+      }
+    },
+    "ServicesAccordion": {
+      "titles": {
+        "ДЛЯ КОГО ПОСЛУГИ": "WHO SERVICES ARE FOR",
+        "ДЛЯ КОГО УСЛУГИ": "WHO SERVICES ARE FOR",
+        "WHO SERVICES ARE FOR": "WHO SERVICES ARE FOR"
+      }
+    },
+    "Comments": {
+      "titles": {
+        "Відгуки": "Reviews",
+        "Отзывы": "Reviews",
+        "Reviews": "Reviews"
+      }
+    },
+    "Header": {
+      "contactButton": "Contact"
+    },
+    "Footer": {
+      "contacts": "Contacts",
+      "navigation": "Navigation",
+      "help": "Help",
+      "address": "Dnipro, Dmytro Yavornytskyi Ave, 2",
+      "workingHours": "Mon-Sun: 09:00 - 18:00",
+      "home": "Home",
+      "aboutUs": "About Us",
+      "faq": "FAQ",
+      "support": "Support"
+    },
+    "pages": {
+      "ContactsPage": {
+        "title": "Contacts",
+        "callUs": "Call us",
+        "email": "Email",
+        "workingHours": "Working hours",
+        "workingHoursTime": "Mon-Fri 9:00-18:00",
+        "ourAddress": "Our address",
+        "address": "Dnipro, Dmytro Yavornytskyi Ave, 2, 49100",
+        "followUs": "Follow us on social media"
+      }
+    }
+  }
 }

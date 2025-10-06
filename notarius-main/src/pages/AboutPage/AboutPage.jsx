@@ -7,21 +7,17 @@ import VideoBlock from "@components/VideoBock/VideoBlock";
 import Form from "@components/Form/Form";
 import Certificates from "@components/Certificates/Certificates";
 
-
 import "./AboutPage.scss";
 
-const AboutPage = ({ skillsContent }) => {
+const AboutPage = () => {
   return (
     <>
       <div className="about-page">
         <About showBreadcrumbs />
       </div>
       <AboutTextBlock />
-      <VideoBlock
-        title="Відео-знайомство з Надією"
-        description="Дізнайтеся більше про професійний шлях та цінності приватного нотаріуса Надії у короткому відеоінтерв’ю."
-      />
-      <Skills skillsContent={skillsContent} />
+      <VideoBlock pageType="aboutPage" />
+      <Skills />
       <Goals />
       <Form />
       <Certificates />

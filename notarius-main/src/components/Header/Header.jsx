@@ -5,19 +5,22 @@ import "./Header.scss";
 import { useIsPC } from "@hooks/isPC";
 import { useModal } from "@components/ModalProvider/ModalProvider";
 import MegaPanel from "./MegaPanel";
-import { detectLocaleFromPath, buildFullPathForId } from "@nav/nav-utils";
+import {
+  detectLocaleFromPath,
+  buildFullPathForId,
+  getLabel,
+  findNodeById,
+} from "@nav/nav-utils";
 import { buildPanelDataFromNav } from "@nav/build-panel-from-nav";
 import { useHybridNav } from "@contexts/HybridNavContext";
-import { useHeaderContacts } from "@hooks/useHeaderContacts";
+import { useLanguage } from "@hooks/useLanguage";
+import { useTranslation } from "@hooks/useTranslation";
 
 export const Header = () => {
-  const languages = {
-    ukr: "UA",
-    rus: "RU",
-    eng: "EN",
-  };
   const { pathname } = useLocation();
-  const lang = detectLocaleFromPath(pathname);
+  const { currentLang, switchLanguage } = useLanguage();
+  const lang = currentLang;
+  const { t } = useTranslation("components.Header");
 
   // Отримуємо навігацію з гібридної системи
   let navTree, loading, error, mergeComplete;
@@ -28,22 +31,18 @@ export const Header = () => {
     error = hybridNavData.error;
     mergeComplete = hybridNavData.mergeComplete;
   } catch (contextError) {
-    console.error("Error accessing HybridNav context:", contextError);
     navTree = null;
     loading = false;
     error = contextError.message;
     mergeComplete = false;
   }
-  const [currentLang, setCurrentLang] = useState("ukr");
+  // currentLang теперь получаем из useLanguage
 
   const [menuOpen, setMenuOpen] = useState(false);
 
   const { open } = useModal();
 
   const isPC = useIsPC();
-  
-  // Загружаем контактные данные из API
-  const { contacts, loading: contactsLoading, error: contactsError } = useHeaderContacts();
 
   useEffect(() => {
     if (isPC) {
@@ -125,19 +124,54 @@ export const Header = () => {
   };
 
   const switchLang = (langKey) => {
-    setCurrentLang(langKey);
-    // Тут можна додати логіку перемикання мови
+    // Маппинг старых ключей на новые
+    const langMap = {
+      ukr: "ua",
+      rus: "ru",
+      eng: "en",
+    };
+    const newLang = langMap[langKey] || langKey;
+    switchLanguage(newLang);
   };
 
   // Функція для отримання URL з навігаційного дерева по ID
   const getNavUrl = (navId, currentLang = lang) => {
     if (!navTree || loading) return "#";
     const url = buildFullPathForId(navTree, navId, currentLang);
-    // Відладочне логування
-    if (process.env.NODE_ENV === "development") {
-      console.log(`getNavUrl: ${navId} (${currentLang}) -> ${url}`);
-    }
     return url || "#";
+  };
+
+  // Функція для отримання перекладу з навігаційного дерева по ID
+  const getNavLabel = (navId, currentLang = lang) => {
+    if (!navTree || loading) return navId;
+    const node = findNodeById(navTree, navId);
+    return getLabel(node, currentLang) || navId;
+  };
+
+  // Функція для отримання перекладу секції (для мобільного меню)
+  const getSectionLabel = (sectionKey, currentLang = lang) => {
+    const sectionLabels = {
+      ua: {
+        services: "Послуги",
+        contacts: "Контакти",
+        social: "Соціальні мережі",
+      },
+      ru: {
+        services: "Услуги",
+        contacts: "Контакты",
+        social: "Социальные сети",
+      },
+      en: {
+        services: "Services",
+        contacts: "Contacts",
+        social: "Social networks",
+      },
+    };
+    return (
+      sectionLabels[currentLang]?.[sectionKey] ||
+      sectionLabels.ua[sectionKey] ||
+      sectionKey
+    );
   };
 
   // Показуємо завантаження якщо навігація ще не завантажена або не об'єднана
@@ -190,36 +224,20 @@ export const Header = () => {
         <div className="header-info bg4">
           <div className="container">
             <div className="header-info-content fs-p--16px lh-150 text-decoration--none c1">
-              {contactsLoading ? (
-                <div style={{ textAlign: "center", padding: "10px" }}>
-                  Завантаження контактів...
-                </div>
-              ) : contactsError ? (
-                <div style={{ textAlign: "center", padding: "10px", color: "#dc3545" }}>
-                  Помилка завантаження контактів
-                </div>
-              ) : (
-                <>
-                  <a className="header-info-email" href={`mailto:${contacts.email}`}>
-                    {contacts.email}
-                  </a>
-                  <div className="header-info-phones-wrap">
-                    <a className="header-info-phones" href={`tel:${contacts.phone_number}`}>
-                      {contacts.phone_number}
-                    </a>
-                    {contacts.phone_number_2 && (
-                      <a className="header-info-phones" href={`tel:${contacts.phone_number_2}`}>
-                        {contacts.phone_number_2}
-                      </a>
-                    )}
-                  </div>
-                  <a className="header-info-address" href="#">
-                    {lang === 'ua' ? contacts.address_ua : 
-                     lang === 'ru' ? contacts.address_ru : 
-                     contacts.address_en}
-                  </a>
-                </>
-              )}
+              <a className="header-info-email" href="#">
+                nknotary.dnipro@gmail.com
+              </a>
+              <div className="header-info-phones-wrap">
+                <a className="header-info-phones" href="#">
+                  + 38 067 820 07 00
+                </a>
+                <a className="header-info-phones" href="#">
+                  + 38 067 544 07 00
+                </a>
+              </div>
+              <a className="header-info-address" href="#">
+                м. Дніпро, пр. Дмитра Яворницького, 2, 49100 
+              </a>
             </div>
           </div>
         </div>
@@ -425,10 +443,14 @@ export const Header = () => {
                 </button>
                 <div className="header-change-lang-dropdown">
                   <div className="header-change-lang-list">
-                    {Object.entries(languages).map(([key, label]) => (
+                    {[
+                      { key: "ukr", label: "UA", lang: "ua" },
+                      { key: "rus", label: "RU", lang: "ru" },
+                      { key: "eng", label: "EN", lang: "en" },
+                    ].map(({ key, label, lang: langCode }) => (
                       <button
                         key={key}
-                        className={`header-change-lang fs-p--16px ${key === currentLang ? "c3" : "c16"} lh-150 `}
+                        className={`header-change-lang fs-p--16px ${lang === langCode ? "c3" : "c16"} lh-150 `}
                         onClick={() => switchLang(key)}
                       >
                         {label}
@@ -441,7 +463,9 @@ export const Header = () => {
                   className="phone-btn-wrap btn-z-style"
                 >
                   {isPC ? (
-                    <p className="phone-btn uppercase fs-p--16px">Зв'язатися</p>
+                    <p className="phone-btn uppercase fs-p--16px">
+                      {t("contactButton")}
+                    </p>
                   ) : (
                     <svg
                       width="24"
@@ -468,7 +492,7 @@ export const Header = () => {
             className="navbar-link text-decoration--none c3"
             to={getNavUrl("about")}
           >
-            Про мене
+            {getNavLabel("about")}
           </Link>
 
           {/* Нотаріальні послуги */}
@@ -492,7 +516,7 @@ export const Header = () => {
                 className="navbar-link text-decoration--none c3"
                 to={getNavUrl("services")}
               >
-                Нотаріальні послуги
+                {getNavLabel("services")}
               </Link>
 
               {openKey === "services" && (
@@ -516,7 +540,7 @@ export const Header = () => {
               className="navbar-link text-decoration--none c3"
               to={getNavUrl("services")}
             >
-              Нотаріальні послуги
+              {getNavLabel("services")}
             </Link>
           )}
 
@@ -540,7 +564,7 @@ export const Header = () => {
                 className="navbar-link text-decoration--none c3"
                 to={getNavUrl("notary-translate")}
               >
-                Нотаріальний переклад
+                {getNavLabel("notary-translate")}
               </Link>
 
               {openKey === "notary-translate" && (
@@ -564,7 +588,7 @@ export const Header = () => {
               className="navbar-link text-decoration--none c3"
               to={getNavUrl("notary-translate")}
             >
-              Нотаріальний переклад
+              {getNavLabel("notary-translate")}
             </Link>
           )}
 
@@ -588,7 +612,7 @@ export const Header = () => {
                 className="navbar-link text-decoration--none c3"
                 to={getNavUrl("other-services")}
               >
-                Інші послуги
+                {getNavLabel("other-services")}
               </Link>
 
               {openKey === "other-services" && (
@@ -612,7 +636,7 @@ export const Header = () => {
               className="navbar-link text-decoration--none c3"
               to={getNavUrl("other-services")}
             >
-              Інші послуги
+              {getNavLabel("other-services")}
             </Link>
           )}
 
@@ -636,7 +660,7 @@ export const Header = () => {
                 className="navbar-link text-decoration--none c3"
                 to={getNavUrl("military-help")}
               >
-                Для військових
+                {getNavLabel("military-help")}
               </Link>
 
               {openKey === "military-help" && (
@@ -660,20 +684,20 @@ export const Header = () => {
               className="navbar-link text-decoration--none c3"
               to={getNavUrl("military-help")}
             >
-              Для військових
+              {getNavLabel("military-help")}
             </Link>
           )}
           <Link
             className="navbar-link text-decoration--none c3"
             to={getNavUrl("blog")}
           >
-            Блог
+            {getNavLabel("blog")}
           </Link>
           <Link
             className="navbar-link text-decoration--none c3"
             to={getNavUrl("contacts")}
           >
-            Контакти
+            {getNavLabel("contacts")}
           </Link>
         </nav>
       </div>
@@ -689,7 +713,7 @@ export const Header = () => {
               to={getNavUrl("about")}
               className="mobile-menu-item fs-p--16px fw-medium lh-100 c9"
             >
-              Про мене
+              {getNavLabel("about")}
             </Link>
 
             {/* Послуги */}
@@ -700,7 +724,7 @@ export const Header = () => {
                 className="accordion-header fw-medium"
                 onClick={() => toggleAccordion(0)}
               >
-                Послуги
+                {getSectionLabel("services")}
                 <span className="mobile-menu-item-icon">
                   <img src={arrow} alt="Arrow" />
                 </span>
@@ -717,7 +741,7 @@ export const Header = () => {
                 <ul>
                   <li className="accordion-header-content-item">
                     <Link onClick={closeMenu} to={getNavUrl("services")}>
-                      Нотаріальні послуги
+                      {getNavLabel("services")}
                     </Link>
                   </li>
                   <li className="accordion-header-content-item">
@@ -725,17 +749,17 @@ export const Header = () => {
                       onClick={closeMenu}
                       to={getNavUrl("notary-translate")}
                     >
-                      Нотаріальний переклад
+                      {getNavLabel("notary-translate")}
                     </Link>
                   </li>
                   <li className="accordion-header-content-item">
                     <Link onClick={closeMenu} to={getNavUrl("military-help")}>
-                      Допомога військовим
+                      {getNavLabel("military-help")}
                     </Link>
                   </li>
                   <li className="fs-p--16px lh-100">
                     <Link onClick={closeMenu} to={getNavUrl("other-services")}>
-                      Інші послуги
+                      {getNavLabel("other-services")}
                     </Link>
                   </li>
                 </ul>
@@ -750,7 +774,7 @@ export const Header = () => {
                 className="accordion-header fw-medium"
                 onClick={() => toggleAccordion(1)}
               >
-                Контакти
+                {getSectionLabel("contacts")}
                 <span className="mobile-menu-item-icon">
                   <img src={arrow} alt="Arrow" />
                 </span>
@@ -765,42 +789,24 @@ export const Header = () => {
                 }}
               >
                 <ul>
-                  {contactsLoading ? (
-                    <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                      Завантаження...
-                    </li>
-                  ) : contactsError ? (
-                    <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                      Помилка завантаження
-                    </li>
-                  ) : (
-                    <>
-                      <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                        <a href={`tel:${contacts.phone_number}`}>{contacts.phone_number}</a>
-                      </li>
-                      {contacts.phone_number_2 && (
-                        <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                          <a href={`tel:${contacts.phone_number_2}`}>{contacts.phone_number_2}</a>
-                        </li>
-                      )}
-                      <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                        <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
-                      </li>
-                      <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                        <a href="#">
-                          {lang === 'ua' ? contacts.address_ua : 
-                           lang === 'ru' ? contacts.address_ru : 
-                           contacts.address_en}
-                        </a>
-                      </li>
-                    </>
-                  )}
+                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                    <a href="">+380 67 820 07 00</a>
+                  </li>
+                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                    <a href="">+380 67 544 07 00</a>
+                  </li>
+                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                    <a href="">nknotary.dnipro@gmail.com</a>
+                  </li>
+                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
+                    <a href="">м. Дніпро, пр. Дмитра Яворницького, 2, 49100 </a>
+                  </li>
                 </ul>
               </div>
             </li>
             <li className="mobile-menu-item">
               <div className="accordion-header fw-medium">
-                Соціальні мережі
+                {getSectionLabel("social")}
                 <ul className="mobile-menu-social-block">
                   <li className="mobile-menu-social-block-item">
                     <a href="#" className="mobile-menu-social-block-item-link">
@@ -900,11 +906,15 @@ export const Header = () => {
         <div className="mobile-menu-footer bg9">
           <div className="container">
             <div className="mobile-menu-change-lang-wrap">
-              {Object.entries(languages).map(([key, label]) => (
+              {[
+                { key: "ukr", label: "UA", lang: "ua" },
+                { key: "rus", label: "RU", lang: "ru" },
+                { key: "eng", label: "EN", lang: "en" },
+              ].map(({ key, label, lang: langCode }) => (
                 <button
                   key={key}
-                  className={`mobile-menu-change-lang lh-100 ${isPC ? "fs-p--30px" : "fs-p--16px"} ${currentLang === key ? "active" : ""}`}
-                  onClick={() => setCurrentLang(key)}
+                  className={`mobile-menu-change-lang lh-100 ${isPC ? "fs-p--30px" : "fs-p--16px"} ${lang === langCode ? "active" : ""}`}
+                  onClick={() => switchLang(key)}
                 >
                   {label}
                 </button>

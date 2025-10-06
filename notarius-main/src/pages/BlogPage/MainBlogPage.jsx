@@ -11,7 +11,6 @@ import ArrowLeft from "../../assets/media/icons/arrov-blog-pagination-left.svg";
 import ArrowRight from "../../assets/media/icons/arrov-blog-pagination-right.svg";
 import TemplateBlogPage from "./TemplateBlogPage";
 import { getArticleById } from "./blogData";
-import { useBlog } from "@hooks/useBlog";
 
 
 const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
@@ -20,9 +19,6 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const cardsPerPage = 6;
-    
-    // Загружаем статьи из API
-    const { articles, loading: blogLoading, error: blogError } = useBlog();
     const filterCategories = [
         { id: 'all', label: 'Всі статті' },
         { id: 'bisnes', label: 'БІЗНЕС' },
@@ -31,30 +27,10 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
         { id: 'taxes', label: 'Податки' }
     ];
 
-    // Получаем данные статьи для первой карточки (fallback)
+    // Получаем данные статьи для первой карточки
     const articleData = getArticleById("blog-article");
     
-    // Формируем карточки блога из API данных
-    const blogCards = articles.length > 0 ? articles.map((article, index) => {
-        // Используем изображения по умолчанию в зависимости от индекса
-        const defaultImages = [BlogCard1, BlogCard2, BlogCard3];
-        const image = article.cover_image || defaultImages[index % defaultImages.length];
-        
-        // Определяем категорию (можно добавить поле category в API)
-        const categories = ['bisnes', 'family', 'military', 'taxes'];
-        const category = article.category || categories[index % categories.length];
-        
-        return {
-            id: article.id,
-            slug: article.slug,
-            title: article.title,
-            text: article.excerpt || article.content?.substring(0, 100) + "...",
-            date: new Date(article.created_at).toLocaleDateString('uk-UA'),
-            image: image,
-            category: category,
-            link: `/blog/${article.slug}`
-        };
-    }) : [
+    const blogCards = [
         {
             title: articleData.title,
             text: "Підтвердження достовірності підпису на документі є найбільш популярною нотаріальною послугою серед фізичних осіб. Обличчя самостійно",
@@ -121,7 +97,6 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
             category: "taxes"
         },
     ];
-    
     // Фильтрация карточек
     const filteredCards = activeFilter === 'all' 
         ? blogCards 

@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useIsPC } from "@hooks/isPC";
-import { useTranslation } from "@hooks/useTranslation";
 import "./ReviewForm.scss";
 import { useReviews, useSubmitReview } from "@hooks/useReviews";
 
 export const ReviewForm = () => {
   const isPC = useIsPC();
-  const { t } = useTranslation("components.ReviewForm");
 
   const [selectedRating, setSelectedRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -19,36 +17,26 @@ export const ReviewForm = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Загружаем отзывы и статистику рейтинга
-  const {
-    ratingStats,
-    loading: reviewsLoading,
-    error: reviewsError,
-    fetchReviews,
-  } = useReviews();
-
+  const { ratingStats, loading: reviewsLoading, error: reviewsError, fetchReviews } = useReviews();
+  
   // Hook для отправки отзыва
-  const {
-    submitReview,
-    loading: submitLoading,
-    error: submitError,
-    success: submitSuccess,
-    reset: resetSubmit,
-  } = useSubmitReview();
+  const { submitReview, loading: submitLoading, error: submitError, success: submitSuccess, reset: resetSubmit } = useSubmitReview();
 
+  // список услуг
   const services = [
     {
       value: "certification",
-      label: t("services.certification"),
+      label: "Засвідчення копій документів та підписів.",
     },
     {
       value: "realEstateTransactions",
-      label: t("services.realEstateTransactions"),
+      label: "Нотаріальне супроводження угод з нерухомістю.",
     },
-    { value: "heritage", label: t("services.heritage") },
-    { value: "attorney", label: t("services.attorney") },
+    { value: "heritage", label: "Оформлення спадщини та заповітів." },
+    { value: "attorney", label: "Посвідчення довіреностей та згод." },
     {
       value: "agreements",
-      label: t("services.agreements"),
+      label: "Посвідчення договорів купівлі-продажу, дарування, оренди.",
     },
   ];
 
@@ -77,19 +65,19 @@ export const ReviewForm = () => {
     e.preventDefault();
 
     if (selectedRating === 0) {
-      alert(t("validation.rateRequired"));
+      alert("Оцініть послугу, обравши зірочки");
       return;
     }
     if (!selectedService) {
-      alert(t("validation.serviceRequired"));
+      alert("Будь ласка, оберіть послугу");
       return;
     }
     if (!name.trim()) {
-      alert(t("validation.nameRequired"));
+      alert("Поле Ім'я обов'язкове");
       return;
     }
     if (!text.trim()) {
-      alert(t("validation.textRequired"));
+      alert("Напишіть свій відгук");
       return;
     }
 
@@ -98,7 +86,7 @@ export const ReviewForm = () => {
       name: name.trim(),
       service: selectedService,
       rating: selectedRating,
-      text: text.trim(),
+      text: text.trim()
     });
 
     if (result.success) {
@@ -108,11 +96,11 @@ export const ReviewForm = () => {
       setSelectedRating(0);
       setSelectedService("");
       setIsOpen(false);
-
+      
       // Обновляем статистику рейтинга
       fetchReviews();
     } else {
-      alert(result.message || t("validation.submitError"));
+      alert(result.message || "Помилка при відправці. Спробуйте ще раз.");
     }
   };
 
@@ -122,16 +110,16 @@ export const ReviewForm = () => {
   const getReviewWord = (count) => {
     const lastDigit = count % 10;
     const lastTwoDigits = count % 100;
-    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return t("reviews.many");
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return "відгуків";
     switch (lastDigit) {
       case 1:
-        return t("reviews.one");
+        return "відгук";
       case 2:
       case 3:
       case 4:
-        return t("reviews.few");
+        return "відгуки";
       default:
-        return t("reviews.many");
+        return "відгуків";
     }
   };
 
@@ -141,7 +129,7 @@ export const ReviewForm = () => {
         {/* Блок рейтинга */}
         <div className="rating-summary">
           <h2 className={`${isPC ? "fs-p--28px" : "fs-p--18px"} fw-semi-bold`}>
-            {t("rating")}
+            Рейтинг
           </h2>
           {reviewsLoading ? (
             <div style={{ textAlign: "center", padding: "20px" }}>
@@ -150,9 +138,7 @@ export const ReviewForm = () => {
               </p>
             </div>
           ) : reviewsError ? (
-            <div
-              style={{ textAlign: "center", padding: "20px", color: "#dc3545" }}
-            >
+            <div style={{ textAlign: "center", padding: "20px", color: "#dc3545" }}>
               <p className={`${isPC ? "fs-p--16px" : "fs-p--12px"} c3`}>
                 Помилка завантаження рейтингу
               </p>
@@ -203,13 +189,13 @@ export const ReviewForm = () => {
         {/* Форма отзыва */}
         <div className="review-form">
           <h2 className={`${isPC ? "fs-p--28px" : "fs-p--18px"} fw-semi-bold`}>
-            {t("leaveReview")}
+            Залишіть свій відгук
           </h2>
 
           {/* Звезды */}
           <div className="rate-wrap">
             <label className={`${isPC ? "fs-p--18px" : "fs-p--10px"}`}>
-              {t("setRating")}
+              Поставте свій рейтинг:
             </label>
             <div className="star-input fs-star" id="starInput">
               {[1, 2, 3, 4, 5].map((value) => (
@@ -240,14 +226,14 @@ export const ReviewForm = () => {
                 type="text"
                 id="review-name"
                 name="name"
-                placeholder={t("name")}
+                placeholder="Ім'я"
                 autoComplete="on"
                 required
                 disabled={submitSuccess}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
-              <label htmlFor="review-name">{t("name")}</label>
+              <label htmlFor="review-name">Ім’я</label>
             </div>
 
             {/* Кастомный select */}
@@ -263,7 +249,7 @@ export const ReviewForm = () => {
                 >
                   {selectedService
                     ? services.find((s) => s.value === selectedService)?.label
-                    : t("service")}
+                    : "Послуга за якою зверталися"}
                   <span className="arrow"></span>
                 </div>
 
@@ -293,7 +279,7 @@ export const ReviewForm = () => {
               className={`input-group ${isPC ? "fs-p--18px" : "fs-p--10px"} c3 lh-150`}
             >
               <textarea
-                placeholder={t("impression")}
+                placeholder="Ваше враження"
                 value={text}
                 id="message"
                 required
@@ -305,7 +291,7 @@ export const ReviewForm = () => {
                 rows={1}
                 disabled={submitSuccess}
               />
-              <label htmlFor="message">{t("impression")}</label>
+              <label htmlFor="message">Ваше враження</label>
             </div>
 
             {/* Кнопка */}
@@ -323,10 +309,10 @@ export const ReviewForm = () => {
               disabled={submitSuccess || submitLoading}
             >
               {submitSuccess
-                ? t("submitted")
+                ? "Дякуємо! Ваш відгук з'явиться після модерації"
                 : submitLoading
-                  ? t("submitting")
-                  : t("submit")}
+                  ? "Відправка..."
+                  : "ВІДПРАВИТИ"}
             </button>
           </form>
         </div>

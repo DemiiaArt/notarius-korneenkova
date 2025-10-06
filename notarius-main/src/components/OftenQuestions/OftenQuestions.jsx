@@ -1,19 +1,8 @@
 import "./OftenQuestions.scss";
 import { useState, useEffect, useRef } from "react";
 import { useIsPC } from "@hooks/isPC";
-import { useFrequentlyAskedQuestions } from "@hooks/useFrequentlyAskedQuestions";
-import { detectLocaleFromPath } from "@nav/nav-helpers-extra";
-import { useLocation } from "react-router-dom";
-
-// Многоязычные заголовки
-const getTitle = (lang) => {
-  const titles = {
-    ua: "Часті запитання",
-    ru: "Частые вопросы", 
-    en: "Frequently Asked Questions"
-  };
-  return titles[lang] || titles.ua;
-};
+import { useTranslation } from "@hooks/useTranslation";
+import { useFAQs } from "@hooks/useFAQs";
 
 // Иконки вынесены отдельно
 const MinusIcon = () => (
@@ -79,88 +68,30 @@ const OftenQuestionsItem = ({ question, isOpen, onToggle }) => {
   );
 };
 
-export const OftenQuestions = () => {
+export const OftenQuestions = ({ title = "Часті запитання" }) => {
   const [activeItem, setActiveItem] = useState(null);
-  const location = useLocation();
-  
-  // Определяем текущий язык из URL
-  const currentLang = detectLocaleFromPath(location.pathname);
-  
-  // Получаем FAQ из API
-  const { faqs, loading, error } = useFrequentlyAskedQuestions(currentLang);
+  const { t } = useTranslation("components.OftenQuestions");
+
+  // Загружаем FAQ из API
+  const { faqs, loading, error } = useFAQs();
 
   const handleToggle = (title) => {
     setActiveItem((prev) => (prev === title ? null : title));
   };
 
   const isPC = useIsPC(768);
-  const title = getTitle(currentLang);
 
-  // Показываем загрузку
-  if (loading) {
-    return (
-      <div className="often-quetions bg1">
-        <div className="container">
-          <div className="often-quetions-content">
-            <h2
-              className={`often-quetions-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} lh-100 uppercase fw-bold`}
-            >
-              {title}
-            </h2>
-            <div className="often-quetions-list">
-              <div className="open">
-                <div>Завантаження...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Функция для получения переведенного заголовка
+  const getTranslatedTitle = (originalTitle) => {
+    const titles = t("titles");
+    return titles && titles[originalTitle]
+      ? titles[originalTitle]
+      : originalTitle;
+  };
 
-  // Показываем ошибку
-  if (error) {
-    return (
-      <div className="often-quetions bg1">
-        <div className="container">
-          <div className="often-quetions-content">
-            <h2
-              className={`often-quetions-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} lh-100 uppercase fw-bold`}
-            >
-              {title}
-            </h2>
-            <div className="often-quetions-list">
-              <div className="open">
-                <div>Помилка завантаження: {error}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Если нет данных
-  if (!faqs || faqs.length === 0) {
-    return (
-      <div className="often-quetions bg1">
-        <div className="container">
-          <div className="often-quetions-content">
-            <h2
-              className={`often-quetions-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} lh-100 uppercase fw-bold`}
-            >
-              {title}
-            </h2>
-            <div className="often-quetions-list">
-              <div className="open">
-                <div>Наразі немає доступних запитань</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Преобразуем FAQ из API в формат для компонента
+  // API возвращает данные в формате { title, text, order }
+  const oftenQuestionsData = Array.isArray(faqs) ? faqs : [];
 
   return (
     <div className="often-quetions bg1">
@@ -169,20 +100,41 @@ export const OftenQuestions = () => {
           <h2
             className={`often-quetions-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} lh-100 uppercase fw-bold`}
           >
-            Часті {isPC ? <br /> : ""} запитання
+            {getTranslatedTitle(title)}
           </h2>
-          <div className="often-quetions-list">
-            <div className="open">
-              {faqs.map((faq, index) => (
-                <OftenQuestionsItem
-                  key={`${faq.title}-${index}`}
-                  question={faq}
-                  isOpen={activeItem === faq.title}
-                  onToggle={() => handleToggle(faq.title)}
-                />
-              ))}
+
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              <p className={`${isPC ? "fs-p--18px" : "fs-p--14px"} c3`}>
+                Завантаження FAQ...
+              </p>
             </div>
-          </div>
+          ) : error ? (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              <p className={`${isPC ? "fs-p--18px" : "fs-p--14px"} c3`}>
+                Помилка завантаження FAQ: {error}
+              </p>
+            </div>
+          ) : oftenQuestionsData.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              <p className={`${isPC ? "fs-p--18px" : "fs-p--14px"} c3`}>
+                Немає доступних питань
+              </p>
+            </div>
+          ) : (
+            <div className="often-quetions-list">
+              <div className="open">
+                {oftenQuestionsData.map((q, index) => (
+                  <OftenQuestionsItem
+                    key={q.title || index}
+                    question={q}
+                    isOpen={activeItem === q.title}
+                    onToggle={() => handleToggle(q.title)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

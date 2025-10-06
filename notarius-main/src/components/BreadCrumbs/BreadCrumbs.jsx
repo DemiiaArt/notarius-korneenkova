@@ -220,6 +220,7 @@ import {
   buildFullPathForId,
   getLabel,
 } from "@nav/nav-utils";
+import { useLanguage } from "@hooks/useLanguage";
 
 // Маршруты, которые на ярких страницах подсвечиваем иначе (оставил твоё)
 const brightRoutes = {
@@ -246,11 +247,12 @@ const brightRoutes = {
 const Breadcrumbs = () => {
   const isPC = useIsPC();
   const location = useLocation();
+  const { currentLang } = useLanguage();
   const { navTree, loading, error, mergeComplete } = useHybridNav();
 
   // Язык и сегменты без префикса языка
   const rawSegments = location.pathname.split("/").filter(Boolean);
-  let lang = "ua";
+  let lang = currentLang || "ua"; // Используем язык из контекста
   let breadcrumbs = [...rawSegments];
   if (breadcrumbs[0] === "ru" || breadcrumbs[0] === "en") {
     lang = breadcrumbs[0];

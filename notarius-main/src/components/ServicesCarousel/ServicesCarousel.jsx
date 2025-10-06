@@ -5,6 +5,7 @@ import { useLang } from "@nav/use-lang";
 import { buildFullPathForId, getLabel, findNodeById } from "@nav/nav-utils";
 import { useHybridNav } from "@contexts/HybridNavContext";
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import "./ServicesCarousel.scss";
 
@@ -15,7 +16,7 @@ import "swiper/css/pagination";
 
 const ServicesCarousel = ({
   parentId, // ID батьківського елемента в навігаційному дереві
-  title = "ПОСЛУГИ",
+  title = "ПОСЛУГИ", // Заголовок, который будет переводиться
   showTitle = true,
   className = "",
   kind = "page",
@@ -24,6 +25,15 @@ const ServicesCarousel = ({
   const isPC = useIsPC();
   const location = useLocation();
   const { navTree, loading, error } = useHybridNav();
+  const { t } = useTranslation("components.ServicesCarousel");
+
+  // Функция для получения переведенного заголовка
+  const getTranslatedTitle = (originalTitle) => {
+    const titles = t("titles");
+    return titles && titles[originalTitle]
+      ? titles[originalTitle]
+      : originalTitle;
+  };
 
   // Показуємо завантаження якщо навігація ще не завантажена
   if (loading) {
@@ -31,7 +41,7 @@ const ServicesCarousel = ({
       <div className={`services-carousel ${className}`}>
         <div className="container">
           <div style={{ textAlign: "center", padding: "20px" }}>
-            Завантаження...
+            {t("loading")}
           </div>
         </div>
       </div>
@@ -199,7 +209,11 @@ const ServicesCarousel = ({
     <div className={`services-carousel ${className}`}>
       <div className="container">
         <div className="services-carousel-container">
-          {showTitle && <h2 className="services-carousel-title">{title}</h2>}
+          {showTitle && (
+            <h2 className="services-carousel-title">
+              {getTranslatedTitle(title)}
+            </h2>
+          )}
         </div>
       </div>
       <div className="services-carousel-wrapper">

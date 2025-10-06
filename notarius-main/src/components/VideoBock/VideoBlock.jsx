@@ -2,12 +2,23 @@ import "./VideoBlock.scss";
 import videoTest from "@media/video_test.mov";
 import { useState, useRef } from "react";
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 import { motion, AnimatePresence } from "framer-motion";
 
-export const VideoBlock = ({ title, description }) => {
+export const VideoBlock = ({ title, description, pageType }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const videoRef = useRef(null);
+  const { getTranslations } = useTranslation("components.VideoBlock");
+
+  // Получаем переводы для компонента
+  const translations = getTranslations();
+  const { playButton } = translations;
+
+  // Получаем переводы для конкретной страницы
+  const pageTranslations = pageType ? translations[pageType] : null;
+  const translatedTitle = pageTranslations?.title || title;
+  const translatedDescription = pageTranslations?.description || description;
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -84,10 +95,10 @@ export const VideoBlock = ({ title, description }) => {
               <h2
                 className={` uppercase fw-bold ${isPC ? "fs-h2--32px" : "fs-h2--20px"}`}
               >
-                {title}
+                {translatedTitle}
               </h2>
               <p className={` ${isPC ? "fs-p--24px" : "fs-p--16px"} lh-150`}>
-                {description}
+                {translatedDescription}
               </p>
             </motion.div>
 
@@ -99,8 +110,7 @@ export const VideoBlock = ({ title, description }) => {
               exit={{ x: 100, opacity: 0 }}
               transition={{ duration: 0.6 }}
             >
-              
-              <span>Дивитись відео</span>
+              <span>{playButton || "Дивитись відео"}</span>
               <svg
                 width="100"
                 height="100"

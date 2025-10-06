@@ -1,6 +1,7 @@
 import "./ServicesAccordion.scss";
 import { useState, useEffect } from "react";
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 
 // Данные вынесены в отдельный массив
 const services = [
@@ -107,10 +108,19 @@ const AccordionItem = ({ service, isOpen, onToggle }) => {
   );
 };
 
-export const ServicesAccordion = () => {
+export const ServicesAccordion = ({ title = "ДЛЯ КОГО ПОСЛУГИ" }) => {
   const [activeItem, setActiveItem] = useState(null);
   const [showCollapsed, setShowCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { t } = useTranslation("components.ServicesAccordion");
+
+  // Функция для получения переведенного заголовка
+  const getTranslatedTitle = (originalTitle) => {
+    const titles = t("titles");
+    return titles && titles[originalTitle]
+      ? titles[originalTitle]
+      : originalTitle;
+  };
 
   // проверка размера экрана
   useEffect(() => {
@@ -137,7 +147,7 @@ export const ServicesAccordion = () => {
         <h2
           className={`accordion-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} fw-bold`}
         >
-          ДЛЯ КОГО ПОСЛУГИ
+          {getTranslatedTitle(title)}
         </h2>
 
         <div

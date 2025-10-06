@@ -17,7 +17,7 @@ export const useHeaderContacts = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_BASE_URL}/header/`);
+      const response = await fetch(`${API_BASE_URL}/header-contacts/`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -46,7 +46,7 @@ export const useHeaderContacts = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_BASE_URL}/header/`, {
+      const response = await fetch(`${API_BASE_URL}/header-contacts/update/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

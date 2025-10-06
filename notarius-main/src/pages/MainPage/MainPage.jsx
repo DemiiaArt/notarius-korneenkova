@@ -9,19 +9,16 @@ import ServicesAccordion from "@components/ServicesAccordion/ServicesAccordion";
 import Form from "@components/Form/Form";
 
 import "./MainPage.scss";
-const MainPage = ({ skillsContent, lang }) => {
+const MainPage = ({ lang }) => {
   return (
     <>
       <MainVideo lang={lang} />
       <About />
-      <Skills skillsContent={skillsContent} />
+      <Skills />
       <ServicesCarousel parentId="services" title="Послуги" kind="group" />
       <Comments />
       <ReviewForm />
-      <VideoBlock
-        title="НАДІЯ — ВАША НАДІЙНА ОПОРА В НОТАРІАЛЬНІЙ СПРАВІ"
-        description="Дізнайтеся більше про професійний шлях та цінності приватного нотаріуса Надії у короткому відеоінтерв’ю."
-      />
+      <VideoBlock pageType="mainPage" />
       <ServicesAccordion />
       <Form />
     </>

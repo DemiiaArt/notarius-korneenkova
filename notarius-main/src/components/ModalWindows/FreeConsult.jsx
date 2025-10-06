@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useIsPC } from "@hooks/isPC";
 import "./FreeConsult.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
-import { useFreeConsultations } from "@hooks/useFreeConsultations";
 
 const formName = "freeConsult";
 
@@ -25,10 +24,9 @@ export const FreeConsult = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const isPC = useIsPC();
-  
-  // Используем хук для отправки заявок на бесплатную консультацию
-  const { submitFreeConsultation, loading: isLoading, error: apiError, success } = useFreeConsultations();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -101,22 +99,22 @@ export const FreeConsult = () => {
 
     if (hasError) return;
 
-    // Отправляем заявку на бесплатную консультацию через API
-    const result = await submitFreeConsultation({
-      name: formData.name,
-      phone_number: formData.tel,
-      city: formData.city,
-      question: formData.question
-    });
+    setIsLoading(true);
 
-    if (result.success) {
+    try {
+      // имитация запроса
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsSubmitted(true);
-      console.log("✅ Заявка на бесплатную консультацию отправлена:", result.data);
-    } else {
+
+      // тестовый лог
+      console.log("Form submitted:", formData);
+    } catch (err) {
       setErrors((prev) => ({
         ...prev,
-        tel: result.error || "Помилка при відправці. Спробуйте ще раз.",
+        tel: "Помилка при відправці. Спробуйте ще раз.",
       }));
+    } finally {
+      setIsLoading(false);
     }
   };
 

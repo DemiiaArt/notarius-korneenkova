@@ -10,6 +10,7 @@ import {
 } from "@nav/nav-utils";
 import { useHybridNav } from "@contexts/HybridNavContext";
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import "./GroupServicesCarousel.scss";
 
@@ -20,7 +21,7 @@ import "swiper/css/pagination";
 
 const GroupServicesCarousel = ({
   parentId, // ID батьківського елемента в навігаційному дереві
-  title = "ВИДИ НОТАРІАЛЬНИХ ПОСЛУГ",
+  title = "ВИДИ НОТАРІАЛЬНИХ ПОСЛУГ", // Заголовок, который будет переводиться
   showTitle = true,
   className = "",
   kind = "page", // Тип елементів для показу
@@ -28,6 +29,15 @@ const GroupServicesCarousel = ({
   const { currentLang } = useLang();
   const isPC = useIsPC();
   const { navTree, loading, error } = useHybridNav();
+  const { t } = useTranslation("components.GroupServicesCarousel");
+
+  // Функция для получения переведенного заголовка
+  const getTranslatedTitle = (originalTitle) => {
+    const titles = t("titles");
+    return titles && titles[originalTitle]
+      ? titles[originalTitle]
+      : originalTitle;
+  };
 
   // Показуємо завантаження якщо навігація ще не завантажена
   if (loading) {
@@ -35,7 +45,7 @@ const GroupServicesCarousel = ({
       <div className={`group-services-carousel ${className}`}>
         <div className="container">
           <div style={{ textAlign: "center", padding: "20px" }}>
-            Завантаження...
+            {t("loading")}
           </div>
         </div>
       </div>
@@ -93,7 +103,7 @@ const GroupServicesCarousel = ({
           <h2
             className={`group-services-carousel-title ${isPC ? "fs-p--32px" : "fs-p--24px"} fw-semi-bold uppercase c3`}
           >
-            {title}
+            {getTranslatedTitle(title)}
           </h2>
         )}
       </div>

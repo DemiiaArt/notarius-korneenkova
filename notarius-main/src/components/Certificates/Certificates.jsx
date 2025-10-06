@@ -1,5 +1,6 @@
 import "./Certificates.scss";
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -26,6 +27,11 @@ const Certificates = () => {
   const [activeTab, setActiveTab] = useState("diplomas");
   const [selectedImage, setSelectedImage] = useState(null);
   const isPC = useIsPC();
+  const { getTranslations } = useTranslation("components.Certificates");
+
+  // Получаем переводы для компонента
+  const translations = getTranslations();
+  const { title, tabs, modal, carousel } = translations;
 
   const certificates = [diploma];
 
@@ -50,55 +56,55 @@ const Certificates = () => {
 
     return (
       <>
-      <Swiper
-        key={key}
-        modules={[Navigation, Pagination]}
-        pagination={{
-          clickable: true,
-          el: `.${paginationClass}`, 
-        }}
-        spaceBetween={32}
-        slidesPerView={1}
-        observer={true}
-        observeParents={true}
-        watchOverflow={true}
-        breakpoints={{
-          768: { slidesPerView: 2, spaceBetween: 32 },
-          1024: { slidesPerView: 3, spaceBetween: 32 },
-        }}
-        onBeforeInit={(swiper) => {
-          swiper.params.navigation.prevEl = `.${prevClass}`;
-          swiper.params.navigation.nextEl = `.${nextClass}`;
-        }}
-        navigation={{
-          prevEl: `.${prevClass}`,
-          nextEl: `.${nextClass}`,
-        }}
-        className="certificates-carousel"
-      >
-        {items.map((src, i) => (
-          <SwiperSlide className="certificates-carousel-slide" key={i}>
-            <div className="certificates-carousel-slide-inner">
-              <img
-                className="certificates-carousel-slide-image"
-                src={src}
-                alt={`Certificate ${i + 1}`}
-                onClick={() => setSelectedImage(src)}
-                style={{ cursor: 'pointer' }}
-              />
-            </div>
-          </SwiperSlide>
-        ))}
+        <Swiper
+          key={key}
+          modules={[Navigation, Pagination]}
+          pagination={{
+            clickable: true,
+            el: `.${paginationClass}`,
+          }}
+          spaceBetween={32}
+          slidesPerView={1}
+          observer={true}
+          observeParents={true}
+          watchOverflow={true}
+          breakpoints={{
+            768: { slidesPerView: 2, spaceBetween: 32 },
+            1024: { slidesPerView: 3, spaceBetween: 32 },
+          }}
+          onBeforeInit={(swiper) => {
+            swiper.params.navigation.prevEl = `.${prevClass}`;
+            swiper.params.navigation.nextEl = `.${nextClass}`;
+          }}
+          navigation={{
+            prevEl: `.${prevClass}`,
+            nextEl: `.${nextClass}`,
+          }}
+          className="certificates-carousel"
+        >
+          {items.map((src, i) => (
+            <SwiperSlide className="certificates-carousel-slide" key={i}>
+              <div className="certificates-carousel-slide-inner">
+                <img
+                  className="certificates-carousel-slide-image"
+                  src={src}
+                  alt={`${carousel?.altText || "Сертифікат"} ${i + 1}`}
+                  onClick={() => setSelectedImage(src)}
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
+            </SwiperSlide>
+          ))}
 
-        {/* Стрелки */}
-        <div className={`${prevClass} certificates-carousel-prev bg6`}>
-          <img src={arrowRight} alt="arrow-left" />
-        </div>
-        <div className={`${nextClass} certificates-carousel-next bg6`}>
-          <img src={arrowRight} alt="arrow-right" />
-        </div>
-      </Swiper>
-      <div className={paginationClass}></div>
+          {/* Стрелки */}
+          <div className={`${prevClass} certificates-carousel-prev bg6`}>
+            <img src={arrowRight} alt={carousel?.prevAlt || "стрілка вліво"} />
+          </div>
+          <div className={`${nextClass} certificates-carousel-next bg6`}>
+            <img src={arrowRight} alt={carousel?.nextAlt || "стрілка вправо"} />
+          </div>
+        </Swiper>
+        <div className={paginationClass}></div>
       </>
     );
   };
@@ -106,8 +112,10 @@ const Certificates = () => {
   return (
     <div className="certificates">
       <div className="container">
-        <h2 className={`certificates-title uppercase ${isPC? "fs-h2--32px" : "fs-h2--20px"} fw-bold c3`}>
-          Кваліфікація та досвід
+        <h2
+          className={`certificates-title uppercase ${isPC ? "fs-h2--32px" : "fs-h2--20px"} fw-bold c3`}
+        >
+          {title || "Кваліфікація та досвід"}
         </h2>
 
         {/* Вкладки */}
@@ -118,7 +126,7 @@ const Certificates = () => {
               activeTab === "diplomas" ? "active" : ""
             }`}
           >
-            Сертифікати
+            {tabs?.certificates || "Сертифікати"}
           </button>
           <button
             onClick={() => setActiveTab("certificates")}
@@ -126,7 +134,7 @@ const Certificates = () => {
               activeTab === "certificates" ? "active" : ""
             }`}
           >
-            Свідоцтво
+            {tabs?.diploma || "Свідоцтво"}
           </button>
         </div>
 
@@ -139,23 +147,23 @@ const Certificates = () => {
 
       {/* Модальное окно для просмотра изображения */}
       {selectedImage && (
-        <div 
+        <div
           className="certificates-modal-overlay"
           onClick={() => setSelectedImage(null)}
         >
-          <div 
+          <div
             className="certificates-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <button 
+            <button
               className="certificates-modal-close"
               onClick={() => setSelectedImage(null)}
             >
-              ×
+              {modal?.close || "×"}
             </button>
-            <img 
-              src={selectedImage} 
-              alt="Certificate full size"
+            <img
+              src={selectedImage}
+              alt={modal?.altText || "Сертифікат повного розміру"}
               className="certificates-modal-image"
             />
           </div>
