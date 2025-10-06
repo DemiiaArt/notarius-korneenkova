@@ -12,13 +12,27 @@ class Header(models.Model):
     address_ua = models.CharField(max_length=255)
     address_en = models.CharField(max_length=255)
     address_ru = models.CharField(max_length=255)
+    
+    # Рабочие часы (многоязычные)
+    working_hours_ua = models.CharField(max_length=255, blank=True, null=True, verbose_name="Години роботи (UA)")
+    working_hours_en = models.CharField(max_length=255, blank=True, null=True, verbose_name="Working hours (EN)")
+    working_hours_ru = models.CharField(max_length=255, blank=True, null=True, verbose_name="Время работы (RU)")
+
+    # Социальные сети (URL)
+    instagram_url = models.URLField(max_length=500, blank=True, null=True)
+    facebook_url = models.URLField(max_length=500, blank=True, null=True)
+    twitter_url = models.URLField(max_length=500, blank=True, null=True)
+    x_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="X (ex-Twitter)")
+    telegram_url = models.URLField(max_length=500, blank=True, null=True)
+    
 
     def __str__(self):
         return self.email
     
     class Meta:
-        verbose_name = "Контакты в шапке профиля"
-        verbose_name_plural = "Контакты в шапке профиля"
+        verbose_name = "Контакты"
+        verbose_name_plural = "Контакты"
+        db_table = 'main_page_header'
 
 
 class BackgroundVideo(models.Model):
