@@ -5,7 +5,7 @@
 
 // Определяем базовый URL в зависимости от окружения
 const getApiBaseUrl = () => {
-  // В production используем переменную окружения или относительный путь
+  // В production используем переменную окружения или текущий origin
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
@@ -15,8 +15,8 @@ const getApiBaseUrl = () => {
     return 'http://localhost:8000/api';
   }
   
-  // Для production - относительный путь или ваш production URL
-  return 'https://notarius-korneenkova-production.up.railway.app/api';
+  // Для production по умолчанию используем текущий origin + /api
+  return `${window.location.origin}/api`;
 };
 
 export const API_BASE_URL = getApiBaseUrl();
