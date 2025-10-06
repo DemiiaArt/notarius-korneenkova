@@ -22,6 +22,9 @@
         "step4": "Document certification and delivery to the client"
       }
     },
+    "NotaryServices": {
+      "orderConsultation": "Order consultation"
+    },
     "Certificates": {
       "title": "Qualification and experience",
       "tabs": {
@@ -209,7 +212,28 @@
         "Translation Services": "Translation Services",
         "Послуги допомога військовим": "Military Support Services",
         "Услуги помощь военным": "Military Support Services",
-        "Military Support Services": "Military Support Services"
+        "Military Support Services": "Military Support Services",
+        "Інші послуги": "Other Services",
+        "Другие услуги": "Other Services",
+        "Other Services": "Other Services",
+        "Категорії договорів": "Contract Categories",
+        "Категории договоров": "Contract Categories",
+        "Contract Categories": "Contract Categories",
+        "Категорії довіреностей": "Power of Attorney Categories",
+        "Категории доверенностей": "Power of Attorney Categories",
+        "Power of Attorney Categories": "Power of Attorney Categories",
+        "АПОСТИЛЬ ТА АФІДЕВІТ": "APOSTILLE AND AFFIDAVIT",
+        "АПОСТИЛЬ И АФФИДЕВИТ": "APOSTILLE AND AFFIDAVIT",
+        "APOSTILLE AND AFFIDAVIT": "APOSTILLE AND AFFIDAVIT",
+        "Консультації. Копії. Дублікати": "Consultations. Copies. Duplicates",
+        "Консультации. Копии. Дубликаты": "Consultations. Copies. Duplicates",
+        "Consultations. Copies. Duplicates": "Consultations. Copies. Duplicates",
+        "Послуги допомога військовим": "Military Support Services",
+        "Услуги помощь военным": "Military Support Services",
+        "Military Support Services": "Military Support Services",
+        "Підпис. Заява": "Signature. Statement",
+        "Подпись. Заявление": "Signature. Statement",
+        "Signature. Statement": "Signature. Statement"
       }
     },
     "ServicesCarousel": {

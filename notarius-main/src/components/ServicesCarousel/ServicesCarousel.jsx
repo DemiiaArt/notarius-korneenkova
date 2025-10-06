@@ -136,6 +136,7 @@ const ServicesCarousel = ({
               kind: node.kind,
               label: node.label,
               showInMenu: node.showInMenu,
+              cardImage: node.cardImage, // Добавляем card_image из merged дерева
             }
           : null;
       })
@@ -160,17 +161,6 @@ const ServicesCarousel = ({
     );
   }
 
-  // Отладочная информация для выбранных данных
-  // console.log("ServicesCarousel Data Debug:", {
-  //   targetParentId,
-  //   targetKind,
-  //   visibleChildrenCount: visibleChildren.length,
-  //   visibleChildren: visibleChildren.map((c) => ({
-  //     id: c?.id,
-  //     label: c?.label?.[currentLang],
-  //   })),
-  // });
-
   // Отримуємо лейбл для мови
   const getLabel = (node, lang) => {
     return (node?.label && node.label[lang]) || "";
@@ -182,23 +172,15 @@ const ServicesCarousel = ({
   };
 
   // Отримуємо зображення для послуги
-  const getServiceImage = (serviceId) => {
-    const images = [
-      "/src/assets/media/services-carousel/ServicesGallery_notary.png",
-      "/src/assets/media/services-carousel/ServicesGallery_ranslate.png",
-      "/src/assets/media/services-carousel/ServicesGallery_military.png",
-    ];
-
-    // Використовуємо хеш ID для вибору зображення
-    let hash = 0;
-    for (let i = 0; i < serviceId.length; i++) {
-      const char = serviceId.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32bit integer
+  const getServiceImage = (service) => {
+    // Якщо є card_image в об'єкті сервісу, використовуємо його
+    console.log("🖼️ ServicesCarousel - Getting image for service:", service);
+    if (service?.cardImage) {
+      return `http://localhost:8000${service.cardImage}`;
     }
 
-    const imageIndex = Math.abs(hash) % images.length;
-    return images[imageIndex];
+    // Fallback - картинка за замовчуванням
+    return "/src/assets/media/services-carousel/ServicesGallery_notary.png";
   };
 
   if (visibleChildren.length === 0) {
@@ -233,7 +215,7 @@ const ServicesCarousel = ({
               <Link to={getUrl(service.id)} className="services-carousel-slide">
                 <div className="services-carousel-image">
                   <img
-                    src={getServiceImage(service.id)}
+                    src={getServiceImage(service)}
                     alt={getLabel(service, currentLang)}
                     loading="lazy"
                   />

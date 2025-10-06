@@ -48,12 +48,26 @@ const ServiceDetailPage = () => {
   // Перевіряємо, чи є компонент для цієї сторінки
   const PageComponent = getComponentById(currentNode.id);
 
+  console.log(
+    "🔍 ServiceDetailPage: Проверяем компонент для ID:",
+    currentNode.id
+  );
+  console.log("🔍 ServiceDetailPage: PageComponent:", PageComponent);
+
   // Якщо є спеціальний компонент - використовуємо його
-  if (PageComponent) {
+  if (PageComponent && PageComponent !== null) {
+    console.log(
+      "✅ ServiceDetailPage: Используем компонент из реестра:",
+      currentNode.id
+    );
     return <PageComponent />;
   }
 
   // Якщо немає спеціального компонента - використовуємо дефолтний шаблон
+  console.log(
+    "📄 ServiceDetailPage: Используем DefaultFourthLevelPage для:",
+    currentNode.id
+  );
   return (
     <DefaultFourthLevelPage title={title} heroImgClass="notaryServicesPage" />
   );

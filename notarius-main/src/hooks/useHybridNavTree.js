@@ -94,6 +94,10 @@ const getChildrenByParentId = (backendTree, parentId) => {
 
 // Простая функция для объединения статического дерева с backend данными
 const mergeStaticWithBackendData = (staticTree, backendData) => {
+  console.log("🔄 Starting merge process...");
+  console.log("📦 Static NAV_TREE:", staticTree);
+  console.log("🌐 Backend data:", backendData);
+
   // Создаем карту backend данных по ID для быстрого поиска
   const backendMap = {};
   const buildBackendMap = (nodes) => {
@@ -108,6 +112,7 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
   };
 
   buildBackendMap(backendData);
+  console.log("🗺️ Backend map created:", backendMap);
 
   const mergeNode = (node) => {
     const mergedNode = { ...node };
@@ -119,7 +124,16 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
       // Объединяем все свойства из backend (showMegaPanel, showInMenu, label, slug и т.д.)
       Object.keys(backendNode).forEach((key) => {
         if (key !== "children") {
-          mergedNode[key] = backendNode[key];
+          // Преобразуем card_image в cardImage (camelCase)
+          if (key === "card_image") {
+            mergedNode.cardImage = backendNode[key];
+            console.log(
+              `✅ Merging node "${node.id}": cardImage =`,
+              backendNode[key]
+            );
+          } else {
+            mergedNode[key] = backendNode[key];
+          }
         }
       });
 
@@ -136,6 +150,7 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
   };
 
   const result = mergeNode(staticTree);
+  console.log("✨ Merge complete! Final result:", result);
   return result;
 };
 

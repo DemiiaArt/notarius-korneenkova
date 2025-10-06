@@ -2,12 +2,16 @@ import { useIsPC } from "@hooks/isPC";
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import "./NotaryServices.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
+import { useTranslation } from "@hooks/useTranslation";
 
 const NotaryServices = ({ title, listItems, heroImageUrl }) => {
   const isPC = useIsPC();
   const { open } = useModal();
+  const { t } = useTranslation("components.NotaryServices");
   const backgroundStyle = heroImageUrl
-    ? { backgroundImage: `url(${import.meta.env.VITE_ASSETS_BASE || ''}${heroImageUrl})` }
+    ? {
+        backgroundImage: `url(${import.meta.env.VITE_ASSETS_BASE || ""}${heroImageUrl})`,
+      }
     : undefined;
 
   return (
@@ -40,7 +44,7 @@ const NotaryServices = ({ title, listItems, heroImageUrl }) => {
                 isPC ? "fs-p--16px" : "fs-p--14px"
               } uppercase c1 bg4`}
             >
-              Замовити консультацію
+              {t("orderConsultation")}
             </button>
           </div>
         </div>

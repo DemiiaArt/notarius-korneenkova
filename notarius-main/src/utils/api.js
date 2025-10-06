@@ -28,7 +28,11 @@ export async function fetchPageDataBySlug({ slug, lang }) {
 
   // Transform: label -> title, keep everything else
   const { label, features, ...rest } = data || {};
-  const transformed = { title: label, listItems: features, ...rest };
+  const transformed = {
+    title: label,
+    listItems: features,
+    ...rest,
+  };
 
   console.log("[fetchPageDataBySlug] Success:", {
     slug,

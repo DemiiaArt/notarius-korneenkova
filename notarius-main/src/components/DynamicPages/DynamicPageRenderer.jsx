@@ -3,10 +3,13 @@ import { useParams } from "react-router-dom";
 import { useHybridNav } from "@contexts/HybridNavContext";
 import { useLanguage } from "@hooks/useLanguage";
 import { detectLocaleFromPath } from "@nav/nav-utils";
+import { getComponentById } from "@nav/component-registry";
 
 // Импорты компонентов
 import ServiceGroupPage from "./ServiceGroupPage";
 import ServiceDetailPage from "./ServiceDetailPage";
+import DefaultThirdLevelPage from "@pagesSecondLevel/DefaultThirdLevelPage";
+import DefaultFourthLevelPage from "@pagesSecondLevel/DefaultFourthLevelPage";
 
 const DynamicPageRenderer = () => {
   const { navTree } = useHybridNav();
@@ -50,6 +53,7 @@ const DynamicPageRenderer = () => {
   console.log("  - currentNode:", currentNode);
 
   if (!currentNode) {
+    console.log("❌ currentNode is null - страница не найдена");
     return (
       <div className="dynamic-page-renderer">
         <div className="container">
@@ -60,18 +64,47 @@ const DynamicPageRenderer = () => {
     );
   }
 
-  // Если у узла есть компонент, используем его
-  if (currentNode.component) {
-    console.log("✅ Используем компонент из узла:", currentNode.id);
-    const Component = currentNode.component;
-    return <Component />;
+  // Проверяем, есть ли компонент в реестре для данного ID
+  const ComponentFromRegistry = getComponentById(currentNode.id);
+
+  console.log("🔍 Проверяем компонент для ID:", currentNode.id);
+  console.log("🔍 ComponentFromRegistry:", ComponentFromRegistry);
+
+  if (ComponentFromRegistry && ComponentFromRegistry !== null) {
+    console.log("✅ Используем компонент из реестра:", currentNode.id);
+    return <ComponentFromRegistry />;
   }
 
-  // Иначе используем стандартные компоненты
-  console.log("⚠️ Используем стандартный компонент для:", currentNode.id);
-  if (isDetailPage) {
-    return <ServiceDetailPage />;
+  // Если компонента нет в реестре, используем дефолтные компоненты
+  console.log(
+    "⚠️ Компонент не найден в реестре, используем дефолтный для:",
+    currentNode.id
+  );
+
+  // Определяем уровень вложенности по количеству slug'ов
+  const slugCount = [slug1, slug2, slug3].filter(Boolean).length;
+
+  if (slugCount >= 3) {
+    // 4-й уровень или выше - используем DefaultFourthLevelPage
+    console.log("📄 Используем DefaultFourthLevelPage для 4+ уровня");
+    return (
+      <DefaultFourthLevelPage
+        title={currentNode.label?.[currentLang] || currentNode.id}
+        heroImgClass="notaryServicesPage"
+      />
+    );
+  } else if (slugCount === 2) {
+    // 3-й уровень - используем DefaultThirdLevelPage
+    console.log("📄 Используем DefaultThirdLevelPage для 3-го уровня");
+    return (
+      <DefaultThirdLevelPage
+        navId={currentNode.id}
+        wrapperClassName="default-third-level-wrap"
+      />
+    );
   } else {
+    // 1-й уровень - используем ServiceGroupPage как fallback
+    console.log("📄 Используем ServiceGroupPage как fallback");
     return <ServiceGroupPage />;
   }
 };

@@ -1,61 +1,50 @@
-import TemplatePage from "../../TemplatePage.jsx";
-import contentImg from "../../../../assets/media/text-content-img.png";
-// import apostilleTextImg from "../../../../assets/media/Apostille.jpeg";
+import { memo, lazy, Suspense } from "react";
+import { usePageData } from "@hooks/usePageData";
+import PageTemplate from "@components/PageTemplate/PageTemplate";
+import AdaptiveCarousel from "@components/AdaptiveCarousel/AdaptiveCarousel";
 
-const content = [
-  {
-    type: "paragraph",
-    text: `Нотаріальні послуги — це комплекс дій, що надаються нотаріусом з
-    метою надання юридичної сили документам та угодам, захисту прав
-    і законних інтересів громадян і юридичних осіб. Основна мета
-    нотаріуса — гарантувати законність, достовірність і безпеку
-    угод, а також запобігти спорам у майбутньому.`,
-  },
-  {
-    type: "paragraph",
-    text: `Нотаріальні послуги в Україні займають особливе місце серед юридичних процедур, адже вони гарантують правову захищеність громадян та юридичних осіб у найрізноманітніших сферах життя. Основна мета нотаріату полягає у забезпеченні законності, достовірності та безпеки документів і угод, які укладають люди. Саме нотаріус виступає своєрідним гарантом прав та обов’язків сторін, підтверджуючи їх волю та законність дій.`,
-  },
-  {
-    type: "title",
-    text: "Навіщо потрібен нотаріус?",
-  },
-  {
-    type: "paragraph",
-    text: `Звернення до нотаріуса дозволяє уникнути багатьох суперечок і
-    непорозумінь у майбутньому. Від посвідчення договорів та
-    заповітів до оформлення довіреностей та заяв, нотаріальні
-    послуги охоплюють широкий спектр потреб. Кожна дія, здійснена
-    нотаріусом, набуває юридичної сили, а документи, завірені ним,
-    визнаються чинними перед державними органами, судами та іншими
-    установами.`,
-  },
-  {
-    type: "list",
-    items: [
-      "Юридична сила документів.",
-      "Захист прав та інтересів.",
-      "Спокій та впевненість.",
-    ],
-  },
-  {
-    type: "image",
-    src: contentImg,
-    alt: "text-content-img",
-  },
-  {
-    type: "paragraph",
-    text: `Звернення до нотаріуса дозволяє уникнути багатьох суперечок і
-    непорозумінь у майбутньому. Від посвідчення договорів та
-    заповітів до оформлення довіреностей та заяв, нотаріальні
-    послуги охоплюють широкий спектр потреб. Кожна дія, здійснена
-    нотаріусом, набуває юридичної сили, а документи, завірені ним,
-    визнаються чинними перед державними органами, судами та іншими
-    установами.`,
-  },
-];
+// Lazy load компонентов
+const Comments = lazy(() => import("@components/Comments/Comments"));
+const HowIWork = lazy(() => import("@components/HowIWork/HowIWork"));
+const ReviewForm = lazy(() => import("@components/ReviewForm/ReviewForm"));
+const Form = lazy(() => import("@components/Form/Form"));
+const OftenQuestions = lazy(
+  () => import("@components/OftenQuestions/OftenQuestions")
+);
+/**
+ * Страница "Апостиль на документи" (4 уровень)
+ * URL: /notarialni-poslugi/apostyl-afidavit/apostyl-na-dokumenty
+ *
+ * Использует PageTemplate для динамической загрузки контента из backend
+ */
+const ApostilleDocs = memo(() => {
+  const { data, loading, error } = usePageData("apostille-documents");
 
-const ApostilleDocs = () => {
-  return <TemplatePage title={"Апостиль"} content={content} heroImgClass={"notaryServicesPage"}/>;
-};
+  return (
+    <PageTemplate pageData={data} loading={loading} error={error}>
+      <AdaptiveCarousel
+        parentId="apostille-documents"
+        title="Апостиль на документи"
+      />
+      <Suspense fallback={<div>Завантаження...</div>}>
+        <HowIWork />
+      </Suspense>
+      <Suspense fallback={<div>Завантаження...</div>}>
+        <Comments />
+      </Suspense>
+      <Suspense fallback={<div>Завантаження...</div>}>
+        <ReviewForm />
+      </Suspense>
+      <Suspense fallback={<div>Завантаження...</div>}>
+        <Form />
+      </Suspense>
+      <Suspense fallback={<div>Завантаження...</div>}>
+        <OftenQuestions />
+      </Suspense>
+    </PageTemplate>
+  );
+});
+
+ApostilleDocs.displayName = "ApostilleDocs";
 
 export default ApostilleDocs;

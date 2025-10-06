@@ -1,78 +1,46 @@
-import TemplatePage from "./TemplatePage.jsx";
-import contentImg from "../../assets/media/text-content-img.png";
+import { memo } from "react";
+import PageTemplate from "@components/PageTemplate/PageTemplate";
+import { usePageData } from "@hooks/usePageData";
+import ServicesCarousel from "@components/ServicesCarousel/ServicesCarousel";
+import Form from "@components/Form/Form";
+import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
 
 /**
- * Дефолтний контент для нових сторінок 3-го рівня
- * На основі сторінки "Апостиль на документи"
- */
-const defaultContent = [
-  {
-    type: "paragraph",
-    text: `Нотаріальні послуги — це комплекс дій, що надаються нотаріусом з
-    метою надання юридичної сили документам та угодам, захисту прав
-    і законних інтересів громадян і юридичних осіб. Основна мета
-    нотаріуса — гарантувати законність, достовірність і безпеку
-    угод, а також запобігти спорам у майбутньому.`,
-  },
-  {
-    type: "paragraph",
-    text: `Нотаріальні послуги в Україні займають особливе місце серед юридичних процедур, адже вони гарантують правову захищеність громадян та юридичних осіб у найрізноманітніших сферах життя. Основна мета нотаріату полягає у забезпеченні законності, достовірності та безпеки документів і угод, які укладають люди. Саме нотаріус виступає своєрідним гарантом прав та обов'язків сторін, підтверджуючи їх волю та законність дій.`,
-  },
-  {
-    type: "title",
-    text: "Навіщо потрібен нотаріус?",
-  },
-  {
-    type: "paragraph",
-    text: `Звернення до нотаріуса дозволяє уникнути багатьох суперечок і
-    непорозумінь у майбутньому. Від посвідчення договорів та
-    заповітів до оформлення довіреностей та заяв, нотаріальні
-    послуги охоплюють широкий спектр потреб. Кожна дія, здійснена
-    нотаріусом, набуває юридичної сили, а документи, завірені ним,
-    визнаються чинними перед державними органами, судами та іншими
-    установами.`,
-  },
-  {
-    type: "list",
-    items: [
-      "Юридична сила документів.",
-      "Захист прав та інтересів.",
-      "Спокій та впевненість.",
-    ],
-  },
-  {
-    type: "image",
-    src: contentImg,
-    alt: "text-content-img",
-  },
-  {
-    type: "paragraph",
-    text: `Звернення до нотаріуса дозволяє уникнути багатьох суперечок і
-    непорозумінь у майбутньому. Від посвідчення договорів та
-    заповітів до оформлення довіреностей та заяв, нотаріальні
-    послуги охоплюють широкий спектр потреб. Кожна дія, здійснена
-    нотаріусом, набуває юридичної сили, а документи, завірені ним,
-    визнаються чинними перед державними органами, судами та іншими
-    установами.`,
-  },
-];
-
-/**
- * Дефолтна сторінка 3-го рівня
- * Використовується як основа для нових сторінок
+ * Дефолтна сторінка 3-го рівня з динамічним контентом з backend
  *
- * @param {string} title - Заголовок сторінки
- * @param {Array} content - Контент сторінки (опціонально, якщо не передано - використовується дефолтний)
- * @param {string} heroImgClass - CSS клас для hero блоку
+ * Використовується як fallback коли:
+ * - В ServiceGroupPage немає кастомного компонента
+ * - В nav-tree не вказаний component для сторінки
+ *
+ * Автоматично завантажує дані з backend через usePageData
+ *
+ * @param {string} navId - ID сторінки з nav-tree.js (обов'язковий!)
+ * @param {string} wrapperClassName - CSS клас для wrapper (опціонально)
+ *
+ * @example
+ * <DefaultThirdLevelPage navId="power-of-attorney" />
  */
-const DefaultThirdLevelPage = ({
-  title = "Нова послуга",
-  content = defaultContent,
-  heroImgClass = "notaryServicesPage",
-}) => {
-  return (
-    <TemplatePage title={title} content={content} heroImgClass={heroImgClass} />
-  );
-};
+const DefaultThirdLevelPage = memo(
+  ({ navId, wrapperClassName = "default-third-level-wrap" }) => {
+    // Завантажуємо дані з backend на основі navId
+    const { data, loading, error } = usePageData(navId);
+
+    return (
+      <PageTemplate
+        pageData={data}
+        loading={loading}
+        error={error}
+        wrapperClassName={wrapperClassName}
+      >
+        {/* Додаткові компоненти для сторінок 3-го рівня */}
+        <ServicesCarousel parentId="services" title="Інші послуги" />
+        <OftenQuestions />
+        <Form />
+      </PageTemplate>
+    );
+  }
+);
+
+DefaultThirdLevelPage.displayName = "DefaultThirdLevelPage";
 
 export default DefaultThirdLevelPage;

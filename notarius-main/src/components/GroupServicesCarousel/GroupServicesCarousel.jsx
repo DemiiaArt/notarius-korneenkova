@@ -24,7 +24,7 @@ const GroupServicesCarousel = ({
   title = "ВИДИ НОТАРІАЛЬНИХ ПОСЛУГ", // Заголовок, который будет переводиться
   showTitle = true,
   className = "",
-  kind = "page", // Тип елементів для показу
+  kind = "page", // Тип елементів для показу (теперь показываем и page, и group)
 }) => {
   const { currentLang } = useLang();
   const isPC = useIsPC();
@@ -65,14 +65,32 @@ const GroupServicesCarousel = ({
 
   const children = findChildren(navTree, parentId) || [];
 
+  console.log("🔍 GroupServicesCarousel - parentId:", parentId);
+  console.log("🔍 GroupServicesCarousel - children:", children);
+  console.log(
+    "🔍 GroupServicesCarousel - children kinds:",
+    children.map((c) => ({
+      id: c.id,
+      kind: c.kind,
+      label: c.label?.[currentLang],
+    }))
+  );
+
   // Фільтруємо елементи за типом
+  // Показуємо як page, так і group елементи
   const visibleChildren = children.filter(
     (child) =>
       child &&
-      child.kind === kind &&
+      (child.kind === "page" || child.kind === "group") &&
       child.showInMenu !== false &&
       child.label && // Перевіряємо, що є лейбл
       child.label[currentLang]
+  );
+
+  console.log("🔍 GroupServicesCarousel - visibleChildren:", visibleChildren);
+  console.log(
+    "🔍 GroupServicesCarousel - visibleChildren count:",
+    visibleChildren.length
   );
 
   // Отримуємо лейбл для мови
@@ -85,10 +103,13 @@ const GroupServicesCarousel = ({
     return buildFullPathForId(navTree, nodeId, currentLang) || "#";
   };
 
-  // Отримуємо зображення для послуги (можна розширити)
-  const getServiceImage = (serviceId) => {
-    // Тут можна додати логіку для різних зображень
-    // Поки що використовуємо одне зображення
+  // Отримуємо зображення для послуги з навігаційного дерева
+  const getServiceImage = (service) => {
+    // Якщо є card_image в об'єкті сервісу, використовуємо його
+    if (service?.card_image) {
+      return `http://localhost:8000${service.card_image}`;
+    }
+    // Fallback - картинка за замовчуванням
     return "/src/assets/media/services-carousel/ServicesGallery_notary.png";
   };
 
@@ -130,7 +151,7 @@ const GroupServicesCarousel = ({
               >
                 <div className="group-services-carousel-image">
                   <img
-                    src={getServiceImage(service.id)}
+                    src={getServiceImage(service)}
                     alt={getLabel(service, currentLang)}
                     loading="lazy"
                   />
