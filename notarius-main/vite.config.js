@@ -51,69 +51,10 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          // Vendor chunks
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react-vendor';
-            }
-            if (id.includes('react-router-dom')) {
-              return 'router-vendor';
-            }
-            if (id.includes('react-i18next') || id.includes('i18next')) {
-              return 'i18n-vendor';
-            }
-            if (id.includes('framer-motion') || id.includes('swiper')) {
-              return 'ui-vendor';
-            }
-          }
-
-          // Page chunks - используем правильные пути
-          if (id.includes('/src/pages/')) {
-            if (
-              id.includes('MainPage') ||
-              id.includes('AboutPage') ||
-              id.includes('ServicesPage')
-            ) {
-              return 'pages-main';
-            }
-            if (
-              id.includes('NotaryTranslatePage') ||
-              id.includes('MilitaryPage') ||
-              id.includes('OtherServicesPage')
-            ) {
-              return 'pages-services';
-            }
-            // Second level pages
-            if (id.includes('/secondLevel/')) {
-              return 'pages-second-level';
-            }
-          }
-
-          // Component chunks
-          if (id.includes('/src/components/')) {
-            if (
-              id.includes('Header') ||
-              id.includes('Footer') ||
-              id.includes('ScrollToTop')
-            ) {
-              return 'components-common';
-            }
-            if (
-              id.includes('Form') ||
-              id.includes('ReviewForm') ||
-              id.includes('ModalWindows')
-            ) {
-              return 'components-forms';
-            }
-          }
-        },
-      },
-    },
+    // Убираем ручное разбиение чанков, чтобы избежать неправильного порядка загрузки vendor-бандлов
+    rollupOptions: {},
     chunkSizeWarningLimit: 1000,
-    assetsInlineLimit: 4096, // Inline assets smaller than 4kb
+    assetsInlineLimit: 4096,
   },
   optimizeDeps: {
     include: [
