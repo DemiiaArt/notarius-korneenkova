@@ -125,7 +125,8 @@ class ServicesCategoryView(APIView):
             root_categories = ServiceCategory.objects.filter(parent__isnull=True).order_by('order')
             
             if not root_categories.exists():
-                return Response(status=404)
+                # Возвращаем пустую структуру вместо 404, чтобы фронт корректно отработал
+                return Response({"children": []}, status=200)
             
             
             serializer = ServiceCategorySerializer(root_categories, many=True)            
