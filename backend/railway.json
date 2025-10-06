@@ -4,7 +4,7 @@
       "builder": "NIXPACKS"
     },
     "deploy": {
-      "startCommand": "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && python change_admin_password.py && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 30 --workers 1",
+      "startCommand": "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && python create_superuser.py && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 30 --workers 1",
       "healthcheckPath": "/health/",
       "healthcheckTimeout": 30,
       "restartPolicyType": "ON_FAILURE",

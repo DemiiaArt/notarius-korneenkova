@@ -23,8 +23,27 @@ from main_page.views import CKEditorUploadView
 from main_page.admin import admin_site
 
 def health_check(request):
-    """Простая проверка здоровья приложения"""
-    return JsonResponse({"status": "ok", "message": "Django app is running"})
+    """Проверка здоровья приложения с проверкой базы данных"""
+    try:
+        from django.db import connection
+        from django.core.exceptions import ImproperlyConfigured
+        
+        # Проверяем подключение к базе данных
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+        
+        return JsonResponse({
+            "status": "ok", 
+            "message": "Django app is running",
+            "database": "connected"
+        })
+    except Exception as e:
+        return JsonResponse({
+            "status": "error", 
+            "message": f"Django app error: {str(e)}",
+            "database": "disconnected"
+        }, status=503)
 
 urlpatterns = [
     path('admin/', admin_site.urls),  # Используем кастомный админ-сайт

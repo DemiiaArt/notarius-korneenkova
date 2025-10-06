@@ -25,7 +25,10 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 if not SECRET_KEY:
-    raise ValueError("SECRET_KEY environment variable is not set!")
+    # Для Railway, если SECRET_KEY не установлен, используем временный ключ
+    SECRET_KEY = 'django-insecure-temporary-key-for-railway-deployment'
+    if DEBUG:
+        print("WARNING: SECRET_KEY not set, using temporary key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
@@ -116,17 +119,19 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'notarius'),
         'USER': os.getenv('PGUSER', 'postgres'),
-        'PASSWORD': os.getenv('PGPASSWORD', 'root1'),  # Укажите ваш пароль PostgreSQL
+        'PASSWORD': os.getenv('PGPASSWORD', ''),
         'HOST': os.getenv('PGHOST', 'localhost'),
         'PORT': os.getenv('PGPORT', '5432'),
     }
 }
 
 # Добавляем отладочную информацию для Railway
-# print(f"DATABASE config: {DATABASES['default']}")
-# print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
-# print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
-# print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
+if DEBUG:
+    print(f"DATABASE config: {DATABASES['default']}")
+    print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
+    print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
+    print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
+    print(f"PGPASSWORD: {'SET' if os.getenv('PGPASSWORD') else 'NOT_SET'}")
 
 
 # Password validation
@@ -192,3 +197,25 @@ CORS_ALLOW_CREDENTIALS = True
 
 # WhiteNoise settings для статических файлов
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Настройки для Railway
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
