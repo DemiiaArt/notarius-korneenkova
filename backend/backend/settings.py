@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 if not SECRET_KEY:
     # Для Railway, если SECRET_KEY не установлен, используем временный ключ
     SECRET_KEY = 'django-insecure-temporary-key-for-railway-deployment'
-    if DEBUG:
+    if os.getenv('DEBUG', 'False').lower() == 'true':
         print("WARNING: SECRET_KEY not set, using temporary key")
 
 # SECURITY WARNING: don't run with debug turned on in production!

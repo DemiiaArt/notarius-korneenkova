@@ -54,6 +54,7 @@ urlpatterns = [
     path('health/', health_check, name='health_check'),
     path('', health_check, name='root_health_check'),
 ]
+# END
 # Обслуживание MEDIA файлов в режиме разработки
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
