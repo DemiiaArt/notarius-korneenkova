@@ -289,6 +289,8 @@ const Footer = () => {
 const FooterAccordion = ({ openIndex, setOpenIndex }) => {
   const isPC = useIsPC();
   const { t } = useTranslation("components.Footer");
+  const { currentLang } = useLanguage();
+  const { contacts } = useContacts(currentLang);
 
   const toggleAccordion = (index) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -299,26 +301,32 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
       title: t("contacts"),
       content: (
         <>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            +380 67 820 07 00
-          </a>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            nk.yes@gmail.com
-          </a>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("address")}
-          </a>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("workingHours")}
-          </a>
+          {contacts.phone_number && (
+            <a
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+              href={`tel:${contacts.phone_number.replace(/\s|\+/g, '')}`}
+            >
+              {contacts.phone_number}
+            </a>
+          )}
+          {contacts.email && (
+            <a
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+              href={`mailto:${contacts.email}`}
+            >
+              {contacts.email}
+            </a>
+          )}
+          {contacts.address && (
+            <a className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}>
+              {contacts.address}
+            </a>
+          )}
+          {contacts.working_hours && (
+            <a className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}>
+              {contacts.working_hours}
+            </a>
+          )}
         </>
       ),
     },
