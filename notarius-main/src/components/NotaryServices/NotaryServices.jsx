@@ -7,7 +7,7 @@ const NotaryServices = ({ title, listItems, heroImageUrl }) => {
   const isPC = useIsPC();
   const { open } = useModal();
   const backgroundStyle = heroImageUrl
-    ? { backgroundImage: `url(http://localhost:8000${heroImageUrl})` }
+    ? { backgroundImage: `url(${import.meta.env.VITE_ASSETS_BASE || ''}${heroImageUrl})` }
     : undefined;
 
   return (
