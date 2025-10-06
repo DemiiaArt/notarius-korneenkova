@@ -15,14 +15,14 @@ import { buildPanelDataFromNav } from "@nav/build-panel-from-nav";
 import { useHybridNav } from "@contexts/HybridNavContext";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
-import { useHeaderContacts } from "@hooks/useHeaderContacts";
+import { useContacts } from "@hooks/useContacts";
 
 export const Header = () => {
   const { pathname } = useLocation();
   const { currentLang, switchLanguage } = useLanguage();
   const lang = currentLang;
   const { t } = useTranslation("components.Header");
-  const { contacts } = useHeaderContacts(lang);
+  const { contacts } = useContacts(lang);
 
   // Отримуємо навігацію з гібридної системи
   let navTree, loading, error, mergeComplete;
@@ -262,7 +262,7 @@ export const Header = () => {
               </div>
               <div className="navbar-social-link-block-pc-wrap">
                 <div className="navbar-social-link-block-pc">
-                  <a className="navbar-social-link bg4" href="#">
+                  <a className="navbar-social-link bg4" href={contacts.instagram_url || "#"} target="_blank" rel="noreferrer">
                     <svg
                       className="navbar-social-link-icon c1"
                       width="20"
@@ -291,7 +291,7 @@ export const Header = () => {
                       </defs>
                     </svg>
                   </a>
-                  <a className="navbar-social-link bg4" href="#">
+                  <a className="navbar-social-link bg4" href={contacts.facebook_url || "#"} target="_blank" rel="noreferrer">
                     <svg
                       className="navbar-social-link-icon c1"
                       width="20"
@@ -313,7 +313,7 @@ export const Header = () => {
                       </defs>
                     </svg>
                   </a>
-                  <a className="navbar-social-link bg4" href="#">
+                  <a className="navbar-social-link bg4" href={contacts.telegram_url || "#"} target="_blank" rel="noreferrer">
                     <svg
                       className="navbar-social-link-icon c1"
                       width="19"
@@ -328,7 +328,7 @@ export const Header = () => {
                       />
                     </svg>
                   </a>
-                  <a className="navbar-social-link bg4" href="#">
+                  <a className="navbar-social-link bg4" href={contacts.x_url || contacts.twitter_url || "#"} target="_blank" rel="noreferrer">
                     <svg
                       className="navbar-social-link-icon c1"
                       width="24"

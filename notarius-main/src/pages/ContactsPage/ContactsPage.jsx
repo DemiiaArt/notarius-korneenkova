@@ -1,6 +1,8 @@
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
+import { useLanguage } from "@hooks/useLanguage";
+import { useContacts } from "@hooks/useContacts";
 
 import "./ContactsPage.scss";
 import VideoBlock from "@components/VideoBock/VideoBlock";
@@ -8,6 +10,8 @@ import VideoBlock from "@components/VideoBock/VideoBlock";
 const ContactsPage = () => {
   const isPC = useIsPC();
   const { getTranslations } = useTranslation("pages.ContactsPage");
+  const { currentLang } = useLanguage();
+  const { contacts } = useContacts(currentLang);
 
   // Получаем все переводы для страницы
   const translations = getTranslations();
@@ -30,18 +34,22 @@ const ContactsPage = () => {
                   >
                     {translations.callUs || "Зателефонуйте нам"}
                   </h4>
-                  <a
-                    href="tel:+380678200700"
-                    className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold tel-link`}
-                  >
-                    +38 067 820 07 00
-                  </a>
-                  <a
-                    href="tel:+380675440700"
-                    className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold tel-link`}
-                  >
-                    +38 067 544 07 00
-                  </a>
+                  {contacts.phone_number && (
+                    <a
+                      href={`tel:${contacts.phone_number.replace(/\s|\+/g, "")}`}
+                      className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold tel-link`}
+                    >
+                      {contacts.phone_number}
+                    </a>
+                  )}
+                  {contacts.phone_number_2 && (
+                    <a
+                      href={`tel:${contacts.phone_number_2.replace(/\s|\+/g, "")}`}
+                      className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold tel-link`}
+                    >
+                      {contacts.phone_number_2}
+                    </a>
+                  )}
                 </li>
                 <li>
                   <h4
@@ -50,10 +58,10 @@ const ContactsPage = () => {
                     {translations.email || "Електронна пошта"}
                   </h4>
                   <a
-                    href="mailto:nknotary.dnipro@gmail.com"
+                    href={`mailto:${contacts.email || ''}`}
                     className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold`}
                   >
-                    nknotary.dnipro@gmail.com
+                    {contacts.email || 'nknotary.dnipro@gmail.com'}
                   </a>
                 </li>
                 <li>
@@ -65,7 +73,7 @@ const ContactsPage = () => {
                   <p
                     className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold`}
                   >
-                    {translations.workingHoursTime || "Пн-Пт 9:00-18:00"}
+                    {contacts.working_hours || translations.workingHoursTime || "Пн-Пт 9:00-18:00"}
                   </p>
                 </li>
                 <li>
@@ -78,7 +86,7 @@ const ContactsPage = () => {
                     href="#"
                     className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold`}
                   >
-                    {translations.address ||
+                    {contacts.address || translations.address ||
                       "м. Дніпро, пр. Дмитра Яворницького, 2, 49100"}
                   </a>
                 </li>
@@ -92,7 +100,7 @@ const ContactsPage = () => {
               </h4>
               <ul className="socials">
                 <li className="socials-item">
-                  <a href="#" className="socials-item-link">
+                  <a href={contacts.instagram_url || '#'} className="socials-item-link" aria-label="instagram" target="_blank" rel="noreferrer">
                     <svg
                       className="socials-item-img"
                       width="20"
@@ -120,9 +128,10 @@ const ContactsPage = () => {
                 </li>
                 <li className="socials-item">
                   <a
-                    href="#"
+                    href={contacts.facebook_url || '#'}
                     className="socials-item-link"
                     aria-label="facebook"
+                    target="_blank" rel="noreferrer"
                   >
                     <svg
                       width="20"
@@ -138,7 +147,7 @@ const ContactsPage = () => {
                   </a>
                 </li>
                 <li className="socials-item">
-                  <a href="#" className="socials-item-link">
+                  <a href={contacts.telegram_url || '#'} className="socials-item-link" aria-label="telegram" target="_blank" rel="noreferrer">
                     <svg
                       width="19"
                       height="20"
@@ -155,7 +164,7 @@ const ContactsPage = () => {
                   </a>
                 </li>
                 <li className="socials-item">
-                  <a href="#" className="socials-item-link">
+                  <a href={contacts.x_url || contacts.twitter_url || '#'} className="socials-item-link" aria-label="x" target="_blank" rel="noreferrer">
                     <svg
                       width="15"
                       height="14"

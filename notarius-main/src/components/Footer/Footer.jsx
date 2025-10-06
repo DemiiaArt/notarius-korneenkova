@@ -13,6 +13,7 @@ import "./Footer.scss";
 import { useIsPC } from "@hooks/isPC";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
+import { useContacts } from "@hooks/useContacts";
 
 const navigationLinks = {
   ua: [
@@ -63,6 +64,7 @@ const Footer = () => {
   const LANG_UI_TO_ROUTE = { ukr: "ua", rus: "ru", eng: "en" };
   const { currentLang, switchLanguage } = useLanguage();
   const { t } = useTranslation("components.Footer");
+  const { contacts } = useContacts(currentLang);
 
   const languages = {
     ukr: "UA",
@@ -135,30 +137,38 @@ const Footer = () => {
               >
                 {t("contacts")}
               </p>
-              <a
-                className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-                href="#"
-              >
-                +380 67 820 07 00
-              </a>
-              <a
-                className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-                href="#"
-              >
-                nk.yes@gmail.com
-              </a>
-              <a
-                className={`footer-contacts-link no-click c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-                href="#"
-              >
-                м.Дніпро, пр. Дмитра Яворницького, 2
-              </a>
-              <a
-                className={`footer-contacts-link no-click c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-                href="#"
-              >
-                Пн-Нд: 09:00 - 18:00
-              </a>
+              {contacts.phone_number && (
+                <a
+                  className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                  href={`tel:${contacts.phone_number.replace(/\s|\+/g, '')}`}
+                >
+                  {contacts.phone_number}
+                </a>
+              )}
+              {contacts.email && (
+                <a
+                  className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                  href={`mailto:${contacts.email}`}
+                >
+                  {contacts.email}
+                </a>
+              )}
+              {contacts.address && (
+                <a
+                  className={`footer-contacts-link no-click c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                  href="#"
+                >
+                  {contacts.address}
+                </a>
+              )}
+              {contacts.working_hours && (
+                <a
+                  className={`footer-contacts-link no-click c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                  href="#"
+                >
+                  {contacts.working_hours}
+                </a>
+              )}
               <div className="footer-change-lang-dropdown">
                 <div className="footer-change-lang-list">
                   {Object.entries(languages).map(([key, label]) => (
@@ -223,28 +233,28 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-social-media">
-            <a className="footer-social-media-item bg2">
+            <a className="footer-social-media-item bg2" href={contacts.instagram_url || '#'} target="_blank" rel="noreferrer">
               <img
                 src={instagram}
                 alt="Inst"
                 className="footer-social-media-icon"
               />
             </a>
-            <a className="footer-social-media-item bg2">
+            <a className="footer-social-media-item bg2" href={contacts.facebook_url || '#'} target="_blank" rel="noreferrer">
               <img
                 src={facebook}
                 alt="Facebook"
                 className="footer-social-media-icon"
               />
             </a>
-            <a className="footer-social-media-item bg2">
+            <a className="footer-social-media-item bg2" href={contacts.twitter_url || contacts.x_url || '#'} target="_blank" rel="noreferrer">
               <img
                 src={ticktock}
                 alt="TickTock"
                 className="footer-social-media-icon"
               />
             </a>
-            <a className="footer-social-media-item bg2">
+            <a className="footer-social-media-item bg2" href={contacts.youtube_url || '#'} target="_blank" rel="noreferrer">
               <img src={x} alt="X" className="footer-social-media-icon" />
             </a>
             <a className="footer-social-media-item bg2">
