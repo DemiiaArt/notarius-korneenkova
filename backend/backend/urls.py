@@ -22,6 +22,10 @@ from django.http import JsonResponse
 from main_page.views import CKEditorUploadView
 from main_page.admin import admin_site
 
+def simple_health(request):
+    """Простой healthcheck без проверки базы данных"""
+    return JsonResponse({"status": "ok"})
+
 def health_check(request):
     """Проверка здоровья приложения с проверкой базы данных"""
     try:
@@ -51,6 +55,7 @@ urlpatterns = [
     path('api/', include('main_page.urls')),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
     path('ckeditor/upload/', CKEditorUploadView.as_view(), name='ckeditor_upload'),
+    path('healthz/', simple_health, name='simple_health_check'),
     path('health/', health_check, name='health_check'),
     path('', health_check, name='root_health_check'),
 ]

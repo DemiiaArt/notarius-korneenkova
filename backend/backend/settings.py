@@ -113,23 +113,43 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# Для Railway используем переменные, которые ссылаются на Postgres сервис
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'notarius'),
-        'USER': os.getenv('PGUSER', 'postgres'),
-        'PASSWORD': os.getenv('PGPASSWORD', 'root1'),
-        'HOST': os.getenv('PGHOST', 'localhost'),
-        'PORT': os.getenv('PGPORT', '5432'),
+# Настройка БД с поддержкой переменной DATABASE_URL (Railway) и PG* переменных
+import dj_database_url  # type: ignore
+
+database_url = (
+    os.getenv('DATABASE_URL')
+    or os.getenv('POSTGRES_URL')
+    or os.getenv('POSTGRESQL_URL')
+    or os.getenv('NEON_DATABASE_URL')
+)
+
+if database_url:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=database_url,
+            conn_max_age=600,
+            ssl_require=True,
+        )
     }
-}
+else:
+    # Fallback к отдельным PG* переменным (Railway обычно предоставляет PGDATABASE, PGUSER, PGPASSWORD, PGHOST, PGPORT)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('PGDATABASE') or os.getenv('POSTGRES_DB', 'notarius'),
+            'USER': os.getenv('PGUSER', 'postgres'),
+            'PASSWORD': os.getenv('PGPASSWORD', ''),
+            'HOST': os.getenv('PGHOST', 'localhost'),
+            'PORT': os.getenv('PGPORT', '5432'),
+        }
+    }
 
 # Добавляем отладочную информацию для Railway
 if DEBUG:
-    print(f"DATABASE config: {DATABASES['default']}")
+    print("DATABASE_URL set:" , bool(database_url))
     print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
     print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
+    print(f"PGDATABASE: {os.getenv('PGDATABASE', 'NOT_SET')}")
     print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
     print(f"PGPASSWORD: {'SET' if os.getenv('PGPASSWORD') else 'NOT_SET'}")
 
