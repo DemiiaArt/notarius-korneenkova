@@ -15,12 +15,14 @@ import { buildPanelDataFromNav } from "@nav/build-panel-from-nav";
 import { useHybridNav } from "@contexts/HybridNavContext";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
+import { useHeaderContacts } from "@hooks/useHeaderContacts";
 
 export const Header = () => {
   const { pathname } = useLocation();
   const { currentLang, switchLanguage } = useLanguage();
   const lang = currentLang;
   const { t } = useTranslation("components.Header");
+  const { contacts } = useHeaderContacts(lang);
 
   // Отримуємо навігацію з гібридної системи
   let navTree, loading, error, mergeComplete;
@@ -224,19 +226,23 @@ export const Header = () => {
         <div className="header-info bg4">
           <div className="container">
             <div className="header-info-content fs-p--16px lh-150 text-decoration--none c1">
-              <a className="header-info-email" href="#">
-                nknotary.dnipro@gmail.com
+              <a className="header-info-email" href={`mailto:${contacts.email || ''}`}>
+                {contacts.email || 'nknotary.dnipro@gmail.com'}
               </a>
               <div className="header-info-phones-wrap">
-                <a className="header-info-phones" href="#">
-                  + 38 067 820 07 00
-                </a>
-                <a className="header-info-phones" href="#">
-                  + 38 067 544 07 00
-                </a>
+                {contacts.phone_number && (
+                  <a className="header-info-phones" href={`tel:${contacts.phone_number.replace(/\s|\+/g, '')}`}>
+                    {contacts.phone_number}
+                  </a>
+                )}
+                {contacts.phone_number_2 && (
+                  <a className="header-info-phones" href={`tel:${contacts.phone_number_2.replace(/\s|\+/g, '')}`}>
+                    {contacts.phone_number_2}
+                  </a>
+                )}
               </div>
               <a className="header-info-address" href="#">
-                м. Дніпро, пр. Дмитра Яворницького, 2, 49100 
+                {contacts.address || 'м. Дніпро, пр. Дмитра Яворницького, 2, 49100'}
               </a>
             </div>
           </div>

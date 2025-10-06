@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { API_BASE_URL } from "../config/api";
 
-export const useHeaderContacts = () => {
+export const useHeaderContacts = (lang = 'ua') => {
   const [contacts, setContacts] = useState({
     email: '',
     phone_number: '',
@@ -17,7 +17,7 @@ export const useHeaderContacts = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_BASE_URL}/header-contacts/`);
+      const response = await fetch(`${API_BASE_URL}/header/?lang=${encodeURIComponent(lang)}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -72,7 +72,8 @@ export const useHeaderContacts = () => {
 
   useEffect(() => {
     fetchHeaderContacts();
-  }, []);
+    // перезагрузка при смене языка, чтобы получить локализованный адрес
+  }, [lang]);
 
   return {
     contacts,

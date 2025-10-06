@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.urls import reverse
+from rest_framework.permissions import AllowAny
 
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
@@ -54,6 +55,59 @@ class HeaderView(generics.ListAPIView):
                 'phone_number_2': '',
                 'address': ''
             })
+
+
+class ContactsView(APIView):
+    """
+    Совместимый с фронтендом endpoint контактов:
+    - GET /api/contacts/ -> возвращает email/phones/address
+    - POST /api/contacts/update/ -> обновляет/создаёт запись
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        header = Header.objects.first()
+        if not header:
+            # Возвращаем пустые значения, чтобы фронт не падал
+            return Response({
+                'email': '',
+                'phone_number': '',
+                'phone_number_2': '',
+                'address': ''
+            })
+
+        # Язык как в HeaderView
+        lang = request.GET.get('lang', 'ua')
+        serializer = HeaderSerializer(header, context={'lang': lang})
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Обновление контактов (используется фронтендом в /contacts/update/)."""
+        data = request.data or {}
+        header = Header.objects.first()
+        if not header:
+            header = Header.objects.create(
+                email=data.get('email', ''),
+                phone_number=data.get('phone_number', ''),
+                phone_number_2=data.get('phone_number_2', ''),
+                address_ua=data.get('address', ''),
+                address_en=data.get('address', ''),
+                address_ru=data.get('address', ''),
+            )
+        else:
+            header.email = data.get('email', header.email)
+            header.phone_number = data.get('phone_number', header.phone_number)
+            header.phone_number_2 = data.get('phone_number_2', header.phone_number_2)
+            # Одно поле address приходит с фронта — пишем во все языки
+            addr = data.get('address')
+            if addr is not None:
+                header.address_ua = addr
+                header.address_en = addr
+                header.address_ru = addr
+            header.save()
+
+        serializer = HeaderSerializer(header, context={'lang': request.GET.get('lang', 'ua')})
+        return Response(serializer.data)
 
 class BackgroundVideoView(generics.ListAPIView):
     """

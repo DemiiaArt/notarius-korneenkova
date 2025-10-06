@@ -10,6 +10,10 @@ urlpatterns = [
     
     # Информация о нотариусе (текст, фото на 3 языках)
     path('about-me/', views.AboutMeView.as_view(), name='about-me'),
+
+    # Контакты (совместимо с фронтом)
+    path('contacts/', views.ContactsView.as_view(), name='contacts'),
+    path('contacts/update/', views.ContactsView.as_view(), name='contacts-update'),
     
     # Иерархическая структура всех услуг (MPTT дерево)
     path('services/', views.ServicesCategoryView.as_view(), name='services'),
