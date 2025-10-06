@@ -1,30 +1,19 @@
 import "./OftenQuestions.scss";
 import { useState, useEffect, useRef } from "react";
 import { useIsPC } from "@hooks/isPC";
-// Данные вынесены в отдельный массив
-const oftenQuestionsData = [
-  {
-    title: "Які документи потрібні для початку співпраці з юристом?",
-    text: "Зазвичай достатньо надати копії установчих документів (статут, виписка з ЄДР), ідентифікаційний код, паспорт (для фізосіб) або документи, що підтверджують повноваження представника компанії. Перелік може змінюватися залежно від ситуації.",
-  },
-  {
-    title: "Скільки коштує юридичний супровід бізнесу?",
-    text: "Ціна залежить від обсягу та складності робіт. Вартість розраховується індивідуально.",
-  },
-  {
-    title:
-      "Чим відрізняється абонентське юридичне обслуговування від разової консультації?",
-    text: "Абонентське обслуговування передбачає постійну підтримку, а разова консультація вирішує конкретне питання.",
-  },
-  {
-    title: "Чи можете ви представляти мої інтереси у суді?",
-    text: "Так, наші юристи мають право представляти клієнтів у судових інстанціях.",
-  },
-  {
-    title: "Скільки часу займає реєстрація бізнесу з вашою допомогою?",
-    text: "В середньому — від 3 до 5 робочих днів.",
-  },
-];
+import { useFrequentlyAskedQuestions } from "@hooks/useFrequentlyAskedQuestions";
+import { detectLocaleFromPath } from "@nav/nav-helpers-extra";
+import { useLocation } from "react-router-dom";
+
+// Многоязычные заголовки
+const getTitle = (lang) => {
+  const titles = {
+    ua: "Часті запитання",
+    ru: "Частые вопросы", 
+    en: "Frequently Asked Questions"
+  };
+  return titles[lang] || titles.ua;
+};
 
 // Иконки вынесены отдельно
 const MinusIcon = () => (
@@ -92,12 +81,86 @@ const OftenQuestionsItem = ({ question, isOpen, onToggle }) => {
 
 export const OftenQuestions = () => {
   const [activeItem, setActiveItem] = useState(null);
+  const location = useLocation();
+  
+  // Определяем текущий язык из URL
+  const currentLang = detectLocaleFromPath(location.pathname);
+  
+  // Получаем FAQ из API
+  const { faqs, loading, error } = useFrequentlyAskedQuestions(currentLang);
 
   const handleToggle = (title) => {
     setActiveItem((prev) => (prev === title ? null : title));
   };
 
   const isPC = useIsPC(768);
+  const title = getTitle(currentLang);
+
+  // Показываем загрузку
+  if (loading) {
+    return (
+      <div className="often-quetions bg1">
+        <div className="container">
+          <div className="often-quetions-content">
+            <h2
+              className={`often-quetions-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} lh-100 uppercase fw-bold`}
+            >
+              {title}
+            </h2>
+            <div className="often-quetions-list">
+              <div className="open">
+                <div>Завантаження...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Показываем ошибку
+  if (error) {
+    return (
+      <div className="often-quetions bg1">
+        <div className="container">
+          <div className="often-quetions-content">
+            <h2
+              className={`often-quetions-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} lh-100 uppercase fw-bold`}
+            >
+              {title}
+            </h2>
+            <div className="often-quetions-list">
+              <div className="open">
+                <div>Помилка завантаження: {error}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Если нет данных
+  if (!faqs || faqs.length === 0) {
+    return (
+      <div className="often-quetions bg1">
+        <div className="container">
+          <div className="often-quetions-content">
+            <h2
+              className={`often-quetions-title ${isPC ? "fs-h2--32px" : "fs-h2--20px"} lh-100 uppercase fw-bold`}
+            >
+              {title}
+            </h2>
+            <div className="often-quetions-list">
+              <div className="open">
+                <div>Наразі немає доступних запитань</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="often-quetions bg1">
@@ -110,12 +173,12 @@ export const OftenQuestions = () => {
           </h2>
           <div className="often-quetions-list">
             <div className="open">
-              {oftenQuestionsData.map((q) => (
+              {faqs.map((faq, index) => (
                 <OftenQuestionsItem
-                  key={q.title}
-                  question={q}
-                  isOpen={activeItem === q.title}
-                  onToggle={() => handleToggle(q.title)}
+                  key={`${faq.title}-${index}`}
+                  question={faq}
+                  isOpen={activeItem === faq.title}
+                  onToggle={() => handleToggle(faq.title)}
                 />
               ))}
             </div>
