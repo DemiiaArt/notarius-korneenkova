@@ -3,6 +3,7 @@ import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
 import { useLanguage } from "@hooks/useLanguage";
 import { useContacts } from "@hooks/useContacts";
+import Loader from "@components/Loader/Loader";
 
 import "./ContactsPage.scss";
 import VideoBlock from "@components/VideoBock/VideoBlock";
@@ -11,15 +12,28 @@ const ContactsPage = () => {
   const isPC = useIsPC();
   const { getTranslations } = useTranslation("pages.ContactsPage");
   const { currentLang } = useLanguage();
-  const { contacts } = useContacts(currentLang);
+  const { contacts, loading, error } = useContacts(currentLang);
 
   // Получаем все переводы для страницы
   const translations = getTranslations();
+  if (loading) {
+    return (
+      <div className="contacts-page bg1">
+        <div className="container">
+          <Loader />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="contacts-page bg1">
       <div className="container">
         <Breadcrumbs />
         <div className="contacts-wrap">
+          {error && (
+            <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"} c16`}>{error}</p>
+          )}
           <div className="contacts">
             <div className="contacts-info">
               <h2
