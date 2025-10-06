@@ -53,35 +53,62 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks(id) {
           // Vendor chunks
-          "react-vendor": ["react", "react-dom"],
-          "router-vendor": ["react-router-dom"],
-          "i18n-vendor": ["react-i18next", "i18next"],
-          "ui-vendor": ["framer-motion", "swiper"],
-          // Page chunks
-          "pages-main": [
-            "./src/pages/MainPage/MainPage.jsx",
-            "./src/pages/AboutPage/AboutPage.jsx",
-            "./src/pages/ServicesPage/ServicesPage.jsx",
-          ],
-          "pages-services": [
-            "./src/pages/NotaryTranslatePage/NotaryTranslatePage.jsx",
-            "./src/pages/MilitaryPage/MilitaryPage.jsx",
-            "./src/pages/OtherServicesPage/OtherServicesPage.jsx",
-          ],
-          "pages-second-level": ["./src/pages/secondLevel"],
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('react-router-dom')) {
+              return 'router-vendor';
+            }
+            if (id.includes('react-i18next') || id.includes('i18next')) {
+              return 'i18n-vendor';
+            }
+            if (id.includes('framer-motion') || id.includes('swiper')) {
+              return 'ui-vendor';
+            }
+          }
+
+          // Page chunks - используем правильные пути
+          if (id.includes('/src/pages/')) {
+            if (
+              id.includes('MainPage') ||
+              id.includes('AboutPage') ||
+              id.includes('ServicesPage')
+            ) {
+              return 'pages-main';
+            }
+            if (
+              id.includes('NotaryTranslatePage') ||
+              id.includes('MilitaryPage') ||
+              id.includes('OtherServicesPage')
+            ) {
+              return 'pages-services';
+            }
+            // Second level pages
+            if (id.includes('/secondLevel/')) {
+              return 'pages-second-level';
+            }
+          }
+
           // Component chunks
-          "components-common": [
-            "./src/components/Header",
-            "./src/components/Footer",
-            "./src/components/ScrollToTop",
-          ],
-          "components-forms": [
-            "./src/components/Form",
-            "./src/components/ReviewForm",
-            "./src/components/ModalWindows",
-          ],
+          if (id.includes('/src/components/')) {
+            if (
+              id.includes('Header') ||
+              id.includes('Footer') ||
+              id.includes('ScrollToTop')
+            ) {
+              return 'components-common';
+            }
+            if (
+              id.includes('Form') ||
+              id.includes('ReviewForm') ||
+              id.includes('ModalWindows')
+            ) {
+              return 'components-forms';
+            }
+          }
         },
       },
     },
