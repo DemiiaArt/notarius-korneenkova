@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8000/api";
+import { API_BASE_URL } from "../config/api";
 
 /**
  * Fetch page/service data by UA slug with language query.

@@ -135,7 +135,12 @@ if database_url:
     )
     # Если в URL отсутствует имя БД, подставим из env
     if not parsed_db.get('NAME'):
-        parsed_db['NAME'] = os.getenv('PGDATABASE') or os.getenv('POSTGRES_DB') or ''
+        # Жёсткий fallback имени БД, чтобы избежать ImproperlyConfigured
+        parsed_db['NAME'] = (
+            os.getenv('PGDATABASE')
+            or os.getenv('POSTGRES_DB')
+            or 'railway'
+        )
     DATABASES = {
         'default': parsed_db
     }
