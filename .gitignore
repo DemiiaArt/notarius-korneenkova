@@ -2,13 +2,14 @@
 .idea
 .vscode
 notarius\venv
-backend/__pycache__/
-backend/migrations/
-backend/*.pyc
+backend\__pycache__/
+backend\migrations/
+backend\*.pyc
 backend/staticfiles/
-backend/db.sqlite3.db
-backend/nixpacks.toml
+backend\*.db
+backend\nixpacks.toml
 venv/
+
 
 # Logs
 notarius\logs
