@@ -11,7 +11,7 @@ const NotaryServices = ({ title, listItems, heroImageUrl }) => {
   console.log(heroImageUrl);
   const backgroundStyle = heroImageUrl
     ? {
-        backgroundImage: `${heroImageUrl}`,
+        backgroundImage: `url(${heroImageUrl})`,
       }
     : undefined;
 
