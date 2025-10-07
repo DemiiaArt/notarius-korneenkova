@@ -651,7 +651,7 @@ class LegalDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LegalDocument
-        fields = ['key', 'title', 'content', 'updated_at']
+        fields = ['key', 'title', 'content', 'updated_at', 'file']
 
     def _get_lang(self):
         lang = self.context.get('lang', 'ua')

@@ -10,6 +10,7 @@ backend/db.sqlite3
 backend/nixpacks.toml
 venv/
 
+
 # Logs
 notarius\logs
 notarius\*.log
