@@ -49,3 +49,105 @@
     }
   }
 }
+
+/* Базовые стили для контента CKEditor */
+.ck-content {
+  line-height: 1.6 !important;
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600 !important;
+    margin: 1.2em 0 0.6em !important;
+  }
+  
+  p { 
+    margin: 0.8em 0 !important; 
+  }
+  
+  ul, ol { 
+    margin: 0.8em 0 0.8em 1.4em !important; 
+  }
+  
+  ul { 
+    list-style: disc !important; 
+    padding-left: 1.2em !important;
+  }
+  
+  ol { 
+    list-style: decimal !important; 
+    padding-left: 1.2em !important;
+  }
+  
+  li { 
+    margin: 0.3em 0 !important;
+    list-style: inherit !important;
+  }
+  
+  blockquote {
+    margin: 1em 0 !important;
+    padding-left: 1em !important;
+    border-left: 3px solid rgba(0,0,0,0.1) !important;
+  }
+  
+  hr { 
+    margin: 1.5em 0 !important; 
+  }
+  
+  pre, code {
+    background: rgba(0,0,0,0.04) !important;
+    padding: 0.2em 0.4em !important;
+    border-radius: 4px !important;
+  }
+  
+  pre { 
+    padding: 0.8em !important; 
+    overflow: auto !important; 
+  }
+  
+  table { 
+    border-collapse: collapse !important; 
+    margin: 1em 0 !important; 
+    width: 100% !important; 
+  }
+  
+  table th, table td {
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    padding: 8px 10px !important;
+  }
+  
+  img { 
+    max-width: 100% !important; 
+    height: auto !important;
+    width: auto !important;
+    display: block !important;
+    margin: 1em auto !important;
+  }
+}
+
+/* Стили для всех контентных блоков с HTML */
+.text-content-html,
+.service-group-description,
+.service-card-description,
+.about-block-text,
+.accordion-description {
+  ul {
+    list-style: disc !important;
+    padding-left: 1.2em !important;
+    margin: 0.8em 0 !important;
+  }
+  ol {
+    list-style: decimal !important;
+    padding-left: 1.2em !important;
+    margin: 0.8em 0 !important;
+  }
+  li {
+    margin: 0.3em 0 !important;
+    list-style: inherit !important;
+  }
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    width: auto !important;
+    display: block !important;
+    margin: 1em auto !important;
+  }
+}

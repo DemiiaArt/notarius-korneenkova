@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
 import { API_BASE_URL } from "../../config/api";
+import { normalizeAndConvertHtml } from "@/utils/html";
 
 export const About = ({ showBreadcrumbs = false }) => {
   const isPC = useIsPC();
@@ -72,7 +73,7 @@ export const About = ({ showBreadcrumbs = false }) => {
               {about.text ? (
                 <div
                   className={`about-block-text fw-light lh-150 ${isPC ? "fs-p--18px" : "fs-p--14px"} c1`}
-                  dangerouslySetInnerHTML={{ __html: about.text }}
+                  dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(about.text) }}
                 />
               ) : (
                 <p

@@ -4,6 +4,7 @@ import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
 import { API_BASE_URL } from "../../config/api";
 import { useLanguage } from "@hooks/useLanguage";
+import { normalizeAndConvertHtml } from "@/utils/html";
 
 // Данные теперь приходят из backend: /api/services-for/?lang=ua|ru|en
 
@@ -66,7 +67,7 @@ const AccordionItem = ({ service, isOpen, onToggle }) => {
               {service.description && (
                 <div
                   className="accordion-description"
-                  dangerouslySetInnerHTML={{ __html: service.description }}
+                  dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(service.description) }}
                 />
               )}
             </div>

@@ -2,6 +2,7 @@ import { useIsPC } from "@hooks/isPC";
 import { useLanguage } from "@hooks/useLanguage";
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import { useEffect, useState } from "react";
+import { normalizeAndConvertHtml } from "@/utils/html";
 import "./OfferAndPolicy.scss";
 
 const OfferPage = () => {
@@ -45,7 +46,10 @@ const OfferPage = () => {
         ) : error ? (
           <div className="content"><p className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>Не вдалося завантажити документ.</p></div>
         ) : (
-          <div className="content" dangerouslySetInnerHTML={{ __html: content }} />
+          <div
+            className="content ck-content"
+            dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(content) }}
+          />
         )}
       </div>
     </>
