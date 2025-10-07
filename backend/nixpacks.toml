@@ -1,10 +1,14 @@
 [phases.setup]
 nixPkgs = ["python312", "python312Packages.pip", "python312Packages.virtualenv", "postgresql"]
 
+[variables]
+CACHE_BUST = "2025-01-27-psycopg2-fix"
+
 [phases.install]
 cmds = [
   "python -m venv /opt/venv",
   "source /opt/venv/bin/activate",
+  "echo 'Cache bust: $CACHE_BUST'",
   "pip install -r requirements.txt"
 ]
 

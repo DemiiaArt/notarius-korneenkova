@@ -1,3 +1,4 @@
+# Updated: removed psycopg2, using psycopg2-binary only
 asgiref==3.9.1
 dj-database-url==2.1.0
 Django==5.0.14
