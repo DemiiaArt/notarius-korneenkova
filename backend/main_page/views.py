@@ -69,7 +69,7 @@ class ContactsView(APIView):
     def get(self, request):
         lang = request.GET.get('lang', 'ua')
         # Предпочтительно возвращаем расширенную модель Contacts
-        contacts = Header.objects.first()
+        contacts = Header.objects.order_by('-id').first()
         if contacts:
             serializer = ContactsSerializer(contacts, context={'lang': lang})
             return Response(serializer.data)
@@ -105,7 +105,7 @@ class ContactsView(APIView):
     def post(self, request):
         """Обновление/создание контактов с расширенными полями."""
         data = request.data or {}
-        contacts = Header.objects.first()
+        contacts = Header.objects.order_by('-id').first()
         if not contacts:
             contacts = Header.objects.create(
                 email=data.get('email', ''),

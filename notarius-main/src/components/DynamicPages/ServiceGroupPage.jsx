@@ -50,8 +50,18 @@ const ServiceGroupPage = () => {
   // Перевіряємо, чи є компонент для цієї сторінки
   const PageComponent = getComponentById(currentNode.id);
 
+  console.log(
+    "🔍 ServiceGroupPage: Проверяем компонент для ID:",
+    currentNode.id
+  );
+  console.log("🔍 ServiceGroupPage: PageComponent:", PageComponent);
+
   // Якщо є спеціальний компонент - використовуємо його
-  if (PageComponent) {
+  if (PageComponent && PageComponent !== null) {
+    console.log(
+      "✅ ServiceGroupPage: Используем компонент из реестра:",
+      currentNode.id
+    );
     return <PageComponent />;
   }
 
@@ -102,8 +112,15 @@ const ServiceGroupPage = () => {
   }
 
   // Якщо немає дочірніх елементів - використовуємо дефолтний шаблон
+  console.log(
+    "📄 ServiceGroupPage: Используем DefaultThirdLevelPage для:",
+    currentNode.id
+  );
   return (
-    <DefaultThirdLevelPage title={title} heroImgClass="notaryServicesPage" />
+    <DefaultThirdLevelPage
+      navId={currentNode.id}
+      wrapperClassName="service-group-default-wrap"
+    />
   );
 };
 

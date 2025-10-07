@@ -3,10 +3,12 @@ import { useIsPC } from "@hooks/isPC";
 import "./FreeConsult.scss";
 import "./OrderConsult.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
+import { useTranslation } from "@hooks/useTranslation";
 
 const formName = "freeOrder";
 
 export const OrderConsult = () => {
+  const { t } = useTranslation("components.NotaryServices");
   const [formData, setFormData] = useState({
     name: "",
     tel: "",
@@ -121,11 +123,9 @@ export const OrderConsult = () => {
                 isPC ? "fs-p--30px" : "fs-p--16px"
               } c3 uppercase`}
             >
-              Замовити консультацію
+              {t("orderConsultation")}
             </h2>
-            <p
-              className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-100 c3`}
-            >
+            <p className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-100 c3`}>
               Бажаєте отримати консультацію юриста? Заповніть форму нижче.
             </p>
           </div>
@@ -203,9 +203,7 @@ export const OrderConsult = () => {
               {errors.question && (
                 <span className="error-label">{errors.question}</span>
               )}
-              <label htmlFor="order-question">
-                Питання, яке вас цікавить
-              </label>
+              <label htmlFor="order-question">Питання, яке вас цікавить</label>
             </div>
 
             {/* submit */}
@@ -219,8 +217,8 @@ export const OrderConsult = () => {
               {isSubmitted
                 ? "Ваша заявка успішно відправлена"
                 : isLoading
-                ? "Відправка..."
-                : "ВІДПРАВИТИ"}
+                  ? "Відправка..."
+                  : "ВІДПРАВИТИ"}
             </button>
           </form>
         </div>
