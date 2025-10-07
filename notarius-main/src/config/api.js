@@ -7,7 +7,7 @@
 const getApiBaseUrl = () => {
   // В production используем переменную окружения или текущий origin
   if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
+    return import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
   }
 
   // В development используем localhost
@@ -19,7 +19,15 @@ const getApiBaseUrl = () => {
   return `${window.location.origin}/api`;
 };
 
+const getMediaBaseUrl = () => {
+  if (import.meta.env.VITE_MEDIA_BASE_URL) {
+    return import.meta.env.VITE_MEDIA_BASE_URL || "http://localhost:8000/media";
+  }
+  return "http://localhost:8000/media";
+};
+
 export const API_BASE_URL = getApiBaseUrl();
+export const MEDIA_BASE_URL = getMediaBaseUrl();
 
 // Вспомогательные функции для API запросов
 export const apiClient = {

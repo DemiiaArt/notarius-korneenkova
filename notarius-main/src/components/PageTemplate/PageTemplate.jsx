@@ -1,6 +1,6 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
 import Loader from "@components/Loader/Loader";
-
+import { MEDIA_BASE_URL } from "@/config/api";
 /**
  * Универсальный шаблон страницы с NotaryServices и контентом
  * @param {Object} props
@@ -25,7 +25,7 @@ const PageTemplate = ({
           listItems={pageData?.listItems}
           heroImageUrl={
             pageData?.hero_image
-              ? `http://localhost:8000${pageData.hero_image}`
+              ? `${MEDIA_BASE_URL}${pageData.hero_image}`
               : null
           }
         />

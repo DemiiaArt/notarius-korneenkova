@@ -2,6 +2,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Link } from "react-router-dom";
 import { useLang } from "@nav/use-lang";
+import { MEDIA_BASE_URL } from "@/config/api";
 import {
   buildFullPathForId,
   findPathStackById,
@@ -107,7 +108,7 @@ const GroupServicesCarousel = ({
   const getServiceImage = (service) => {
     // Якщо є card_image в об'єкті сервісу, використовуємо його
     if (service?.card_image) {
-      return `http://localhost:8000${service.card_image}`;
+      return `${MEDIA_BASE_URL}${service.card_image}`;
     }
     // Fallback - картинка за замовчуванням
     return "/src/assets/media/services-carousel/ServicesGallery_notary.png";
