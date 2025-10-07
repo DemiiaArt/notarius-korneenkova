@@ -7,7 +7,7 @@ backend/migrations/
 backend/*.pyc
 backend/staticfiles/
 backend/db.sqlite3
-backend\nixpacks.toml
+backend/nixpacks.toml
 venv/
 
 
