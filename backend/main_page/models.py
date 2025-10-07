@@ -470,6 +470,7 @@ class LegalDocument(models.Model):
     content_ua = CKEditor5Field(blank=True, null=True, verbose_name="Контент (UA)")
     content_ru = CKEditor5Field(blank=True, null=True, verbose_name="Контент (RU)")
     content_en = CKEditor5Field(blank=True, null=True, verbose_name="Контент (EN)")
+    file = models.FileField(upload_to='trademark/', blank=True, null=True, verbose_name="Файл")
 
     # Метаданные
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")

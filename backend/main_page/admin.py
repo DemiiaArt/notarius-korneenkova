@@ -570,7 +570,7 @@ class FrequentlyAskedQuestionAdmin(ContentAdmin):
 class LegalDocumentAdmin(ContentAdmin):
     list_display = ['key', 'title_ua', 'updated_at']
     list_filter = ['key', 'updated_at']
-    search_fields = ['title_ua', 'title_ru', 'title_en', 'content_ua', 'content_ru', 'content_en']
+    search_fields = ['title_ua', 'title_ru', 'title_en', 'content_ua', 'content_ru', 'content_en', 'file']
     readonly_fields = ['created_at', 'updated_at']
     list_per_page = 20
 
@@ -587,6 +587,10 @@ class LegalDocumentAdmin(ContentAdmin):
         }),
         ('English', {
             'fields': ('title_en', 'content_en'),
+        }),
+        ('Файл', {
+            'fields': ('file',),
+            'description': 'Файл'
         }),
     )
 
@@ -776,6 +780,12 @@ class NotariusAdminSite(admin.AdminSite):
                 'models': ['Review', 'FrequentlyAskedQuestion'],
                 'icon': 'fas fa-star',
                 'priority': 5
+            },
+            'Футер': {
+                'models': ['LegalDocument'],
+                'icon': 'fas fa-file-signature',
+                'description': 'Оферта, политика конфиденциальности, торговая марка',
+                'priority': 6
             }
         }
         
