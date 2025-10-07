@@ -8,9 +8,10 @@ const NotaryServices = ({ title, listItems, heroImageUrl }) => {
   const isPC = useIsPC();
   const { open } = useModal();
   const { t } = useTranslation("components.NotaryServices");
+  console.log(heroImageUrl);
   const backgroundStyle = heroImageUrl
     ? {
-        backgroundImage: `url(${import.meta.env.VITE_ASSETS_BASE || ""}${heroImageUrl})`,
+        backgroundImage: `${heroImageUrl}`,
       }
     : undefined;
 

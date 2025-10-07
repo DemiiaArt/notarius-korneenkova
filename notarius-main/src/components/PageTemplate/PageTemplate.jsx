@@ -17,17 +17,14 @@ const PageTemplate = ({
   wrapperClassName = "",
   children,
 }) => {
+  const heroImageUrl = `${MEDIA_BASE_URL}${pageData?.hero_image}`;
   return (
     <>
       <div className={wrapperClassName}>
         <NotaryServices
           title={pageData?.title}
           listItems={pageData?.listItems}
-          heroImageUrl={
-            pageData?.hero_image
-              ? `${MEDIA_BASE_URL}${pageData.hero_image}`
-              : null
-          }
+          heroImageUrl={pageData?.hero_image ? heroImageUrl : null}
         />
         {loading && !pageData && (
           <div
