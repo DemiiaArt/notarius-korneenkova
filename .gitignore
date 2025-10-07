@@ -2,11 +2,11 @@
 .idea
 .vscode
 notarius\venv
-backend\__pycache__/
-backend\migrations/
-backend\*.pyc
+backend/__pycache__/
+backend/migrations/
+backend/*.pyc
 backend/staticfiles/
-backend\*.db
+backend/db.sqlite3.db
 backend\nixpacks.toml
 venv/
 
