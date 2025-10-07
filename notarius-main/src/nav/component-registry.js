@@ -125,70 +125,70 @@ export const COMPONENT_REGISTRY = {
   "default-third-level": DefaultThirdLevelPage,
   "default-fourth-level": DefaultFourthLevelPage,
 
-  // Группы услуг
-  contracts: ContractPage,
-  "power-of-attorney": AttorneyPage,
-  "signatures-statements": SignaturePage,
-  "consult-copy-duplicate": ConsultationPage,
-  "apostille-affidavit": ApostillePage,
+  // // Группы услуг
+  // contracts: ContractPage,
+  // "power-of-attorney": AttorneyPage,
+  // "signatures-statements": SignaturePage,
+  // "consult-copy-duplicate": ConsultationPage,
+  // "apostille-affidavit": ApostillePage,
 
   // Контракты
-  "property-agreements": PropertyAgreements,
-  "family-agreements": FamilyAgreements,
-  "contractual-guarantees": ContractualGuarantees,
-  "inheritance-agreements": InheritanceAgreements,
-  "corporate-rights-agreements": CorporateRightsAgreements,
-  "executive-inscription": ExecutiveInscription,
-  "other-agreements": OtherAgreements,
+  // "property-agreements": PropertyAgreements,
+  // "family-agreements": FamilyAgreements,
+  // "contractual-guarantees": ContractualGuarantees,
+  // "inheritance-agreements": InheritanceAgreements,
+  // "corporate-rights-agreements": CorporateRightsAgreements,
+  // "executive-inscription": ExecutiveInscription,
+  // "other-agreements": OtherAgreements,
 
   // Доверенности
-  "poa-property": PoaProperty,
-  "poa-representation": PoaRepresentation,
-  "poa-special": PoaSpecial,
+  // "poa-property": PoaProperty,
+  // "poa-representation": PoaRepresentation,
+  // "poa-special": PoaSpecial,
 
-  // Подписи и заявления
-  "signatures-consents": Signature,
-  applications: Applications,
+  // // Подписи и заявления
+  // "signatures-consents": Signature,
+  // applications: Applications,
 
-  // Консультации
-  consultations: Consultations,
-  "document-copies": DocumentCopies,
+  // // Консультации
+  // consultations: Consultations,
+  // "document-copies": DocumentCopies,
 
-  // Апостиль
-  "apostille-documents": ApostilleDocs,
-  affidavit: Affidavit,
+  // // Апостиль
+  // "apostille-documents": ApostilleDocs,
+  // affidavit: Affidavit,
 
   // Переводы
-  "translator-signature": lazy(
-    () => import("@pagesSecondLevel/NotaryTranslate/TranslatorSignature")
-  ),
-  "notarial-translation-one-doc": lazy(
-    () => import("@pagesSecondLevel/NotaryTranslate/NotarialTranslationOneDoc")
-  ),
-  "two-in-one-copy-translation": lazy(
-    () => import("@pagesSecondLevel/NotaryTranslate/TwoInOneCopyTranslation")
-  ),
+  // "translator-signature": lazy(
+  //   () => import("@pagesSecondLevel/NotaryTranslate/TranslatorSignature")
+  // ),
+  // "notarial-translation-one-doc": lazy(
+  //   () => import("@pagesSecondLevel/NotaryTranslate/NotarialTranslationOneDoc")
+  // ),
+  // "two-in-one-copy-translation": lazy(
+  //   () => import("@pagesSecondLevel/NotaryTranslate/TwoInOneCopyTranslation")
+  // ),
 
-  // Другие услуги
-  "legal-consultations-with-opinion": lazy(
-    () =>
-      import("@pagesSecondLevel/OtherServices/LegalConsultationsWithOpinion")
-  ),
-  "extracts-real-rights-register": lazy(
-    () => import("@pagesSecondLevel/OtherServices/ExtractsRealRightsRegister")
-  ),
-  "edr-registration": lazy(
-    () => import("@pagesSecondLevel/OtherServices/EdrRegistration")
-  ),
-  "register-ownership-real-estate": lazy(
-    () => import("@pagesSecondLevel/OtherServices/RegisterOwnershipRealEstate")
-  ),
-  "edr-error-correction": lazy(
-    () => import("@pagesSecondLevel/OtherServices/EdrErrorCorrection")
-  ),
-  "rights-register-for-developers": lazy(
-    () => import("@pagesSecondLevel/OtherServices/RightsRegisterForDevelopers")
-  ),
+  // // Другие услуги
+  // "legal-consultations-with-opinion": lazy(
+  //   () =>
+  //     import("@pagesSecondLevel/OtherServices/LegalConsultationsWithOpinion")
+  // ),
+  // "extracts-real-rights-register": lazy(
+  //   () => import("@pagesSecondLevel/OtherServices/ExtractsRealRightsRegister")
+  // ),
+  // "edr-registration": lazy(
+  //   () => import("@pagesSecondLevel/OtherServices/EdrRegistration")
+  // ),
+  // "register-ownership-real-estate": lazy(
+  //   () => import("@pagesSecondLevel/OtherServices/RegisterOwnershipRealEstate")
+  // ),
+  // "edr-error-correction": lazy(
+  //   () => import("@pagesSecondLevel/OtherServices/EdrErrorCorrection")
+  // ),
+  // "rights-register-for-developers": lazy(
+  //   () => import("@pagesSecondLevel/OtherServices/RightsRegisterForDevelopers")
+  // ),
 };
 
 /**

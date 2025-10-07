@@ -229,7 +229,13 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # WhiteNoise settings для статических файлов
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Используем ManifestStaticFilesStorage только в продакшене
+if DEBUG:
+    # Для локальной разработки используем простое хранилище
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    # Для продакшена используем с манифестом
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Настройки для Railway
 LOGGING = {
