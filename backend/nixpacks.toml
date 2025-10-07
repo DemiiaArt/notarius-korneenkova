@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["python312", "pip", "postgresql"]
+nixPkgs = ["python312", "python312Packages.pip", "postgresql"]
 
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
@@ -8,4 +8,4 @@ cmds = ["pip install -r requirements.txt"]
 cmds = ["python manage.py collectstatic --noinput"]
 
 [start]
-cmd = "python manage.py makemigrations --noinput && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python create_superuser.py && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 60 --workers 1"
+cmd = "python manage.py makemigrations --noinput && python manage.py migrate --noinput && python create_superuser.py && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 60 --workers 1"
