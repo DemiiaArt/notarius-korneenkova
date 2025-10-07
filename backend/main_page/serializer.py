@@ -679,3 +679,34 @@ class LegalDocumentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Вопрос не должен превышать 5000 символов")
         
         return value.strip()
+
+
+class LegalDocumentMetaSerializer(serializers.ModelSerializer):
+    """
+    Лёгкий сериализатор для списка документов: { key, title, file }.
+    Заголовок локализуется через контекст (lang). file — абсолютный URL, если есть.
+    """
+    title = serializers.SerializerMethodField()
+    file = serializers.SerializerMethodField()
+
+    class Meta:
+        model = LegalDocument
+        fields = ['key', 'title', 'file']
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_title(self, obj):
+        lang = self._get_lang()
+        return getattr(obj, f'title_{lang}', '')
+
+    def get_file(self, obj):
+        request = self.context.get('request')
+        try:
+            if obj.file and hasattr(obj.file, 'url'):
+                url = obj.file.url
+                return request.build_absolute_uri(url) if request else url
+        except Exception:
+            return None
+        return None

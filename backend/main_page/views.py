@@ -661,3 +661,24 @@ class LegalDocumentDetailView(APIView):
 
         serializer = LegalDocumentSerializer(doc, context={'lang': lang})
         return Response(serializer.data)
+
+
+class LegalDocumentListView(APIView):
+    """
+    Возвращает список доступных юридических документов с локализованными заголовками.
+    GET /api/legal/?lang=ua|ru|en
+    Ответ: [{ key, title, file }]
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+
+        from .models import LegalDocument
+        from .serializer import LegalDocumentMetaSerializer
+
+        qs = LegalDocument.objects.all().order_by('key')
+        serializer = LegalDocumentMetaSerializer(qs, many=True, context={'lang': lang, 'request': request})
+        return Response(serializer.data)
