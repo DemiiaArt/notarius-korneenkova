@@ -278,6 +278,12 @@
         "ourAddress": "Наш адрес",
         "address": "г. Днепр, пр. Дмитрия Яворницкого, 2, 49100",
         "followUs": "Следите за нами в социальных сетях"
+      },
+      "TradeMarkPage": {
+        "title": "Торговая марка",
+        "pdfNotFound": "PDF файл не найден",
+        "browserNotSupported": "Ваш браузер не поддерживает отображение PDF.",
+        "downloadPdf": "Скачать PDF"
       }
     }
   }

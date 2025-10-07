@@ -2,6 +2,7 @@ import { useIsPC } from "@hooks/isPC";
 import { useLanguage } from "@hooks/useLanguage";
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/config/api";
 import "./OfferAndPolicy.scss";
 
 const OfferPage = () => {
@@ -16,11 +17,11 @@ const OfferPage = () => {
     setLoading(true);
     setError(null);
     const lang = ["ua", "ru", "en"].includes(currentLang) ? currentLang : "ua";
-    fetch(`/api/legal/offer_agreement/?lang=${lang}`,{
+    fetch(`${API_BASE_URL}/legal/offer_agreement/?lang=${lang}`, {
       headers: {
         Accept: "application/json",
       },
-    } )
+    })
       .then((r) => {
         if (!r.ok) throw new Error("Failed to load offer document");
         return r.json();
@@ -37,15 +38,28 @@ const OfferPage = () => {
     <>
       <div className="container text-container">
         <Breadcrumbs />
-        <h1 className={`offer-title ${isPC ? "fs-h1--40px" : "fs-h1--24px"} fw-bold uppercase`}>
+        <h1
+          className={`offer-title ${isPC ? "fs-h1--40px" : "fs-h1--24px"} fw-bold uppercase`}
+        >
           {title || "Договір оферти"}
         </h1>
         {loading ? (
-          <div className="content"><p className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>Завантаження...</p></div>
+          <div className="content">
+            <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>
+              Завантаження...
+            </p>
+          </div>
         ) : error ? (
-          <div className="content"><p className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>Не вдалося завантажити документ.</p></div>
+          <div className="content">
+            <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>
+              Не вдалося завантажити документ.
+            </p>
+          </div>
         ) : (
-          <div className="content" dangerouslySetInnerHTML={{ __html: content }} />
+          <div
+            className="content"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
         )}
       </div>
     </>

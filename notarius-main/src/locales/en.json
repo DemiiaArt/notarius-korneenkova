@@ -228,9 +228,6 @@
         "Консультації. Копії. Дублікати": "Consultations. Copies. Duplicates",
         "Консультации. Копии. Дубликаты": "Consultations. Copies. Duplicates",
         "Consultations. Copies. Duplicates": "Consultations. Copies. Duplicates",
-        "Послуги допомога військовим": "Military Support Services",
-        "Услуги помощь военным": "Military Support Services",
-        "Military Support Services": "Military Support Services",
         "Підпис. Заява": "Signature. Statement",
         "Подпись. Заявление": "Signature. Statement",
         "Signature. Statement": "Signature. Statement"
@@ -295,6 +292,12 @@
         "ourAddress": "Our address",
         "address": "Dnipro, Dmytro Yavornytskyi Ave, 2, 49100",
         "followUs": "Follow us on social media"
+      },
+      "TradeMarkPage": {
+        "title": "Trademark",
+        "pdfNotFound": "PDF file not found",
+        "browserNotSupported": "Your browser does not support PDF display.",
+        "downloadPdf": "Download PDF"
       }
     }
   }
