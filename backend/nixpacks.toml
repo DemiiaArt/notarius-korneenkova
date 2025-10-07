@@ -1,11 +1,18 @@
 [phases.setup]
-nixPkgs = ["python312", "python312Packages.pip", "postgresql"]
+nixPkgs = ["python312", "python312Packages.pip", "python312Packages.virtualenv", "postgresql"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+  "python -m venv /opt/venv",
+  "source /opt/venv/bin/activate",
+  "pip install -r requirements.txt"
+]
 
 [phases.build]
-cmds = ["python manage.py collectstatic --noinput"]
+cmds = [
+  "source /opt/venv/bin/activate",
+  "python manage.py collectstatic --noinput"
+]
 
 [start]
-cmd = "python manage.py makemigrations --noinput && python manage.py migrate --noinput && python create_superuser.py && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 60 --workers 1"
+cmd = "source /opt/venv/bin/activate && python manage.py makemigrations --noinput && python manage.py migrate --noinput && python create_superuser.py && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 60 --workers 1"
