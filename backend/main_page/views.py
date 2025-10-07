@@ -637,3 +637,27 @@ class FrequentlyAskedQuestionListView(generics.ListAPIView):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
         return Response(serializer.data)
+
+
+class LegalDocumentDetailView(APIView):
+    """
+    Возвращает юридический документ по ключу: offer_agreement | privacy_policy | trademark.
+    Поддерживает параметр lang (ua/ru/en), по умолчанию ua.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, key):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+
+        from .models import LegalDocument
+        from .serializer import LegalDocumentSerializer
+
+        try:
+            doc = LegalDocument.objects.get(key=key)
+        except LegalDocument.DoesNotExist:
+            return Response({"detail": "Not found."}, status=404)
+
+        serializer = LegalDocumentSerializer(doc, context={'lang': lang})
+        return Response(serializer.data)

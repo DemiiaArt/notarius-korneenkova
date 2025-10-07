@@ -80,4 +80,8 @@ urlpatterns = [
 
     # Эндпоинты часто задаваемых вопросов
     path('faqs/', views.FrequentlyAskedQuestionListView.as_view(), name='faq-list'),
+
+    # Юридические документы
+    # GET /api/legal/<key>/?lang=ua|ru|en
+    path('legal/<slug:key>/', views.LegalDocumentDetailView.as_view(), name='legal-document-detail'),
 ]

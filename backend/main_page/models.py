@@ -445,3 +445,41 @@ class FrequentlyAskedQuestion(models.Model):
 
     def __str__(self):
         return self.question_ua
+
+
+class LegalDocument(models.Model):
+    """
+    Юридические документы сайта: Договор оферты, Политика конфиденциальности, Торговая марка.
+    Содержат локализованные заголовки и контент с поддержкой CKEditor5.
+    """
+
+    KEY_CHOICES = [
+        ('offer_agreement', 'Договір оферти'),
+        ('privacy_policy', 'Політика конфіденційності'),
+        ('trademark', 'Торгівельна марка'),
+    ]
+
+    key = models.SlugField(max_length=64, unique=True, choices=KEY_CHOICES, verbose_name="Тип документа")
+
+    # Заголовки на трех языках
+    title_ua = models.CharField(max_length=255, verbose_name="Заголовок (UA)")
+    title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
+    title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
+
+    # Контент на трех языках
+    content_ua = CKEditor5Field(blank=True, null=True, verbose_name="Контент (UA)")
+    content_ru = CKEditor5Field(blank=True, null=True, verbose_name="Контент (RU)")
+    content_en = CKEditor5Field(blank=True, null=True, verbose_name="Контент (EN)")
+
+    # Метаданные
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Юридический документ"
+        verbose_name_plural = "Юридические документы"
+        ordering = ['key']
+        db_table = 'main_page_legal_document'
+
+    def __str__(self):
+        return dict(self.KEY_CHOICES).get(self.key, self.key)

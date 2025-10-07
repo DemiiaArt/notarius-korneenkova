@@ -14,6 +14,7 @@ from .models import (
 )
 from blog.models import BlogCategory, BlogPost
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from .models import LegalDocument
 
 # Базовые админ-классы для лучшей организации
 class BaseAdmin(admin.ModelAdmin):
@@ -566,6 +567,29 @@ class FrequentlyAskedQuestionAdmin(ContentAdmin):
         }),
     )
 
+class LegalDocumentAdmin(ContentAdmin):
+    list_display = ['key', 'title_ua', 'updated_at']
+    list_filter = ['key', 'updated_at']
+    search_fields = ['title_ua', 'title_ru', 'title_en', 'content_ua', 'content_ru', 'content_en']
+    readonly_fields = ['created_at', 'updated_at']
+    list_per_page = 20
+
+    fieldsets = (
+        ('Параметры', {
+            'fields': ('key', 'created_at', 'updated_at'),
+            'description': 'Тип документа и метаданные'
+        }),
+        ('Українська мова', {
+            'fields': ('title_ua', 'content_ua'),
+        }),
+        ('Русский язык', {
+            'fields': ('title_ru', 'content_ru'),
+        }),
+        ('English', {
+            'fields': ('title_en', 'content_en'),
+        }),
+    )
+
 class ServiceFeatureInline(admin.TabularInline):
     model = ServiceFeature
     extra = 1
@@ -809,6 +833,7 @@ admin_site.register(VideoInterview, VideoInterviewAdmin)
 admin_site.register(Review, ReviewAdmin)
 admin_site.register(FrequentlyAskedQuestion, FrequentlyAskedQuestionAdmin)
 admin_site.register(ServiceCategory, ServiceCategoryAdmin)
+admin_site.register(LegalDocument, LegalDocumentAdmin)
 
 # Регистрируем модели блога
 admin_site.register(BlogCategory, BlogCategoryAdmin)
