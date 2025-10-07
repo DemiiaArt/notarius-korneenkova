@@ -1,7 +1,6 @@
-import { memo } from "react";
 import PageTemplate from "@components/PageTemplate/PageTemplate";
 import { usePageData } from "@hooks/usePageData";
-import ServicesCarousel from "@components/ServicesCarousel/ServicesCarousel";
+import AdaptiveCarousel from "@components/AdaptiveCarousel/AdaptiveCarousel";
 import Form from "@components/Form/Form";
 import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
 
@@ -20,27 +19,26 @@ import OftenQuestions from "@components/OftenQuestions/OftenQuestions";
  * @example
  * <DefaultThirdLevelPage navId="power-of-attorney" />
  */
-const DefaultThirdLevelPage = memo(
-  ({ navId, wrapperClassName = "default-third-level-wrap" }) => {
-    // Завантажуємо дані з backend на основі navId
-    const { data, loading, error } = usePageData(navId);
+const DefaultThirdLevelPage = ({
+  navId,
+  wrapperClassName = "default-third-level-wrap",
+}) => {
+  // Завантажуємо дані з backend на основі navId
+  const { data, loading, error } = usePageData(navId);
 
-    return (
-      <PageTemplate
-        pageData={data}
-        loading={loading}
-        error={error}
-        wrapperClassName={wrapperClassName}
-      >
-        {/* Додаткові компоненти для сторінок 3-го рівня */}
-        <ServicesCarousel parentId="services" title="Інші послуги" />
-        <OftenQuestions />
-        <Form />
-      </PageTemplate>
-    );
-  }
-);
-
-DefaultThirdLevelPage.displayName = "DefaultThirdLevelPage";
+  return (
+    <PageTemplate
+      pageData={data}
+      loading={loading}
+      error={error}
+      wrapperClassName={wrapperClassName}
+    >
+      {/* На 3-му рівні показуємо дітей поточного розділу (або верхній рівень, якщо дітей немає) */}
+      <AdaptiveCarousel parentId={navId} title="Інші послуги" />
+      <OftenQuestions />
+      <Form />
+    </PageTemplate>
+  );
+};
 
 export default DefaultThirdLevelPage;

@@ -1,4 +1,4 @@
-import { memo, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { usePageData } from "@hooks/usePageData";
 import PageTemplate from "@components/PageTemplate/PageTemplate";
 import AdaptiveCarousel from "@components/AdaptiveCarousel/AdaptiveCarousel";
@@ -11,13 +11,14 @@ const Form = lazy(() => import("@components/Form/Form"));
 const OftenQuestions = lazy(
   () => import("@components/OftenQuestions/OftenQuestions")
 );
+
 /**
  * Страница "Апостиль на документи" (4 уровень)
  * URL: /notarialni-poslugi/apostyl-afidavit/apostyl-na-dokumenty
  *
  * Использует PageTemplate для динамической загрузки контента из backend
  */
-const ApostilleDocs = memo(() => {
+const ApostilleDocs = () => {
   const { data, loading, error } = usePageData("apostille-documents");
 
   return (
@@ -43,8 +44,6 @@ const ApostilleDocs = memo(() => {
       </Suspense>
     </PageTemplate>
   );
-});
-
-ApostilleDocs.displayName = "ApostilleDocs";
+};
 
 export default ApostilleDocs;

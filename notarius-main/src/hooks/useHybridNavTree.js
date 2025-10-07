@@ -124,6 +124,11 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
       // Объединяем все свойства из backend (showMegaPanel, showInMenu, label, slug и т.д.)
       Object.keys(backendNode).forEach((key) => {
         if (key !== "children") {
+          // Никогда не переносим поле component из backend,
+          // чтобы не ломать привязку к локальному реестру компонентов
+          if (key === "component") {
+            return;
+          }
           // Преобразуем card_image в cardImage (camelCase)
           if (key === "card_image") {
             mergedNode.cardImage = backendNode[key];

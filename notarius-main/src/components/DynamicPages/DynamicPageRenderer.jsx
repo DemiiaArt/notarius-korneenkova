@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useHybridNav } from "@contexts/HybridNavContext";
 import { useLanguage } from "@hooks/useLanguage";
 import { detectLocaleFromPath } from "@nav/nav-utils";
@@ -14,31 +14,86 @@ import DefaultFourthLevelPage from "@pagesSecondLevel/DefaultFourthLevelPage";
 const DynamicPageRenderer = () => {
   const { navTree } = useHybridNav();
   const { slug1, slug2, slug3 } = useParams();
+  const location = useLocation();
   const { currentLang } = useLanguage();
+  // Определяем язык непосредственно из URL, чтобы избежать рассинхронизации при переключении
+  const effectiveLang = detectLocaleFromPath(location.pathname) || currentLang;
 
   // Определяем тип страницы (3-й или 4-й уровень)
   const isDetailPage = !!slug3;
 
   // Находим текущий узел
   const findCurrentNode = () => {
-    if (!navTree) return null;
+    if (!navTree) {
+      console.log("❌ navTree is null");
+      return null;
+    }
 
-    const findNodeBySlugs = (nodes, targetSlugs) => {
+    const normalize = (s) => (s == null ? "" : String(s)).trim().toLowerCase();
+
+    const findNodeBySlugs = (nodes, targetSlugs, depth = 0) => {
+      console.log(
+        `${"  ".repeat(depth)}🔍 Searching at depth ${depth}, target: ${targetSlugs[0]}`
+      );
+
       for (const node of nodes) {
         // Проверяем slug для текущего языка
-        const nodeSlug = node.slug?.[currentLang];
-        if (nodeSlug === targetSlugs[0]) {
-          if (targetSlugs.length === 1) return node;
+        const nodeSlug = node.slug?.[effectiveLang];
+        console.log(
+          `${"  ".repeat(depth)}  - node.id: ${node.id}, slug[${effectiveLang}]: ${nodeSlug}`
+        );
+
+        const target = normalize(targetSlugs[0]);
+        const matchBySlug = normalize(nodeSlug) === target;
+        const matchById = normalize(node.id) === target;
+
+        if (matchBySlug || matchById) {
+          console.log(
+            `${"  ".repeat(depth)}  ✅ Match found! by ${matchBySlug ? "slug" : "id"} → node.id: ${node.id}`
+          );
+
+          if (targetSlugs.length === 1) {
+            console.log(
+              `${"  ".repeat(depth)}  ✅ Final node found: ${node.id}`
+            );
+            return node;
+          }
+
           if (node.children) {
-            const child = findNodeBySlugs(node.children, targetSlugs.slice(1));
+            console.log(
+              `${"  ".repeat(depth)}  → Searching in children of ${node.id}`
+            );
+            const child = findNodeBySlugs(
+              node.children,
+              targetSlugs.slice(1),
+              depth + 1
+            );
             if (child) return child;
+          } else {
+            console.log(`${"  ".repeat(depth)}  ⚠️ No children in ${node.id}`);
           }
         }
       }
       return null;
     };
 
-    const slugs = [slug1, slug2, slug3].filter(Boolean);
+    let slugs = [slug1, slug2, slug3].filter(Boolean).map((s) => {
+      try {
+        return decodeURIComponent(s);
+      } catch (_) {
+        return s;
+      }
+    });
+    // Если первый сегмент — языковой префикс, убираем его
+    if (slugs.length > 0 && ["ua", "ru", "en"].includes(slugs[0])) {
+      slugs = slugs.slice(1);
+    }
+    console.log(
+      "🔍 Starting search with slugs:",
+      slugs,
+      "lang:",
+      effectiveLang
+    );
     return findNodeBySlugs(navTree.children, slugs);
   };
 
@@ -50,7 +105,9 @@ const DynamicPageRenderer = () => {
   console.log("  - slug2:", slug2);
   console.log("  - slug3:", slug3);
   console.log("  - currentLang:", currentLang);
+  console.log("  - effectiveLang(from URL):", effectiveLang);
   console.log("  - currentNode:", currentNode);
+  console.log("  - navTree:", navTree);
 
   if (!currentNode) {
     console.log("❌ currentNode is null - страница не найдена");
@@ -89,8 +146,8 @@ const DynamicPageRenderer = () => {
     console.log("📄 Используем DefaultFourthLevelPage для 4+ уровня");
     return (
       <DefaultFourthLevelPage
-        title={currentNode.label?.[currentLang] || currentNode.id}
-        heroImgClass="notaryServicesPage"
+        navId={currentNode.id}
+        wrapperClassName="default-fourth-level-wrap"
       />
     );
   } else if (slugCount === 2) {

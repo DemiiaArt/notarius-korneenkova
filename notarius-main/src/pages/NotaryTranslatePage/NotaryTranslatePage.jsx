@@ -1,4 +1,4 @@
-import { lazy, Suspense, memo } from "react";
+import { lazy, Suspense } from "react";
 import "./NotaryTranslatePage.scss";
 import AdaptiveCarousel from "@components/AdaptiveCarousel/AdaptiveCarousel";
 import PageTemplate from "@components/PageTemplate/PageTemplate";
@@ -13,7 +13,7 @@ const OftenQuestions = lazy(
   () => import("@components/OftenQuestions/OftenQuestions")
 );
 
-const NotaryTranslatePage = memo(() => {
+const NotaryTranslatePage = () => {
   // Используем универсальный хук с navId из nav-tree
   const { data, loading, error } = usePageData("notary-translate");
 
@@ -42,6 +42,6 @@ const NotaryTranslatePage = memo(() => {
       </Suspense>
     </PageTemplate>
   );
-});
+};
 
 export default NotaryTranslatePage;

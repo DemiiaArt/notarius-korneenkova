@@ -1,4 +1,4 @@
-import { lazy, Suspense, memo } from "react";
+import { lazy, Suspense } from "react";
 import AdaptiveCarousel from "@components/AdaptiveCarousel/AdaptiveCarousel";
 import "./OtherServicesPage.scss";
 import PageTemplate from "@components/PageTemplate/PageTemplate";
