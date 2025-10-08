@@ -237,8 +237,42 @@ html,
     max-width: 100% !important;
     height: auto !important;
     width: auto !important;
-    display: block !important;
-    margin: 1em auto !important;
+    display: inline-block !important; // не навязываем блочное центрирование
+    margin: 1em 0 !important; // убираем auto по бокам, чтобы сработал text-align/float
+  }
+}
+
+// Поддержка классов выравнивания изображений из CKEditor
+.text-content-html {
+  figure.image {
+    display: table;
+    margin: 1em 0;
+    img {
+      display: block;
+    }
+  }
+  figure.image.image-style-align-left {
+    float: left;
+    margin: 1em 1em 1em 0;
+  }
+  figure.image.image-style-align-right {
+    float: right;
+    margin: 1em 0 1em 1em;
+  }
+  figure.image.image-style-align-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  figure.image.image-style-side {
+    float: right;
+    max-width: 50%;
+    margin: 1em 0 1em 1em;
+  }
+  // Сбрасываем float внутри контейнера после плавающих элементов
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
   }
 }
 
