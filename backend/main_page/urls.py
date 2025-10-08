@@ -10,6 +10,8 @@ urlpatterns = [
     
     # Информация о нотариусе (текст, фото на 3 языках)
     path('about-me/', views.AboutMeView.as_view(), name='about-me'),
+    path('about-me/detail/', views.AboutMeDetailView.as_view(), name='about-me-detail'),
+    path('qualification/', views.QualificationBlockView.as_view(), name='qualification-block'),
 
     # Контакты (совместимо с фронтом)
     path('contacts/', views.ContactsView.as_view(), name='contacts'),

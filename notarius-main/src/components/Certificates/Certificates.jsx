@@ -1,58 +1,84 @@
 import "./Certificates.scss";
 import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
-
-import { useState } from "react";
+import { useLanguage } from "@hooks/useLanguage";
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
+import { API_BASE_URL } from "@/config/api";
 
 import "swiper/css";
 import "swiper/css/navigation";
-import cert1 from "@media/cerficates/certificate1.jpg";
-import cert2 from "@media/cerficates/certificate2.jpg";
-import cert3 from "@media/cerficates/certificate3.jpg";
-import cert4 from "@media/cerficates/certificate4.jpg";
-import cert5 from "@media/cerficates/certificate5.jpg";
-import cert6 from "@media/cerficates/certificate6.jpg";
-import cert7 from "@media/cerficates/certificate7.jpg";
-import cert8 from "@media/cerficates/certificate8.jpg";
-import cert9 from "@media/cerficates/certificate9.jpg";
-import cert10 from "@media/cerficates/certificate10.jpg";
-import cert11 from "@media/cerficates/certificate11.jpg";
-import diploma from "@media/cerficates/diploma.jpg";
-
 import arrowRight from "@media/services-carousel/icons/arrow-right.svg";
+import { MEDIA_BASE_URL } from "@/config/api";
 
 const Certificates = () => {
   const [activeTab, setActiveTab] = useState("diplomas");
   const [selectedImage, setSelectedImage] = useState(null);
   const isPC = useIsPC();
-  const { getTranslations } = useTranslation("components.Certificates");
+  const { currentLang } = useLanguage();
+  const { t } = useTranslation("components.Certificates");
 
-  // Получаем переводы для компонента
-  const translations = getTranslations();
-  const { title, tabs, modal, carousel } = translations;
+  // Данные с бэкенда
+  const [data, setData] = useState({
+    title: "",
+    certificates: [],
+    diplomas: [],
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const certificates = [diploma];
+  // Загружаем данные с бэкенда
+  useEffect(() => {
+    const controller = new AbortController();
+    const lang = ["ua", "ru", "en"].includes(currentLang) ? currentLang : "ua";
 
-  const diplomas = [
-    cert1,
-    cert2,
-    cert3,
-    cert4,
-    cert5,
-    cert6,
-    cert7,
-    cert8,
-    cert9,
-    cert10,
-    cert11,
-  ];
+    setLoading(true);
+    setError(null);
+
+    fetch(`${API_BASE_URL}/qualification/?lang=${lang}`, {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((resp) => {
+        setData({
+          title: resp.title || "",
+          certificates:
+            resp.certificates.map((item) => `${MEDIA_BASE_URL}${item.image}`) ||
+            [],
+          diplomas:
+            resp.diplomas.map((item) => `${MEDIA_BASE_URL}${item.image}`) || [],
+        });
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError") {
+          setError(e.message || "Failed to load");
+        }
+      })
+      .finally(() => setLoading(false));
+
+    return () => controller.abort();
+  }, [currentLang]);
 
   const renderSwiper = (items, key) => {
     const prevClass = `certificates-carousel-prev-${key}`;
     const nextClass = `certificates-carousel-next-${key}`;
     const paginationClass = `certificates-pagination-${key}`;
+
+    if (!items || items.length === 0) {
+      return (
+        <div className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>
+          {loading
+            ? t("loading") || "Завантаження..."
+            : t("noImages") || "Немає зображень"}
+        </div>
+      );
+    }
 
     return (
       <>
@@ -82,14 +108,14 @@ const Certificates = () => {
           }}
           className="certificates-carousel"
         >
-          {items.map((src, i) => (
+          {items.map((item, i) => (
             <SwiperSlide className="certificates-carousel-slide" key={i}>
               <div className="certificates-carousel-slide-inner">
                 <img
                   className="certificates-carousel-slide-image"
-                  src={src}
-                  alt={`${carousel?.altText || "Сертифікат"} ${i + 1}`}
-                  onClick={() => setSelectedImage(src)}
+                  src={item.image}
+                  alt={`${t("carousel.altText")} ${i + 1}`}
+                  onClick={() => setSelectedImage(item.image)}
                   style={{ cursor: "pointer" }}
                 />
               </div>
@@ -98,10 +124,10 @@ const Certificates = () => {
 
           {/* Стрелки */}
           <div className={`${prevClass} certificates-carousel-prev bg6`}>
-            <img src={arrowRight} alt={carousel?.prevAlt || "стрілка вліво"} />
+            <img src={arrowRight} alt={t("carousel.prevAlt")} />
           </div>
           <div className={`${nextClass} certificates-carousel-next bg6`}>
-            <img src={arrowRight} alt={carousel?.nextAlt || "стрілка вправо"} />
+            <img src={arrowRight} alt={t("carousel.nextAlt")} />
           </div>
         </Swiper>
         <div className={paginationClass}></div>
@@ -109,13 +135,40 @@ const Certificates = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <div className="certificates">
+        <div className="container">
+          <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>
+            {t("loading") || "Завантаження..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="certificates">
+        <div className="container">
+          <p
+            className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}
+            style={{ color: "#e74c3c" }}
+          >
+            {t("error") || "Помилка завантаження"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="certificates">
       <div className="container">
         <h2
           className={`certificates-title uppercase ${isPC ? "fs-h2--32px" : "fs-h2--20px"} fw-bold c3`}
         >
-          {title || "Кваліфікація та досвід"}
+          {data.title || t("title")}
         </h2>
 
         {/* Вкладки */}
@@ -126,7 +179,7 @@ const Certificates = () => {
               activeTab === "diplomas" ? "active" : ""
             }`}
           >
-            {tabs?.certificates || "Сертифікати"}
+            {t("tabs.certificates")}
           </button>
           <button
             onClick={() => setActiveTab("certificates")}
@@ -134,13 +187,13 @@ const Certificates = () => {
               activeTab === "certificates" ? "active" : ""
             }`}
           >
-            {tabs?.diploma || "Свідоцтво"}
+            {t("tabs.diploma")}
           </button>
         </div>
 
         {/* Контент */}
         {renderSwiper(
-          activeTab === "certificates" ? certificates : diplomas,
+          activeTab === "certificates" ? data.certificates : data.diplomas,
           activeTab
         )}
       </div>
@@ -159,11 +212,11 @@ const Certificates = () => {
               className="certificates-modal-close"
               onClick={() => setSelectedImage(null)}
             >
-              {modal?.close || "×"}
+              {t("modal.close")}
             </button>
             <img
               src={selectedImage}
-              alt={modal?.altText || "Сертифікат повного розміру"}
+              alt={t("modal.altText")}
               className="certificates-modal-image"
             />
           </div>

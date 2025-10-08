@@ -10,12 +10,9 @@ import VideoBlock from "@components/VideoBock/VideoBlock";
 
 const ContactsPage = () => {
   const isPC = useIsPC();
-  const { getTranslations } = useTranslation("pages.ContactsPage");
+  const { t } = useTranslation("pages.ContactsPage");
   const { currentLang } = useLanguage();
   const { contacts, loading, error } = useContacts(currentLang);
-
-  // Получаем все переводы для страницы
-  const translations = getTranslations();
   if (loading) {
     return (
       <div className="contacts-page bg1">
@@ -32,21 +29,23 @@ const ContactsPage = () => {
         <Breadcrumbs />
         <div className="contacts-wrap">
           {error && (
-            <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"} c16`}>{error}</p>
+            <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"} c16`}>
+              {error}
+            </p>
           )}
           <div className="contacts">
             <div className="contacts-info">
               <h2
                 className={`${isPC ? "fs-p--40px" : "fs-h2--24px"} fw-bold uppercase`}
               >
-                {translations.title || "Контакти"}
+                {t("title")}
               </h2>
               <ul className="contacts-info">
                 <li>
                   <h4
                     className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
                   >
-                    {translations.callUs || "Зателефонуйте нам"}
+                    {t("callUs")}
                   </h4>
                   {contacts.phone_number && (
                     <a
@@ -69,39 +68,38 @@ const ContactsPage = () => {
                   <h4
                     className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
                   >
-                    {translations.email || "Електронна пошта"}
+                    {t("email")}
                   </h4>
                   <a
-                    href={`mailto:${contacts.email || ''}`}
+                    href={`mailto:${contacts.email || ""}`}
                     className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold`}
                   >
-                    {contacts.email || 'nknotary.dnipro@gmail.com'}
+                    {contacts.email || "nknotary.dnipro@gmail.com"}
                   </a>
                 </li>
                 <li>
                   <h4
                     className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
                   >
-                    {translations.workingHours || "Час роботи"}
+                    {t("workingHours")}
                   </h4>
                   <p
                     className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold`}
                   >
-                    {contacts.working_hours || translations.workingHoursTime || "Пн-Пт 9:00-18:00"}
+                    {contacts.working_hours || t("workingHoursTime")}
                   </p>
                 </li>
                 <li>
                   <h4
                     className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
                   >
-                    {translations.ourAddress || "Наша адреса"}
+                    {t("ourAddress")}
                   </h4>
                   <a
                     href="#"
                     className={`${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold`}
                   >
-                    {contacts.address || translations.address ||
-                      "м. Дніпро, пр. Дмитра Яворницького, 2, 49100"}
+                    {contacts.address || t("address")}
                   </a>
                 </li>
               </ul>
@@ -110,11 +108,17 @@ const ContactsPage = () => {
               <h4
                 className={`${isPC ? "fs-p--18px" : "fs-p--14px"} fw-normal lh-150`}
               >
-                {translations.followUs || "Слідкуйте за нами в соцмережах"}
+                {t("followUs")}
               </h4>
               <ul className="socials">
                 <li className="socials-item">
-                  <a href={contacts.instagram_url || '#'} className="socials-item-link" aria-label="instagram" target="_blank" rel="noreferrer">
+                  <a
+                    href={contacts.instagram_url || "#"}
+                    className="socials-item-link"
+                    aria-label="instagram"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <svg
                       className="socials-item-img"
                       width="20"
@@ -142,10 +146,11 @@ const ContactsPage = () => {
                 </li>
                 <li className="socials-item">
                   <a
-                    href={contacts.facebook_url || '#'}
+                    href={contacts.facebook_url || "#"}
                     className="socials-item-link"
                     aria-label="facebook"
-                    target="_blank" rel="noreferrer"
+                    target="_blank"
+                    rel="noreferrer"
                   >
                     <svg
                       width="20"
@@ -161,7 +166,13 @@ const ContactsPage = () => {
                   </a>
                 </li>
                 <li className="socials-item">
-                  <a href={contacts.telegram_url || '#'} className="socials-item-link" aria-label="telegram" target="_blank" rel="noreferrer">
+                  <a
+                    href={contacts.telegram_url || "#"}
+                    className="socials-item-link"
+                    aria-label="telegram"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <svg
                       width="19"
                       height="20"
@@ -178,7 +189,13 @@ const ContactsPage = () => {
                   </a>
                 </li>
                 <li className="socials-item">
-                  <a href={contacts.x_url || contacts.twitter_url || '#'} className="socials-item-link" aria-label="x" target="_blank" rel="noreferrer">
+                  <a
+                    href={contacts.x_url || contacts.twitter_url || "#"}
+                    className="socials-item-link"
+                    aria-label="x"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <svg
                       width="15"
                       height="14"

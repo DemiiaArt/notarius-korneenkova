@@ -5,6 +5,9 @@ notarius\venv
 backend/__pycache__/
 backend/migrations/
 backend/*.pyc
+**/__pycache__/
+*.pyc
+*.pyo
 backend/staticfiles/
 backend/db.sqlite3
 backend/nixpacks.toml

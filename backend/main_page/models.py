@@ -79,6 +79,30 @@ class AboutMe(models.Model):
         verbose_name = "О себе"
         verbose_name_plural = "О себе"
 
+class AboutMeDetail(models.Model):
+    """
+    Детальный блок "Про мене" на странице About.
+    Содержит локализованные заголовок и контент на трёх языках.
+    """
+
+    title_ua = models.CharField(max_length=255, verbose_name="Заголовок (UA)")
+    title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
+    title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
+
+    text_ua = CKEditor5Field(blank=True, null=True, verbose_name="Текст (UA)")
+    text_ru = CKEditor5Field(blank=True, null=True, verbose_name="Текст (RU)")
+    text_en = CKEditor5Field(blank=True, null=True, verbose_name="Текст (EN)")
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    def __str__(self):
+        return self.title_ua
+
+    class Meta:
+        verbose_name = "Блок про мене (детали)"
+        verbose_name_plural = "Блоки про мене (детали)"
+        ordering = ['-created_at']
 
 class VideoInterview(models.Model):
     title_video_uk = models.CharField(max_length=255)
@@ -484,3 +508,52 @@ class LegalDocument(models.Model):
 
     def __str__(self):
         return dict(self.KEY_CHOICES).get(self.key, self.key)
+
+class QualificationBlock(models.Model):
+    """
+    Блок "Кваліфікація та досвід": общий заголовок + две карусели.
+    """
+    title_ua = models.CharField(max_length=255, verbose_name="Заголовок (UA)")
+    title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
+    title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Квалификация и опыт"
+        verbose_name_plural = "Квалификация и опыт"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title_ua
+
+
+class QualificationCertificate(models.Model):
+    """Изображение сертификата в левой карусели."""
+    block = models.ForeignKey(QualificationBlock, on_delete=models.CASCADE, related_name='certificates')
+    image = models.ImageField(upload_to='qualifications/certificates/')
+    order = models.PositiveIntegerField(default=0, verbose_name="Порядок")
+
+    class Meta:
+        verbose_name = "Сертификат"
+        verbose_name_plural = "Сертификаты"
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f"Certificate #{self.id}"
+
+
+class QualificationDiploma(models.Model):
+    """Изображение свидоцтва/диплома во второй карусели."""
+    block = models.ForeignKey(QualificationBlock, on_delete=models.CASCADE, related_name='diplomas')
+    image = models.ImageField(upload_to='qualifications/diplomas/')
+    order = models.PositiveIntegerField(default=0, verbose_name="Порядок")
+
+    class Meta:
+        verbose_name = "Свидетельство"
+        verbose_name_plural = "Свидетельства"
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f"Diploma #{self.id}"
