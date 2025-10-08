@@ -26,6 +26,28 @@ function getPathAfterMedia(originalUrl) {
   }
 }
 
+// If URL is absolute and points to our host (current) or known old host,
+// and path DOES NOT start with /media/, return the path (without leading slash)
+function getPathIfSameHostNoMedia(originalUrl) {
+  if (!originalUrl) return null;
+  const OLD_HOSTS = [
+    "notarius-korneenkova-production.up.railway.app",
+  ];
+  try {
+    const urlObj = new URL(originalUrl, window.location.origin);
+    const hostMatches =
+      urlObj.host === window.location.host || OLD_HOSTS.includes(urlObj.host);
+    if (!hostMatches) return null;
+    if (urlObj.pathname.startsWith("/media/")) return null;
+    const path = urlObj.pathname.startsWith("/")
+      ? urlObj.pathname.substring(1)
+      : urlObj.pathname;
+    return path || null;
+  } catch {
+    return null;
+  }
+}
+
 export function normalizeEditorHtml(htmlString) {
   if (!htmlString || typeof htmlString !== "string") return htmlString;
 
@@ -45,6 +67,14 @@ export function normalizeEditorHtml(htmlString) {
     if (mediaPathFromAbsolute) {
       const needsSlashAbs = !MEDIA_BASE_URL.endsWith("/") && !mediaPathFromAbsolute.startsWith("/");
       img.setAttribute("src", `${MEDIA_BASE_URL}${needsSlashAbs ? "/" : ""}${mediaPathFromAbsolute}`);
+      return;
+    }
+
+    // Case 1b: absolute URL to same/old host but without /media/ -> prefix MEDIA_BASE_URL
+    const sameHostPath = isAbsoluteUrl(src) ? getPathIfSameHostNoMedia(src) : null;
+    if (sameHostPath) {
+      const needsSlashSame = !MEDIA_BASE_URL.endsWith("/") && !sameHostPath.startsWith("/");
+      img.setAttribute("src", `${MEDIA_BASE_URL}${needsSlashSame ? "/" : ""}${sameHostPath}`);
       return;
     }
 
@@ -75,6 +105,13 @@ export function normalizeEditorHtml(htmlString) {
       return;
     }
 
+    const sameHostPath = isAbsoluteUrl(src) ? getPathIfSameHostNoMedia(src) : null;
+    if (sameHostPath) {
+      const needsSlashSame = !MEDIA_BASE_URL.endsWith("/") && !sameHostPath.startsWith("/");
+      source.setAttribute("src", `${MEDIA_BASE_URL}${needsSlashSame ? "/" : ""}${sameHostPath}`);
+      return;
+    }
+
     if (!isAbsoluteUrl(src)) {
       let cleanSrc = src;
       if (src.startsWith("/media/")) {
@@ -96,6 +133,13 @@ export function normalizeEditorHtml(htmlString) {
     if (mediaPathFromAbsolute) {
       const needsSlashAbs = !MEDIA_BASE_URL.endsWith("/") && !mediaPathFromAbsolute.startsWith("/");
       video.setAttribute("poster", `${MEDIA_BASE_URL}${needsSlashAbs ? "/" : ""}${mediaPathFromAbsolute}`);
+      return;
+    }
+
+    const sameHostPath = isAbsoluteUrl(poster) ? getPathIfSameHostNoMedia(poster) : null;
+    if (sameHostPath) {
+      const needsSlashSame = !MEDIA_BASE_URL.endsWith("/") && !sameHostPath.startsWith("/");
+      video.setAttribute("poster", `${MEDIA_BASE_URL}${needsSlashSame ? "/" : ""}${sameHostPath}`);
       return;
     }
 
