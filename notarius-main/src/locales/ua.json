@@ -23,10 +23,20 @@
       }
     },
     "NotaryServices": {
-      "orderConsultation": "Замовити консультацію"
+      "orderConsultation": "Замовити консультацію",
+      "moreDetails": "Детальніше"
+    },
+    "AboutTextBlock": {
+      "showMore": "ДИВИТИСЯ БІЛЬШЕ",
+      "hide": "ПРИХОВАТИ",
+      "loading": "Завантаження...",
+      "error": "Помилка завантаження"
     },
     "Certificates": {
       "title": "Кваліфікація та досвід",
+      "loading": "Завантаження...",
+      "error": "Помилка завантаження",
+      "noImages": "Немає зображень",
       "tabs": {
         "certificates": "Сертифікати",
         "diploma": "Свідоцтво"
@@ -184,6 +194,70 @@
         "submitError": "Помилка при відправці. Спробуйте ще раз."
       }
     },
+    "OrderConsult": {
+      "title": "Замовити консультацію",
+      "description": "Бажаєте отримати консультацію юриста? Заповніть форму нижче.",
+      "fields": {
+        "name": {
+          "label": "Ім'я",
+          "placeholder": "Ім'я"
+        },
+        "phone": {
+          "label": "Номер телефону",
+          "placeholder": "Номер телефону"
+        },
+        "question": {
+          "label": "Питання, яке вас цікавить",
+          "placeholder": "Питання, яке вас цікавить"
+        }
+      },
+      "validation": {
+        "nameRequired": "Поле ім'я обов'язкове",
+        "phoneInvalid": "Введіть номер у форматі: +380....",
+        "questionRequired": "Поле питання не може бути порожнім",
+        "submitError": "Помилка при відправці. Спробуйте ще раз."
+      },
+      "buttons": {
+        "submit": "ВІДПРАВИТИ",
+        "loading": "Відправка...",
+        "success": "Ваша заявка успішно відправлена"
+      },
+      "closeButton": "Закрити"
+    },
+    "FreeConsult": {
+      "title": "Отримати безкоштовну консультацію",
+      "fields": {
+        "name": {
+          "label": "Ім'я",
+          "placeholder": "Ім'я"
+        },
+        "phone": {
+          "label": "Номер телефону",
+          "placeholder": "Номер телефону"
+        },
+        "city": {
+          "label": "Місто",
+          "placeholder": "Місто"
+        },
+        "question": {
+          "label": "Питання, яке вас цікавить",
+          "placeholder": "Питання, яке вас цікавить"
+        }
+      },
+      "validation": {
+        "nameRequired": "Поле ім'я обов'язкове",
+        "phoneInvalid": "Введіть номер у форматі: +380....",
+        "cityRequired": "Поле місто обов'язкове",
+        "questionRequired": "Поле питання не може бути порожнім",
+        "submitError": "Помилка при відправці. Спробуйте ще раз."
+      },
+      "buttons": {
+        "submit": "ВІДПРАВИТИ",
+        "loading": "Відправка...",
+        "success": "Ваша заявка успішно відправлена"
+      },
+      "closeButton": "Закрити"
+    },
     "GroupServicesCarousel": {
       "loading": "Завантаження...",
       "titles": {
@@ -278,9 +352,12 @@
       },
       "TradeMarkPage": {
         "title": "Торгова марка",
+        "loading": "Завантаження PDF...",
+        "loadError": "Не вдалося завантажити PDF.",
         "pdfNotFound": "PDF файл не знайдено",
         "browserNotSupported": "Ваш браузер не підтримує відображення PDF.",
-        "downloadPdf": "Завантажити PDF"
+        "downloadPdf": "Завантажити PDF",
+        "downloadFile": "Завантажити файл"
       }
     }
   }

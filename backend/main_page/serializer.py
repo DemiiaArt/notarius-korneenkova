@@ -4,11 +4,11 @@ from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, 
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory,
     ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs,
-    FrequentlyAskedQuestion
+    FrequentlyAskedQuestion, AboutMeDetail
 )
 from .models import Header
 from .models import LegalDocument
-
+from .models import QualificationBlock, QualificationCertificate, QualificationDiploma
 
 
 class HeaderSerializer(serializers.ModelSerializer):
@@ -710,3 +710,77 @@ class LegalDocumentMetaSerializer(serializers.ModelSerializer):
         except Exception:
             return None
         return None
+
+class AboutMeDetailSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор детального блока AboutMeDetail с выбором языка через контекст.
+    Возвращает { title, text }.
+    """
+    title = serializers.SerializerMethodField()
+    text = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AboutMeDetail
+        fields = ['title', 'text', 'updated_at']
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_title(self, obj):
+        lang = self._get_lang()
+        return getattr(obj, f'title_{lang}', '')
+
+    def get_text(self, obj):
+        lang = self._get_lang()
+        return getattr(obj, f'text_{lang}', '')
+
+class QualificationImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = QualificationCertificate  # placeholder; not used directly
+        fields = ['image', 'order']
+
+    def get_image(self, obj):
+        request = self.context.get('request')
+        try:
+            if obj.image and hasattr(obj.image, 'url'):
+                url = obj.image.url
+                return request.build_absolute_uri(url) if request else url
+        except Exception:
+            return None
+        return None
+
+
+class QualificationBlockSerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField()
+    certificates = serializers.SerializerMethodField()
+    diplomas = serializers.SerializerMethodField()
+
+    class Meta:
+        model = QualificationBlock
+        fields = ['title', 'certificates', 'diplomas', 'updated_at']
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_title(self, obj):
+        lang = self._get_lang()
+        return getattr(obj, f'title_{lang}', '')
+
+    def _serialize_images(self, queryset):
+        return [
+            {
+                'image': QualificationImageSerializer().get_image(item),
+                'order': item.order,
+            }
+            for item in queryset
+        ]
+
+    def get_certificates(self, obj):
+        return self._serialize_images(obj.certificates.all().order_by('order', 'id'))
+
+    def get_diplomas(self, obj):
+        return self._serialize_images(obj.diplomas.all().order_by('order', 'id'))

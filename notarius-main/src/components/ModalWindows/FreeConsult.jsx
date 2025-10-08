@@ -2,10 +2,15 @@ import { useState, useEffect } from "react";
 import { useIsPC } from "@hooks/isPC";
 import "./FreeConsult.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
+import { useTranslation } from "@hooks/useTranslation";
 
 const formName = "freeConsult";
 
 export const FreeConsult = () => {
+  const { getTranslations } = useTranslation("components.FreeConsult");
+  const translations = getTranslations();
+  const { title, fields, validation, buttons, closeButton } = translations;
+
   const { close, getOpenModalState } = useModal();
   const openModalState = getOpenModalState(formName);
 
@@ -69,14 +74,17 @@ export const FreeConsult = () => {
     let hasError = false;
 
     if (!formData.name.trim()) {
-      setErrors((prev) => ({ ...prev, name: "Поле ім’я обов’язкове" }));
+      setErrors((prev) => ({
+        ...prev,
+        name: validation?.nameRequired || "Поле ім'я обов'язкове",
+      }));
       hasError = true;
     }
 
     if (!validatePhone(formData.tel)) {
       setErrors((prev) => ({
         ...prev,
-        tel: "Введіть номер у форматі: +380....",
+        tel: validation?.phoneInvalid || "Введіть номер у форматі: +380....",
       }));
       hasError = true;
     }
@@ -84,7 +92,7 @@ export const FreeConsult = () => {
     if (!formData.city.trim()) {
       setErrors((prev) => ({
         ...prev,
-        city: "Поле місто обов’язкове",
+        city: validation?.cityRequired || "Поле місто обов'язкове",
       }));
       hasError = true;
     }
@@ -92,7 +100,8 @@ export const FreeConsult = () => {
     if (!formData.question.trim()) {
       setErrors((prev) => ({
         ...prev,
-        question: "Поле питання не може бути порожнім",
+        question:
+          validation?.questionRequired || "Поле питання не може бути порожнім",
       }));
       hasError = true;
     }
@@ -111,7 +120,8 @@ export const FreeConsult = () => {
     } catch (err) {
       setErrors((prev) => ({
         ...prev,
-        tel: "Помилка при відправці. Спробуйте ще раз.",
+        tel:
+          validation?.submitError || "Помилка при відправці. Спробуйте ще раз.",
       }));
     } finally {
       setIsLoading(false);
@@ -125,16 +135,12 @@ export const FreeConsult = () => {
           <button
             className="close-btn"
             onClick={handleClose}
-            aria-label="Закрити"
+            aria-label={closeButton || "Закрити"}
           ></button>
 
           <div className="form-content">
-            <h2
-              className={`fw-bold ${
-                isPC ? "fs-p--30px" : "fs-p--16px"
-              }`}
-            >
-              отримати безкоштовну консультацію
+            <h2 className={`fw-bold ${isPC ? "fs-p--30px" : "fs-p--16px"}`}>
+              {title || "отримати безкоштовну консультацію"}
             </h2>
           </div>
 
@@ -154,14 +160,16 @@ export const FreeConsult = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Ім'я"
+                placeholder={fields?.name?.placeholder || "Ім'я"}
                 className={`c3 ${errors.name ? "error" : ""}`}
                 disabled={isSubmitted}
               />
               {errors.name ? (
                 <span className="error-label">{errors.name}</span>
               ) : (
-                <label htmlFor="free-consult-name">Ім’я</label>
+                <label htmlFor="free-consult-name">
+                  {fields?.name?.label || "Ім'я"}
+                </label>
               )}
             </div>
 
@@ -177,14 +185,16 @@ export const FreeConsult = () => {
                 name="tel"
                 value={formData.tel}
                 onChange={handleChange}
-                placeholder="Номер телефону"
+                placeholder={fields?.phone?.placeholder || "Номер телефону"}
                 className={`c3 ${errors.tel ? "error" : ""}`}
                 disabled={isSubmitted}
               />
               {errors.tel ? (
                 <span className="error-label">{errors.tel}</span>
               ) : (
-                <label htmlFor="free-consult-tel">Номер телефону</label>
+                <label htmlFor="free-consult-tel">
+                  {fields?.phone?.label || "Номер телефону"}
+                </label>
               )}
             </div>
 
@@ -200,14 +210,14 @@ export const FreeConsult = () => {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                placeholder="Місто"
+                placeholder={fields?.city?.placeholder || "Місто"}
                 className={`c3 ${errors.city ? "error" : ""}`}
                 disabled={isSubmitted}
               />
               {errors.city ? (
                 <span className="error-label">{errors.city}</span>
               ) : (
-                <label htmlFor="city">Місто</label>
+                <label htmlFor="city">{fields?.city?.label || "Місто"}</label>
               )}
             </div>
 
@@ -226,7 +236,9 @@ export const FreeConsult = () => {
                   e.target.style.height = "auto";
                   e.target.style.height = `${e.target.scrollHeight - 15}px`;
                 }}
-                placeholder="Питання, яке вас цікавить"
+                placeholder={
+                  fields?.question?.placeholder || "Питання, яке вас цікавить"
+                }
                 rows={1}
                 className={errors.question ? "error" : ""}
                 disabled={isSubmitted}
@@ -234,7 +246,9 @@ export const FreeConsult = () => {
               {errors.question && (
                 <span className="error-label">{errors.question}</span>
               )}
-              <label htmlFor="question">Питання, яке вас цікавить</label>
+              <label htmlFor="question">
+                {fields?.question?.label || "Питання, яке вас цікавить"}
+              </label>
             </div>
 
             {/* submit */}
@@ -246,10 +260,10 @@ export const FreeConsult = () => {
               disabled={isSubmitted || isLoading}
             >
               {isSubmitted
-                ? "Ваша заявка успішно відправлена"
+                ? buttons?.success || "Ваша заявка успішно відправлена"
                 : isLoading
-                ? "Відправка..."
-                : "ВІДПРАВИТИ"}
+                  ? buttons?.loading || "Відправка..."
+                  : buttons?.submit || "ВІДПРАВИТИ"}
             </button>
           </form>
         </div>

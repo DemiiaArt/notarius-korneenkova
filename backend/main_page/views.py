@@ -13,7 +13,7 @@ from rest_framework.permissions import AllowAny
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
     ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs,
-    FrequentlyAskedQuestion
+    FrequentlyAskedQuestion, AboutMeDetail, QualificationBlock
 )
 from .serializer import (
     HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer,
@@ -22,7 +22,7 @@ from .serializer import (
     VideoInterviewSerializer, ReviewSerializer, ReviewCreateSerializer,
     FreeConsultationSerializer, FreeConsultationCreateSerializer,
     ContactUsSerializer, ContactUsCreateSerializer, FrequentlyAskedQuestionSerializer,
-    ContactsSerializer
+    ContactsSerializer, AboutMeDetailSerializer, QualificationBlockSerializer
 )
 
 
@@ -187,6 +187,26 @@ class AboutMeView(generics.ListAPIView):
                 'photo': None
             })
 
+class AboutMeDetailView(generics.RetrieveAPIView):
+    """
+    Возвращает последний детальный блок «Про мене».
+    Поддерживает параметр lang (ua/ru/en).
+    """
+    queryset = AboutMeDetail.objects.all()
+    serializer_class = AboutMeDetailSerializer
+
+    def get_object(self):
+        return AboutMeDetail.objects.order_by('-created_at').first()
+
+    def retrieve(self, request, *args, **kwargs):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        obj = self.get_object()
+        if not obj:
+            return Response({'title': '', 'text': ''})
+        serializer = self.get_serializer(obj, context={'lang': lang})
+        return Response(serializer.data)
 
 class CKEditorUploadView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -682,4 +702,25 @@ class LegalDocumentListView(APIView):
 
         qs = LegalDocument.objects.all().order_by('key')
         serializer = LegalDocumentMetaSerializer(qs, many=True, context={'lang': lang, 'request': request})
+        return Response(serializer.data)
+
+class QualificationBlockView(generics.RetrieveAPIView):
+    """
+    Возвращает последний блок "Кваліфікація та досвід" с картинками
+    двух каруселей. Поддерживает ?lang=ua|ru|en.
+    """
+    queryset = QualificationBlock.objects.all()
+    serializer_class = QualificationBlockSerializer
+
+    def get_object(self):
+        return QualificationBlock.objects.order_by('-created_at').first()
+
+    def retrieve(self, request, *args, **kwargs):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        obj = self.get_object()
+        if not obj:
+            return Response({'title': '', 'certificates': [], 'diplomas': []})
+        serializer = self.get_serializer(obj, context={'lang': lang, 'request': request})
         return Response(serializer.data)

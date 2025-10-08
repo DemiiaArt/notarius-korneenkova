@@ -8,7 +8,11 @@ import { useTranslation } from "@hooks/useTranslation";
 const formName = "freeOrder";
 
 export const OrderConsult = () => {
-  const { t } = useTranslation("components.NotaryServices");
+  const { getTranslations } = useTranslation("components.OrderConsult");
+  const translations = getTranslations();
+  const { title, description, fields, validation, buttons, closeButton } =
+    translations;
+
   const [formData, setFormData] = useState({
     name: "",
     tel: "",
@@ -70,14 +74,17 @@ export const OrderConsult = () => {
     let hasError = false;
 
     if (!formData.name.trim()) {
-      setErrors((prev) => ({ ...prev, name: "Поле ім’я обов’язкове" }));
+      setErrors((prev) => ({
+        ...prev,
+        name: validation?.nameRequired || "Поле ім'я обов'язкове",
+      }));
       hasError = true;
     }
 
     if (!validatePhone(formData.tel)) {
       setErrors((prev) => ({
         ...prev,
-        tel: "Введіть номер у форматі: +380....",
+        tel: validation?.phoneInvalid || "Введіть номер у форматі: +380....",
       }));
       hasError = true;
     }
@@ -85,7 +92,8 @@ export const OrderConsult = () => {
     if (!formData.question.trim()) {
       setErrors((prev) => ({
         ...prev,
-        question: "Поле питання не може бути порожнім",
+        question:
+          validation?.questionRequired || "Поле питання не може бути порожнім",
       }));
       hasError = true;
     }
@@ -101,7 +109,8 @@ export const OrderConsult = () => {
     } catch (err) {
       setErrors((prev) => ({
         ...prev,
-        tel: "Помилка при відправці. Спробуйте ще раз.",
+        tel:
+          validation?.submitError || "Помилка при відправці. Спробуйте ще раз.",
       }));
     } finally {
       setIsLoading(false);
@@ -115,7 +124,7 @@ export const OrderConsult = () => {
           <button
             className="close-btn"
             onClick={handleClose}
-            aria-label="Закрити"
+            aria-label={closeButton || "Закрити"}
           ></button>
           <div className="form-content">
             <h2
@@ -123,10 +132,11 @@ export const OrderConsult = () => {
                 isPC ? "fs-p--30px" : "fs-p--16px"
               } c3 uppercase`}
             >
-              {t("orderConsultation")}
+              {title || "Замовити консультацію"}
             </h2>
             <p className={`${isPC ? "fs-p--24px" : "fs-p--14px"} lh-100 c3`}>
-              Бажаєте отримати консультацію юриста? Заповніть форму нижче.
+              {description ||
+                "Бажаєте отримати консультацію юриста? Заповніть форму нижче."}
             </p>
           </div>
 
@@ -146,14 +156,16 @@ export const OrderConsult = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Ім'я"
+                placeholder={fields?.name?.placeholder || "Ім'я"}
                 className={`c3 ${errors.name ? "error" : ""}`}
                 disabled={isSubmitted}
               />
               {errors.name ? (
                 <span className="error-label">{errors.name}</span>
               ) : (
-                <label htmlFor="order-consult-name">Ім’я</label>
+                <label htmlFor="order-consult-name">
+                  {fields?.name?.label || "Ім'я"}
+                </label>
               )}
             </div>
 
@@ -169,14 +181,16 @@ export const OrderConsult = () => {
                 name="tel"
                 value={formData.tel}
                 onChange={handleChange}
-                placeholder="Номер телефону"
+                placeholder={fields?.phone?.placeholder || "Номер телефону"}
                 className={`c3 ${errors.tel ? "error" : ""}`}
                 disabled={isSubmitted}
               />
               {errors.tel ? (
                 <span className="error-label">{errors.tel}</span>
               ) : (
-                <label htmlFor="order-consult-tel">Номер телефону</label>
+                <label htmlFor="order-consult-tel">
+                  {fields?.phone?.label || "Номер телефону"}
+                </label>
               )}
             </div>
 
@@ -195,7 +209,9 @@ export const OrderConsult = () => {
                   e.target.style.height = "auto";
                   e.target.style.height = `${e.target.scrollHeight - 10}px`;
                 }}
-                placeholder="Питання, яке вас цікавить"
+                placeholder={
+                  fields?.question?.placeholder || "Питання, яке вас цікавить"
+                }
                 rows={1}
                 className={errors.question ? "error" : ""}
                 disabled={isSubmitted}
@@ -203,7 +219,9 @@ export const OrderConsult = () => {
               {errors.question && (
                 <span className="error-label">{errors.question}</span>
               )}
-              <label htmlFor="order-question">Питання, яке вас цікавить</label>
+              <label htmlFor="order-question">
+                {fields?.question?.label || "Питання, яке вас цікавить"}
+              </label>
             </div>
 
             {/* submit */}
@@ -215,10 +233,10 @@ export const OrderConsult = () => {
               disabled={isSubmitted || isLoading}
             >
               {isSubmitted
-                ? "Ваша заявка успішно відправлена"
+                ? buttons?.success || "Ваша заявка успішно відправлена"
                 : isLoading
-                  ? "Відправка..."
-                  : "ВІДПРАВИТИ"}
+                  ? buttons?.loading || "Відправка..."
+                  : buttons?.submit || "ВІДПРАВИТИ"}
             </button>
           </form>
         </div>
