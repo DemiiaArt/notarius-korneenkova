@@ -19,4 +19,4 @@ cmds = [
 ]
 
 [start]
-cmd = "source /opt/venv/bin/activate && python manage.py makemigrations --noinput && python manage.py migrate --noinput && python create_superuser.py && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 60 --workers 1"
+cmd = "source /opt/venv/bin/activate && python manage.py makemigrations --noinput && python manage.py migrate --noinput && python create_superuser.py && python manage.py loaddata service_category_test.json && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 60 --workers 1"
