@@ -10,6 +10,22 @@ function isAbsoluteUrl(url) {
   return ABSOLUTE_URL_REGEX.test(url || "");
 }
 
+// If URL (absolute or relative) contains a /media/ segment, return path after it
+function getPathAfterMedia(originalUrl) {
+  if (!originalUrl) return null;
+  try {
+    const urlObj = new URL(originalUrl, window.location.origin);
+    const idx = urlObj.pathname.indexOf("/media/");
+    if (idx === -1) return null;
+    return urlObj.pathname.substring(idx + 7); // skip '/media/'
+  } catch {
+    // Fallback for malformed URLs
+    const idx = originalUrl.indexOf("/media/");
+    if (idx === -1) return null;
+    return originalUrl.substring(idx + 7);
+  }
+}
+
 export function normalizeEditorHtml(htmlString) {
   if (!htmlString || typeof htmlString !== "string") return htmlString;
 
@@ -21,63 +37,79 @@ export function normalizeEditorHtml(htmlString) {
   container.querySelectorAll("img[src]").forEach((img) => {
     const src = img.getAttribute("src");
     if (!src) return;
-    // Skip data URLs and absolute URLs
+    // Skip data URLs
     if (src.startsWith("data:")) return;
-    if (isAbsoluteUrl(src)) return;
-    
-    // Remove leading /media/ if present to avoid double /media/media/
-    let cleanSrc = src;
-    if (src.startsWith("/media/")) {
-      cleanSrc = src.substring(7); // Remove "/media/"
-    } else if (src.startsWith("media/")) {
-      cleanSrc = src.substring(6); // Remove "media/"
+
+    // Case 1: absolute URL that still points to some /media/ path -> rewrite base
+    const mediaPathFromAbsolute = isAbsoluteUrl(src) ? getPathAfterMedia(src) : null;
+    if (mediaPathFromAbsolute) {
+      const needsSlashAbs = !MEDIA_BASE_URL.endsWith("/") && !mediaPathFromAbsolute.startsWith("/");
+      img.setAttribute("src", `${MEDIA_BASE_URL}${needsSlashAbs ? "/" : ""}${mediaPathFromAbsolute}`);
+      return;
     }
-    
-    // Prefix with MEDIA_BASE_URL
-    const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanSrc.startsWith("/");
-    img.setAttribute(
-      "src",
-      `${MEDIA_BASE_URL}${needsSlash ? "/" : ""}${cleanSrc}`
-    );
+
+    // Case 2: relative URL -> normalize to MEDIA_BASE_URL
+    if (!isAbsoluteUrl(src)) {
+      // Remove leading /media/ if present to avoid double /media/media/
+      let cleanSrc = src;
+      if (src.startsWith("/media/")) {
+        cleanSrc = src.substring(7);
+      } else if (src.startsWith("media/")) {
+        cleanSrc = src.substring(6);
+      }
+
+      const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanSrc.startsWith("/");
+      img.setAttribute("src", `${MEDIA_BASE_URL}${needsSlash ? "/" : ""}${cleanSrc}`);
+    }
   });
 
   // Fix <source src> and <video poster>
   container.querySelectorAll("source[src]").forEach((source) => {
     const src = source.getAttribute("src");
-    if (!src || src.startsWith("data:") || isAbsoluteUrl(src)) return;
-    
-    // Remove leading /media/ if present to avoid double /media/media/
-    let cleanSrc = src;
-    if (src.startsWith("/media/")) {
-      cleanSrc = src.substring(7); // Remove "/media/"
-    } else if (src.startsWith("media/")) {
-      cleanSrc = src.substring(6); // Remove "media/"
+    if (!src || src.startsWith("data:")) return;
+
+    const mediaPathFromAbsolute = isAbsoluteUrl(src) ? getPathAfterMedia(src) : null;
+    if (mediaPathFromAbsolute) {
+      const needsSlashAbs = !MEDIA_BASE_URL.endsWith("/") && !mediaPathFromAbsolute.startsWith("/");
+      source.setAttribute("src", `${MEDIA_BASE_URL}${needsSlashAbs ? "/" : ""}${mediaPathFromAbsolute}`);
+      return;
     }
-    
-    const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanSrc.startsWith("/");
-    source.setAttribute(
-      "src",
-      `${MEDIA_BASE_URL}${needsSlash ? "/" : ""}${cleanSrc}`
-    );
+
+    if (!isAbsoluteUrl(src)) {
+      let cleanSrc = src;
+      if (src.startsWith("/media/")) {
+        cleanSrc = src.substring(7);
+      } else if (src.startsWith("media/")) {
+        cleanSrc = src.substring(6);
+      }
+
+      const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanSrc.startsWith("/");
+      source.setAttribute("src", `${MEDIA_BASE_URL}${needsSlash ? "/" : ""}${cleanSrc}`);
+    }
   });
 
   container.querySelectorAll("video[poster]").forEach((video) => {
     const poster = video.getAttribute("poster");
-    if (!poster || poster.startsWith("data:") || isAbsoluteUrl(poster)) return;
-    
-    // Remove leading /media/ if present to avoid double /media/media/
-    let cleanPoster = poster;
-    if (poster.startsWith("/media/")) {
-      cleanPoster = poster.substring(7); // Remove "/media/"
-    } else if (poster.startsWith("media/")) {
-      cleanPoster = poster.substring(6); // Remove "media/"
+    if (!poster || poster.startsWith("data:")) return;
+
+    const mediaPathFromAbsolute = isAbsoluteUrl(poster) ? getPathAfterMedia(poster) : null;
+    if (mediaPathFromAbsolute) {
+      const needsSlashAbs = !MEDIA_BASE_URL.endsWith("/") && !mediaPathFromAbsolute.startsWith("/");
+      video.setAttribute("poster", `${MEDIA_BASE_URL}${needsSlashAbs ? "/" : ""}${mediaPathFromAbsolute}`);
+      return;
     }
-    
-    const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanPoster.startsWith("/");
-    video.setAttribute(
-      "poster",
-      `${MEDIA_BASE_URL}${needsSlash ? "/" : ""}${cleanPoster}`
-    );
+
+    if (!isAbsoluteUrl(poster)) {
+      let cleanPoster = poster;
+      if (poster.startsWith("/media/")) {
+        cleanPoster = poster.substring(7);
+      } else if (poster.startsWith("media/")) {
+        cleanPoster = poster.substring(6);
+      }
+
+      const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanPoster.startsWith("/");
+      video.setAttribute("poster", `${MEDIA_BASE_URL}${needsSlash ? "/" : ""}${cleanPoster}`);
+    }
   });
 
   return container.innerHTML;
