@@ -86,6 +86,11 @@ export function normalizeEditorHtml(htmlString) {
         cleanSrc = src.substring(7);
       } else if (src.startsWith("media/")) {
         cleanSrc = src.substring(6);
+      } else if (src.startsWith("/media/uploads/")) {
+        // Перепробуем без 'uploads/' если файл реально лежит в корне media
+        cleanSrc = src.substring("/media/".length);
+      } else if (src.startsWith("media/uploads/")) {
+        cleanSrc = src.substring("media/".length);
       }
 
       const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanSrc.startsWith("/");
@@ -118,6 +123,10 @@ export function normalizeEditorHtml(htmlString) {
         cleanSrc = src.substring(7);
       } else if (src.startsWith("media/")) {
         cleanSrc = src.substring(6);
+      } else if (src.startsWith("/media/uploads/")) {
+        cleanSrc = src.substring("/media/".length);
+      } else if (src.startsWith("media/uploads/")) {
+        cleanSrc = src.substring("media/".length);
       }
 
       const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanSrc.startsWith("/");
@@ -149,6 +158,10 @@ export function normalizeEditorHtml(htmlString) {
         cleanPoster = poster.substring(7);
       } else if (poster.startsWith("media/")) {
         cleanPoster = poster.substring(6);
+      } else if (poster.startsWith("/media/uploads/")) {
+        cleanPoster = poster.substring("/media/".length);
+      } else if (poster.startsWith("media/uploads/")) {
+        cleanPoster = poster.substring("media/".length);
       }
 
       const needsSlash = !MEDIA_BASE_URL.endsWith("/") && !cleanPoster.startsWith("/");
