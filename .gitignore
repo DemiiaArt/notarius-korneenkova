@@ -2,10 +2,10 @@
 .idea
 .vscode
 notarius\venv
-backend/pycache/
+backend/__pycache__/
 backend/migrations/
 backend/*.pyc
-**/pycache/
+**/__pycache__/
 .pyc
 .pyo
 backend/staticfiles/
