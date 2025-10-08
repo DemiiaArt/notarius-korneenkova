@@ -18,7 +18,11 @@ const PageTemplate = ({
   wrapperClassName = "",
   children,
 }) => {
-  const heroImageUrl = `${MEDIA_BASE_URL}${pageData?.hero_image}`;
+  // Если hero_image уже содержит полный путь с /media/, используем его как есть
+  // Иначе префиксируем с MEDIA_BASE_URL
+  const heroImageUrl = pageData?.hero_image?.startsWith('/media/') 
+    ? pageData.hero_image 
+    : `${MEDIA_BASE_URL}${pageData?.hero_image}`;
   return (
     <>
       <div className={wrapperClassName}>

@@ -49,10 +49,13 @@ const Certificates = () => {
         setData({
           title: resp.title || "",
           certificates:
-            resp.certificates.map((item) => `${MEDIA_BASE_URL}${item.image}`) ||
-            [],
+            resp.certificates.map((item) => 
+              item.image?.startsWith('/media/') ? item.image : `${MEDIA_BASE_URL}${item.image}`
+            ) || [],
           diplomas:
-            resp.diplomas.map((item) => `${MEDIA_BASE_URL}${item.image}`) || [],
+            resp.diplomas.map((item) => 
+              item.image?.startsWith('/media/') ? item.image : `${MEDIA_BASE_URL}${item.image}`
+            ) || [],
         });
       })
       .catch((e) => {
