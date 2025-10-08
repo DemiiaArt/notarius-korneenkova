@@ -281,9 +281,12 @@
       },
       "TradeMarkPage": {
         "title": "Торговая марка",
+        "loading": "Загрузка PDF...",
+        "loadError": "Не удалось загрузить PDF.",
         "pdfNotFound": "PDF файл не найден",
         "browserNotSupported": "Ваш браузер не поддерживает отображение PDF.",
-        "downloadPdf": "Скачать PDF"
+        "downloadPdf": "Скачать PDF",
+        "downloadFile": "Скачать файл"
       }
     }
   }

@@ -12,6 +12,7 @@ const getApiBaseUrl = () => {
 
   // В development используем localhost
   if (import.meta.env.DEV) {
+    console.log(import.meta.env.DEV);
     return "http://localhost:8000/api";
   }
 
@@ -20,6 +21,9 @@ const getApiBaseUrl = () => {
 };
 
 const getMediaBaseUrl = () => {
+  if (import.meta.env.DEV) {
+    return "http://localhost:8000/media";
+  }
   if (import.meta.env.VITE_MEDIA_BASE_URL) {
     return import.meta.env.VITE_MEDIA_BASE_URL || "http://localhost:8000/media";
   }

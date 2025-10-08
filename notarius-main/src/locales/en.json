@@ -295,9 +295,12 @@
       },
       "TradeMarkPage": {
         "title": "Trademark",
+        "loading": "Loading PDF...",
+        "loadError": "Failed to load PDF.",
         "pdfNotFound": "PDF file not found",
         "browserNotSupported": "Your browser does not support PDF display.",
-        "downloadPdf": "Download PDF"
+        "downloadPdf": "Download PDF",
+        "downloadFile": "Download file"
       }
     }
   }

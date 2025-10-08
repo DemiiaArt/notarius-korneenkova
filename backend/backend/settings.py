@@ -260,6 +260,12 @@ CKEDITOR_5_CONFIGS = {
     },
 }
 
+if DEBUG:
+    X_FRAME_OPTIONS = 'ALLOWALL'
+else:
+    # В продакшене ограничиваем фреймы текущим origin
+    X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 CKEDITOR_5_UPLOAD_PATH = "uploads/"
 CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
