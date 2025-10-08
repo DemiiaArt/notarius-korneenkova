@@ -4,6 +4,7 @@ import { useHybridNav } from "@contexts/HybridNavContext";
 import { findNodeById, getLabel } from "@nav/nav-utils";
 import { getComponentById } from "@nav/component-registry";
 import DefaultThirdLevelPage from "@pagesSecondLevel/DefaultThirdLevelPage";
+import { normalizeAndConvertHtml } from "@/utils/html";
 import "./ServiceGroupPage.scss";
 
 const ServiceGroupPage = () => {
@@ -75,7 +76,7 @@ const ServiceGroupPage = () => {
             {description && (
               <div
                 className="service-group-description"
-                dangerouslySetInnerHTML={{ __html: description }}
+                dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(description) }}
               />
             )}
           </div>
@@ -92,7 +93,7 @@ const ServiceGroupPage = () => {
                     <div
                       className="service-card-description"
                       dangerouslySetInnerHTML={{
-                        __html: service.description.ua,
+                        __html: normalizeAndConvertHtml(service.description.ua),
                       }}
                     />
                   )}

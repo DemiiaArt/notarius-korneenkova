@@ -1,6 +1,7 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
 import Loader from "@components/Loader/Loader";
 import { MEDIA_BASE_URL } from "@/config/api";
+import { normalizeAndConvertHtml } from "@/utils/html";
 /**
  * Универсальный шаблон страницы с NotaryServices и контентом
  * @param {Object} props
@@ -59,7 +60,7 @@ const PageTemplate = ({
               <div
                 className="text-content-html"
                 dangerouslySetInnerHTML={{
-                  __html: pageData.description,
+                  __html: normalizeAndConvertHtml(pageData.description),
                 }}
               />
             )}

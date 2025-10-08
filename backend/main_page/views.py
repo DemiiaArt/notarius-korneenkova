@@ -196,7 +196,8 @@ class CKEditorUploadView(APIView):
         if not file_obj:
             return Response({"error": {"message": "No file uploaded"}}, status=400)
 
-        saved_path = default_storage.save(f"uploads/{file_obj.name}", ContentFile(file_obj.read()))
+        # Сохраняем файлы прямо в корень MEDIA, чтобы URL был /media/<filename>
+        saved_path = default_storage.save(file_obj.name, ContentFile(file_obj.read()))
         file_url = settings.MEDIA_URL + saved_path
         return Response({
             # CKEditor SimpleUploadAdapter expects this shape

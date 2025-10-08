@@ -1,0 +1,22 @@
+[phases.setup]
+nixPkgs = ["python312", "python312Packages.pip", "python312Packages.virtualenv", "postgresql"]
+
+[variables]
+CACHE_BUST = "2025-01-27-psycopg2-fix"
+
+[phases.install]
+cmds = [
+  "python -m venv /opt/venv",
+  "source /opt/venv/bin/activate",
+  "echo 'Cache bust: $CACHE_BUST'",
+  "pip install -r requirements.txt"
+]
+
+[phases.build]
+cmds = [
+  "source /opt/venv/bin/activate",
+  "python manage.py collectstatic --noinput"
+]
+
+[start]
+cmd = "source /opt/venv/bin/activate && python manage.py makemigrations --noinput && python manage.py migrate --noinput && python create_superuser.py && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 60 --workers 1"
