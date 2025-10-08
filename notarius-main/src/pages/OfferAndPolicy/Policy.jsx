@@ -1,72 +1,66 @@
 import { useIsPC } from "@hooks/isPC";
+import { useLanguage } from "@hooks/useLanguage";
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
-
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/config/api";
 import "./OfferAndPolicy.scss";
 
 const PolicyPage = () => {
   const isPC = useIsPC();
-  let offerItems = [
-    {
-      title: "1. ОСНОВНІ ПОНЯТТЯ ТА ВИЗНАЧЕННЯ",
-      paragraphs: [
-        "1.1. Контролер або Answear – акціонерне товариство «Answear.com», що знаходиться за адресою: 31-564 м. Краків, Алея Покою, 18, внесене до реєстру підприємців Державного судового реєстру Польщі, який веде Районний суд для Кракова-Середмістя у Кракові, XI Господарський відділ за номером KRS 0000816066, NIP:6793080390, REGON: 122515020.",
-        "1.2 Персональні дані – інформація про фізичну особу, ідентифіковану або таку, яку можливо ідентифікувати, за одним чи кількома характерними факторами, що визначають фізичну, фізіологічну, генетичну, психічну, економічну, культурну або соціальну ідентичність, включаючи IP-адресу пристрою, дані про місцеперебування, інтернет-ідентифікатор, а також інформацію, що збирається за допомогою файлів cookie та іншої подібної технології.",
-        "1.3 Політика – дана Політика конфіденційності, що містить інформацію про обробку Персональних даних, а також про використання файлів cookie та подібних технологій відстеження в рамках Вебсайту.",
-        "1.4 GDPR – Регламент Європейського парламенту і Ради (ЄС) 2016/679 від 27 квітня 2016 р. «Про захист фізичних осіб у зв’язку з обробкою персональних даних і про вільний рух таких даних, та про скасування Директиви 95/46/ЄС».",
-        "1.5 Веб-сайт – вебсайт, який запустив Контролер на домені https://answear.ua/, доступний через веббраузери та через мобільний додаток «Answear – fashion store».",
-        ".6 Магазин – інтернет-магазин Answear, доступний через Вебсайт, на якому Answear здійснює дистанційний продаж товарів",
-        "1.7 Користувач – будь-яка фізична особа, яка відвідує Вебсайт або користується однією або кількома послугами чи функціями, описаними у Політиці.",
-        "1.8 Пристрій – означає електронний пристрій, за допомогою якого Користувач отримує доступ до Вебсайту.",
-        "",
-      ],
-    },
-    {
-      title: "2. ЗАГАЛЬНА ІНФОРМАЦІЯ",
-      paragraphs: [
-        "2.1 У зв’язку з використанням Вами Вебсайту ми збираємо дані, необхідні для надання пропонованих послуг, а також інформацію про Вашу активність на Вебсайті. У зв’язку з цим ми є контролером Ваших Персональних даних і надаємо великого значення їх належному захисту. Ми дбаємо про те, щоб здійснювані нами процеси обробки даних відповідали відповідним правовим положенням, зокрема, GDPR. Наша мета – надати Вам можливість отримати повну інформацію про обробку нами Ваших Персональних даних та надати Вам інструменти, які дозволять Вам реалізувати Ваші права. Нижче ми надаємо інформацію про те, як ми обробляємо Ваші Персональні дані.",
-        "2.2 Ми обробляємо Ваші Персональні дані відповідно до законодавства, дбаючи про те, щоб вони були актуальними та правильними. Тому час від часу ми можемо нагадувати Вам про необхідність оновити їх, надсилаючи повідомлення на вказану Вами адресу електронної пошти або розмістивши відповідне сповіщення на Вебсайті після того, як Ви увійдете у свій обліковий запис.",
-        "",
-        "",
-        "",
-        "",
-      ],
-    },
-    // {
-    //   title: "",
-    //   paragraphs: [
-    //     "",
-    //     "",
-    //   ],
-    // },
-  ];
+  const { currentLang } = useLanguage();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    const lang = ["ua", "ru", "en"].includes(currentLang) ? currentLang : "ua";
+    fetch(`${API_BASE_URL}/legal/privacy_policy/?lang=${lang}`, {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to load privacy policy document");
+        return r.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setTitle(data?.title || "");
+        setContent(data?.content || "");
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [currentLang]);
   return (
     <>
       <div className="container text-container">
         <Breadcrumbs />
         <h1
-          className={`policy-title ${isPC ? "fs-h1  --40px" : "fs-h1--24px"} fw-bold uppercase`}
+          className={`policy-title ${isPC ? "fs-h1--40px" : "fs-h1--24px"} fw-bold uppercase`}
         >
-          Політика конфіденційності
+          {title || "Політика конфіденційності"}
         </h1>
-        <div className="content">
-          {offerItems.map((item, index) => (
-            <div key={index} className="content-block-item">
-              <h3
-                className={`${isPC ? "fs-p--16px" : "fs-p--14px"} uppercase fw-semi-bold lh-150 content-block-title`}
-              >
-                {item.title}
-              </h3>
-              {item.paragraphs.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className={`${isPC ? "fs-p--16px" : "fs-p--14px"} lh-150 content-block-text`}
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="content">
+            <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>
+              Завантаження...
+            </p>
+          </div>
+        ) : error ? (
+          <div className="content">
+            <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"}`}>
+              Не вдалося завантажити документ.
+            </p>
+          </div>
+        ) : (
+          <div
+            className="content"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        )}
       </div>
     </>
   );

@@ -41,7 +41,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://notarius-korneenkova-production.up.railway.app',
     'https://*.railway.app',
     'https://*.up.railway.app',
-    'http://127.0.0.1:8000/',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
 ]
 
 # Дополнительные настройки для Railway
@@ -145,17 +146,27 @@ if database_url:
         'default': parsed_db
     }
 else:
-    # Fallback к отдельным PG* переменным (Railway обычно предоставляет PGDATABASE, PGUSER, PGPASSWORD, PGHOST, PGPORT)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('PGDATABASE') or os.getenv('POSTGRES_DB', 'notarius'),
-            'USER': os.getenv('PGUSER', 'postgres'),
-            'PASSWORD': os.getenv('PGPASSWORD', ''),
-            'HOST': os.getenv('PGHOST', 'localhost'),
-            'PORT': os.getenv('PGPORT', '5432'),
+    # Если нет DATABASE_URL и PG*, используем SQLite по умолчанию для локальной разработки
+    use_sqlite = os.getenv('USE_SQLITE', 'true').lower() == 'true'
+    if use_sqlite:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
+    else:
+        # Fallback к отдельным PG* переменным (локальная Postgres)
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.getenv('PGDATABASE') or os.getenv('POSTGRES_DB', 'notarius'),
+                'USER': os.getenv('PGUSER', 'postgres'),
+                'PASSWORD': os.getenv('PGPASSWORD', ''),
+                'HOST': os.getenv('PGHOST', 'localhost'),
+                'PORT': os.getenv('PGPORT', '5432'),
+            }
+        }
 
 
 
@@ -201,11 +212,44 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# CKEditor 5 settings
+# CKEditor 5 settings — базовые инструменты текста и изображений
 CKEDITOR_5_CONFIGS = {
     'default': {
-        'toolbar': ['heading', '|', 'bold', 'italic', 'link',
-                    'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', ],
+        'toolbar': [
+            'heading',
+            '|',
+            'bold', 'italic', 'underline', 'strikethrough', 'link',
+            '|',
+            'bulletedList', 'numberedList', 'outdent', 'indent',
+            '|',
+            'alignment', 'blockQuote', 'code', 'codeBlock', 'horizontalLine', 'removeFormat',
+            '|',
+            'imageUpload', 'insertTable', 'mediaEmbed'
+        ],
+        'heading': {
+            'options': [
+                {'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph'},
+                {'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1'},
+                {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
+                {'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3'},
+            ]
+        },
+        'image': {
+            'toolbar': [
+                'imageTextAlternative',
+                'toggleImageCaption',
+                'imageStyle:inline',
+                'imageStyle:block',
+                'imageStyle:side',
+                'linkImage'
+            ],
+            'styles': ['inline', 'block', 'side']
+        },
+        'table': {
+            'contentToolbar': [
+                'tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties'
+            ]
+        }
     },
 }
 
@@ -222,7 +266,13 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # WhiteNoise settings для статических файлов
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Используем ManifestStaticFilesStorage только в продакшене
+if DEBUG:
+    # Для локальной разработки используем простое хранилище
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    # Для продакшена используем с манифестом
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Настройки для Railway
 LOGGING = {

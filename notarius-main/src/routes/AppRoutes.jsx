@@ -5,6 +5,7 @@ import { INDICES } from "../nav/indices"; // содержит pathById/idByPath/
 import { useLang } from "../nav/use-lang";
 import { useHybridNav } from "../contexts/HybridNavContext";
 import DynamicRenderer from "../components/DynamicRenderer/DynamicRenderer";
+import { getComponentById, hasComponent } from "../nav/component-registry";
 import DynamicChildrenLoader from "../components/DynamicChildrenLoader/DynamicChildrenLoader";
 import BlogArticlePage from "../pages/BlogPage/BlogArticlePage";
 import DynamicPageRenderer from "../components/DynamicPages/DynamicPageRenderer";
@@ -45,9 +46,14 @@ function makeRouteElement(node, pageProps) {
       ? getProps({ lang: currentLang, params, location, node })
       : {};
 
-    // Если есть компонент в узле, используем его
-    if (node.component) {
-      const Comp = node.component;
+    // Берём компонент строго из реестра по id, игнорируя любые поля component в дереве
+    const Comp = getComponentById(node.id);
+    const isValidComponent =
+      !!Comp &&
+      (typeof Comp === "function" ||
+        (typeof Comp === "object" && "$$typeof" in Comp));
+
+    if (isValidComponent) {
       return (
         <Suspense fallback={<LoadingSpinner />}>
           <Comp {...pageProps} {...nodeProps} {...dynamic} />
@@ -55,19 +61,14 @@ function makeRouteElement(node, pageProps) {
       );
     }
 
-    // Иначе используем динамический рендерер по ID
-    return (
-      <DynamicRenderer
-        id={node.id}
-        componentProps={{ ...pageProps, ...nodeProps, ...dynamic }}
-      />
-    );
+    // Иначе ничего не рендерим здесь — дадим шанс динамическим маршрутам ниже
+    return null;
   };
 }
 
 /** Рекурсивно собираем все роуты для текущего языка */
 function collectRoutes(node, lang, pageProps, acc = []) {
-  if (node.component) {
+  if (hasComponent(node.id)) {
     const rawPath = INDICES.pathById[lang]?.[node.id];
     const path = normalizeForRoute(rawPath);
     if (path) {
@@ -84,6 +85,8 @@ export default function AppRoutes({ pageProps = {} }) {
   const { navTree } = useHybridNav();
 
   const routes = collectRoutes(navTree, currentLang, pageProps);
+  const hasRoot = routes.some(({ path }) => path === "/");
+  const HomeComp = getComponentById ? getComponentById("home") : null;
 
   return (
     <Routes>
@@ -91,9 +94,36 @@ export default function AppRoutes({ pageProps = {} }) {
         <Route key={`${id}:${path}`} path={path} element={<Element />} />
       ))}
 
+      {/* Явный маршрут на корень для ua, если по каким-то причинам не собрался */}
+      {!hasRoot && HomeComp && (
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <HomeComp />
+            </Suspense>
+          }
+        />
+      )}
+
       {/* Dynamic routes for 3rd and 4th level pages */}
+      {/* Ukrainian (no prefix) */}
       <Route path="/:slug1/:slug2/:slug3" element={<DynamicPageRenderer />} />
       <Route path="/:slug1/:slug2" element={<DynamicPageRenderer />} />
+
+      {/* Russian */}
+      <Route
+        path="/ru/:slug1/:slug2/:slug3"
+        element={<DynamicPageRenderer />}
+      />
+      <Route path="/ru/:slug1/:slug2" element={<DynamicPageRenderer />} />
+
+      {/* English */}
+      <Route
+        path="/en/:slug1/:slug2/:slug3"
+        element={<DynamicPageRenderer />}
+      />
+      <Route path="/en/:slug1/:slug2" element={<DynamicPageRenderer />} />
 
       {/* 404 */}
       <Route path="*" element={<div>404</div>} />

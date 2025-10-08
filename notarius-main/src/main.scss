@@ -203,12 +203,42 @@ html,
     &-list {
       margin: 20px 0;
 
-      &,
+      list-style: disc;
+      padding-left: 40px;
+
       li {
         list-style: disc;
-        margin: 0 0 0 40px;
       }
     }
+  }
+}
+
+// Глобальные стили для всех HTML контентных блоков
+.text-content-html,
+.service-group-description,
+.service-card-description,
+.about-block-text,
+.accordion-description {
+  ul {
+    list-style: disc !important;
+    padding-left: 1.2em !important;
+    margin: 0.8em 0 !important;
+  }
+  ol {
+    list-style: decimal !important;
+    padding-left: 1.2em !important;
+    margin: 0.8em 0 !important;
+  }
+  li {
+    margin: 0.3em 0 !important;
+    list-style: inherit !important;
+  }
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    width: auto !important;
+    display: block !important;
+    margin: 1em auto !important;
   }
 }
 

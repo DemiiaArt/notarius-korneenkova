@@ -30,7 +30,9 @@ const TemplatePage = ({ title, content = [], heroImgClass }) => {
         <div className={`hero-img ${heroImgClass || ""}`}>
           <div className="container hero-container">
             <Breadcrumbs />
-            <h1 className={`fw-bold uppercase ${isPC ? "fs-p--40px" : "fs-p--24px"} c1`}>
+            <h1
+              className={`fw-bold uppercase ${isPC ? "fs-p--40px" : "fs-p--24px"} c1`}
+            >
               {title.split("\n").map((line, idx) => (
                 <span key={idx}>
                   {line}

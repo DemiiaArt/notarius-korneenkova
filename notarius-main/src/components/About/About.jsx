@@ -4,14 +4,22 @@ import "./About.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@hooks/useLanguage";
+import { useTranslation } from "@hooks/useTranslation";
 import { API_BASE_URL } from "../../config/api";
+import { normalizeAndConvertHtml } from "@/utils/html";
 
 export const About = ({ showBreadcrumbs = false }) => {
   const isPC = useIsPC();
   const { open } = useModal();
   const { currentLang } = useLanguage();
+  const { t } = useTranslation("components.NotaryServices");
 
-  const [about, setAbout] = useState({ subtitle: "", title: "", text: "", photo: null });
+  const [about, setAbout] = useState({
+    subtitle: "",
+    title: "",
+    text: "",
+    photo: null,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -21,7 +29,9 @@ export const About = ({ showBreadcrumbs = false }) => {
       try {
         setLoading(true);
         setError(null);
-        const resp = await fetch(`${API_BASE_URL}/about-me/?lang=${encodeURIComponent(currentLang || "ua")}`);
+        const resp = await fetch(
+          `${API_BASE_URL}/about-me/?lang=${encodeURIComponent(currentLang || "ua")}`
+        );
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         if (!isCancelled) setAbout(data || {});
@@ -41,7 +51,9 @@ export const About = ({ showBreadcrumbs = false }) => {
     <>
       <div
         className="about-block"
-        style={about.photo ? { backgroundImage: `url(${about.photo})` } : undefined}
+        style={
+          about.photo ? { backgroundImage: `url(${about.photo})` } : undefined
+        }
       >
         <div className="container">
           <div className="about-block-content">
@@ -55,12 +67,13 @@ export const About = ({ showBreadcrumbs = false }) => {
               <h1
                 className={`about-block-title fw-light uppercase ${isPC ? "fs-h1--40px" : "fs-h2--20px"} c1`}
               >
-                {about.title || "Ваш надійний нотаріус, медіатор та перекладач."}
+                {about.title ||
+                  "Ваш надійний нотаріус, медіатор та перекладач."}
               </h1>
               {about.text ? (
                 <div
                   className={`about-block-text fw-light lh-150 ${isPC ? "fs-p--18px" : "fs-p--14px"} c1`}
-                  dangerouslySetInnerHTML={{ __html: about.text }}
+                  dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(about.text) }}
                 />
               ) : (
                 <p
@@ -77,7 +90,7 @@ export const About = ({ showBreadcrumbs = false }) => {
                 onClick={() => open("freeOrder")}
                 className="about-block-btn btn-z-style uppercase c1 "
               >
-                Замовити консультацію
+                {t("orderConsultation")}
               </button>
             </div>
           </div>

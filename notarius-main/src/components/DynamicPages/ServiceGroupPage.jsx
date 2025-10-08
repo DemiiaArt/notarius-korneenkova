@@ -4,6 +4,7 @@ import { useHybridNav } from "@contexts/HybridNavContext";
 import { findNodeById, getLabel } from "@nav/nav-utils";
 import { getComponentById } from "@nav/component-registry";
 import DefaultThirdLevelPage from "@pagesSecondLevel/DefaultThirdLevelPage";
+import { normalizeAndConvertHtml } from "@/utils/html";
 import "./ServiceGroupPage.scss";
 
 const ServiceGroupPage = () => {
@@ -50,8 +51,18 @@ const ServiceGroupPage = () => {
   // Перевіряємо, чи є компонент для цієї сторінки
   const PageComponent = getComponentById(currentNode.id);
 
+  console.log(
+    "🔍 ServiceGroupPage: Проверяем компонент для ID:",
+    currentNode.id
+  );
+  console.log("🔍 ServiceGroupPage: PageComponent:", PageComponent);
+
   // Якщо є спеціальний компонент - використовуємо його
-  if (PageComponent) {
+  if (PageComponent && PageComponent !== null) {
+    console.log(
+      "✅ ServiceGroupPage: Используем компонент из реестра:",
+      currentNode.id
+    );
     return <PageComponent />;
   }
 
@@ -65,7 +76,7 @@ const ServiceGroupPage = () => {
             {description && (
               <div
                 className="service-group-description"
-                dangerouslySetInnerHTML={{ __html: description }}
+                dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(description) }}
               />
             )}
           </div>
@@ -82,7 +93,7 @@ const ServiceGroupPage = () => {
                     <div
                       className="service-card-description"
                       dangerouslySetInnerHTML={{
-                        __html: service.description.ua,
+                        __html: normalizeAndConvertHtml(service.description.ua),
                       }}
                     />
                   )}
@@ -102,8 +113,15 @@ const ServiceGroupPage = () => {
   }
 
   // Якщо немає дочірніх елементів - використовуємо дефолтний шаблон
+  console.log(
+    "📄 ServiceGroupPage: Используем DefaultThirdLevelPage для:",
+    currentNode.id
+  );
   return (
-    <DefaultThirdLevelPage title={title} heroImgClass="notaryServicesPage" />
+    <DefaultThirdLevelPage
+      navId={currentNode.id}
+      wrapperClassName="service-group-default-wrap"
+    />
   );
 };
 

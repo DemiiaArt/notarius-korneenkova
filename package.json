@@ -1,0 +1,17 @@
+{
+  "name": "notarius-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd notarius-main && npm run dev",
+    "build": "cd notarius-main && npm run build",
+    "lint": "cd notarius-main && npm run lint",
+    "preview": "cd notarius-main && npm run preview",
+    "start-backend": "cd backend && cd venv/Scripts && activate && cd ../.. && python manage.py runserver"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tony-Stark-AMB/notarius-project.git"
+  }
+}
