@@ -28,13 +28,8 @@ const getMediaBaseUrl = () => {
     return import.meta.env.VITE_MEDIA_BASE_URL;
   }
 
-  // В development используем localhost
-  if (import.meta.env.DEV) {
-    return "http://localhost:8000/media";
-  }
-
-  // Для production используем Railway URL
-  return "https://notarius-korneenkova-production.up.railway.app/media";
+  // По умолчанию используем текущий origin
+  return `${window.location.origin}/media`;
 };
 
 export const API_BASE_URL = getApiBaseUrl();
