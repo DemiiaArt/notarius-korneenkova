@@ -157,14 +157,7 @@ else:
         }
     }
 
-# Добавляем отладочную информацию для Railway
-if DEBUG:
-    print("DATABASE_URL set:" , bool(database_url))
-    print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
-    print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
-    print(f"PGDATABASE: {os.getenv('PGDATABASE', 'NOT_SET')}")
-    print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
-    print(f"PGPASSWORD: {'SET' if os.getenv('PGPASSWORD') else 'NOT_SET'}")
+
 
 
 # Password validation

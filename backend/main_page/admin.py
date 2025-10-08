@@ -606,7 +606,7 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
     prepopulated_fields = {
         "nav_id": ("label_en",),
         "slug_ua": ("label_ua",),
-        "slug_ru": ("label_ua",),
+        "slug_ru": ("label_ru",),
         "slug_en": ("label_en",),
     }
     exclude = ('component',)
@@ -614,10 +614,11 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
 
     list_display = (
         'label_ua',
+        'order',
         'parent',
         'kind',
         'show_in_menu',
-        'order',
+        
         # 'created_at',
         # 'updated_at',
     )
