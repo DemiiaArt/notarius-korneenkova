@@ -26,7 +26,7 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
 
   // Формируем категории фильтров
   const filterCategories = [
-    { id: "all", label: t("allArticles") || "Всі статті" },
+    { id: "all", label: t("all Articles") || "Всі статті" },
     ...categories
       .filter((cat) => cat.show_in_filters !== false)
       .map((cat) => ({

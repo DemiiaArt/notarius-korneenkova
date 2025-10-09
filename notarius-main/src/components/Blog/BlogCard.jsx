@@ -2,6 +2,7 @@ import { useIsPC } from "@hooks/isPC";
 import OptimizedImage from "@components/OptimizedImage/OptimizedImage";
 import { Link } from "react-router-dom";
 import { BACKEND_BASE_URL } from "@/config/api";
+import { useLanguage } from "@hooks/useLanguage";
 import "./BlogCard.scss";
 
 const BlogCard = ({
@@ -22,6 +23,7 @@ const BlogCard = ({
   maxTextLength = 80, // Максимальная длина текста
 }) => {
   const isPC = useIsPC();
+  const { currentLang } = useLanguage();
 
   // Определяем данные для отображения
   const displayTitle = title || "Без назви";
@@ -67,9 +69,21 @@ const BlogCard = ({
     return null;
   })();
 
-  // Формируем ссылку
-  const displayLink =
-    link !== "#" ? link : slug ? `/notarialni-blog/${slug}` : "#";
+  // Формируем ссылку с учетом языка
+  const getBlogLink = () => {
+    if (link !== "#") return link;
+    if (!slug) return "#";
+
+    // Определяем slug блога в зависимости от языка
+    const blogSlug = currentLang === "en" ? "notary-blog" : "notarialni-blog";
+
+    // Определяем префикс языка
+    const langPrefix = currentLang === "ua" ? "" : `/${currentLang}`;
+
+    return `${langPrefix}/${blogSlug}/${slug}`;
+  };
+
+  const displayLink = getBlogLink();
 
   // Форматируем дату
   const formatDate = (dateString) => {
@@ -133,10 +147,10 @@ const BlogCard = ({
           handleClick(e);
         }
       }}
-      aria-label={`Перейти к статье: ${title || "Blog Card"}`}
+      aria-label={`Перейти к статье: ${displayTitle}`}
     >
-      {link && link !== "#" ? (
-        <Link to={link} className="blog-card-link">
+      {displayLink && displayLink !== "#" ? (
+        <Link to={displayLink} className="blog-card-link">
           {cardContent}
         </Link>
       ) : (

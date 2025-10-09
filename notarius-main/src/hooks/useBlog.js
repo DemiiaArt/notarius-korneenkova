@@ -177,6 +177,7 @@ export const useBlog = ({ page = 1, category = null } = {}) => {
  * @returns {Object} { article, loading, error, fetchArticle }
  */
 export const useBlogArticle = (slug) => {
+  const { currentLang } = useLanguage();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -186,34 +187,45 @@ export const useBlogArticle = (slug) => {
    * @param {string} articleSlug - slug статьи
    * @returns {Promise<Object>} Данные статьи
    */
-  const fetchArticle = useCallback(async (articleSlug) => {
-    if (!articleSlug) {
-      setError("Slug статьи не указан");
-      setLoading(false);
-      return null;
-    }
+  const fetchArticle = useCallback(
+    async (articleSlug) => {
+      if (!articleSlug) {
+        setError("Slug статьи не указан");
+        setLoading(false);
+        return null;
+      }
 
-    try {
-      setLoading(true);
-      setError(null);
+      try {
+        setLoading(true);
+        setError(null);
 
-      const data = await apiClient.get(`/blog/notarialni-blog/${articleSlug}/`);
+        // Формируем query параметры
+        const params = new URLSearchParams({
+          lang: currentLang,
+        });
 
-      console.log("✅ Статья загружена:", data);
-      setArticle(data);
+        const url = `/blog/notarialni-blog/${articleSlug}/?${params.toString()}`;
+        console.log("✅ Загружаем статью:", url);
 
-      return data;
-    } catch (err) {
-      const errorMessage = err.message || "Помилка при завантаженні статті";
-      setError(errorMessage);
-      console.error("❌ Ошибка при загрузке статьи:", err);
+        const data = await apiClient.get(url);
 
-      setArticle(null);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        console.log("✅ Статья загружена:", data);
+        setArticle(data);
+
+        return data;
+      } catch (err) {
+        const errorMessage = err.message || "Помилка при завантаженні статті";
+        setError(errorMessage);
+        console.error("❌ Ошибка при загрузке статьи:", err);
+
+        setArticle(null);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentLang]
+  );
 
   // Загружаем статью при изменении slug
   useEffect(() => {
