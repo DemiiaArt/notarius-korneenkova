@@ -23,10 +23,20 @@
       }
     },
     "NotaryServices": {
-      "orderConsultation": "Order consultation"
+      "orderConsultation": "Order consultation",
+      "moreDetails": "More details"
+    },
+    "AboutTextBlock": {
+      "showMore": "SHOW MORE",
+      "hide": "HIDE",
+      "loading": "Loading...",
+      "error": "Loading error"
     },
     "Certificates": {
       "title": "Qualification and experience",
+      "loading": "Loading...",
+      "error": "Loading error",
+      "noImages": "No images",
       "tabs": {
         "certificates": "Certificates",
         "diploma": "Diploma"
@@ -201,6 +211,70 @@
         "submitError": "Error submitting. Please try again."
       }
     },
+    "OrderConsult": {
+      "title": "Order Consultation",
+      "description": "Would you like to get legal advice? Fill out the form below.",
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Name"
+        },
+        "phone": {
+          "label": "Phone number",
+          "placeholder": "Phone number"
+        },
+        "question": {
+          "label": "Your question",
+          "placeholder": "Your question"
+        }
+      },
+      "validation": {
+        "nameRequired": "Name field is required",
+        "phoneInvalid": "Enter number in format: +380....",
+        "questionRequired": "Question field cannot be empty",
+        "submitError": "Error submitting. Please try again."
+      },
+      "buttons": {
+        "submit": "SUBMIT",
+        "loading": "Submitting...",
+        "success": "Your request has been successfully submitted"
+      },
+      "closeButton": "Close"
+    },
+    "FreeConsult": {
+      "title": "Get Free Consultation",
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Name"
+        },
+        "phone": {
+          "label": "Phone number",
+          "placeholder": "Phone number"
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "City"
+        },
+        "question": {
+          "label": "Your question",
+          "placeholder": "Your question"
+        }
+      },
+      "validation": {
+        "nameRequired": "Name field is required",
+        "phoneInvalid": "Enter number in format: +380....",
+        "cityRequired": "City field is required",
+        "questionRequired": "Question field cannot be empty",
+        "submitError": "Error submitting. Please try again."
+      },
+      "buttons": {
+        "submit": "SUBMIT",
+        "loading": "Submitting...",
+        "success": "Your request has been successfully submitted"
+      },
+      "closeButton": "Close"
+    },
     "GroupServicesCarousel": {
       "loading": "Loading...",
       "titles": {
@@ -295,9 +369,12 @@
       },
       "TradeMarkPage": {
         "title": "Trademark",
+        "loading": "Loading PDF...",
+        "loadError": "Failed to load PDF.",
         "pdfNotFound": "PDF file not found",
         "browserNotSupported": "Your browser does not support PDF display.",
-        "downloadPdf": "Download PDF"
+        "downloadPdf": "Download PDF",
+        "downloadFile": "Download file"
       }
     }
   }

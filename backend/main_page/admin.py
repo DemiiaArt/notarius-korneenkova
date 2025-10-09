@@ -10,7 +10,8 @@ from django.contrib.admin import SimpleListFilter
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature,
     ServicesFor, Application, VideoInterview, Review, FreeConsultation, 
-    ContactUs, FrequentlyAskedQuestion
+    ContactUs, FrequentlyAskedQuestion, AboutMeDetail,
+    QualificationBlock, QualificationCertificate, QualificationDiploma
 )
 from blog.models import BlogCategory, BlogPost
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -298,6 +299,58 @@ class AboutMeAdmin(admin.ModelAdmin):
         return '—'
     photo_thumb.short_description = 'Превью'
 
+class QualificationCertificateInline(admin.TabularInline):
+    model = QualificationCertificate
+    fields = ('order', 'image')
+    extra = 1
+    ordering = ['order', 'id']
+
+class QualificationDiplomaInline(admin.TabularInline):
+    model = QualificationDiploma
+    fields = ('order', 'image')
+    extra = 1
+    ordering = ['order', 'id']
+
+class QualificationBlockAdmin(ContentAdmin):
+    list_display = ['title_ua', 'updated_at']
+    search_fields = ['title_ua', 'title_ru', 'title_en']
+    readonly_fields = ['created_at', 'updated_at']
+    inlines = [QualificationCertificateInline, QualificationDiplomaInline]
+    fieldsets = (
+        ('Українська мова', {
+            'fields': ('title_ua',),
+        }),
+        ('Русский язык', {
+            'fields': ('title_ru',),
+        }),
+        ('English', {
+            'fields': ('title_en',),
+        }),
+        ('Параметры', {
+            'fields': ('created_at', 'updated_at'),
+        }),
+    )
+
+class AboutMeDetailAdmin(ContentAdmin):
+    list_display = ['title_ua', 'updated_at']
+    search_fields = ['title_ua', 'title_ru', 'title_en', 'text_ua', 'text_ru', 'text_en']
+    readonly_fields = ['created_at', 'updated_at']
+    list_per_page = 20
+
+    fieldsets = (
+        ('Українська мова', {
+            'fields': ('title_ua', 'text_ua'),
+        }),
+        ('Русский язык', {
+            'fields': ('title_ru', 'text_ru'),
+        }),
+        ('English', {
+            'fields': ('title_en', 'text_en'),
+        }),
+        ('Параметры', {
+            'fields': ('created_at', 'updated_at'),
+        }),
+    )
 
 class ServicesForAdmin(admin.ModelAdmin):
     list_display = ['title_uk', 'subtitle_uk']
@@ -768,7 +821,7 @@ class NotariusAdminSite(admin.AdminSite):
                 'priority': 2
             },
             'Основной контент': {
-                'models': ['Header', 'AboutMe', 'ServicesFor', 'VideoInterview', 'BackgroundVideo'],
+                'models': ['Header', 'AboutMe', 'AboutMeDetail', 'QualificationBlock', 'ServicesFor', 'VideoInterview', 'BackgroundVideo'],
                 'icon': 'fas fa-home',
                 'priority': 3
             },
@@ -839,6 +892,8 @@ admin_site.register(AboutMe, AboutMeAdmin)
 admin_site.register(ServicesFor, ServicesForAdmin)
 admin_site.register(Application, ApplicationAdmin)
 admin_site.register(FreeConsultation, FreeConsultationAdmin)
+admin_site.register(QualificationBlock, QualificationBlockAdmin)
+admin_site.register(AboutMeDetail, AboutMeDetailAdmin)
 admin_site.register(ContactUs, ContactUsAdmin)
 admin_site.register(VideoInterview, VideoInterviewAdmin)
 admin_site.register(Review, ReviewAdmin)

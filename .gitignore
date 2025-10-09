@@ -2,9 +2,12 @@
 .idea
 .vscode
 notarius\venv
-backend/__pycache__/
+backend/pycache/
 backend/migrations/
 backend/*.pyc
+**/pycache/
+*.pyc
+.pyo
 backend/staticfiles/
 backend/db.sqlite3
 backend/nixpacks.toml
@@ -13,8 +16,8 @@ venv/
 
 # Logs
 notarius\logs
-notarius\*.log
-notarius\npm-debug.log*
+notarius*.log
+notarius\npm-debug.log
 notarius\yarn-debug.log*
 notarius\yarn-error.log*
 notarius\pnpm-debug.log*
@@ -23,22 +26,22 @@ notarius\lerna-debug.log*
 notarius\node_modules
 notarius\dist
 notarius\dist-ssr
-notarius\*.local
+notarius*.local
 
 # Editor directories and files
-notarius\.vscode/*
-notarius\!.vscode/extensions.json
-notarius\.idea
-notarius\.DS_Store
-notarius\*.suo
-notarius\*.ntvs*
-notarius\*.njsproj
-notarius\*.sln
-notarius\*.sw?
+notarius.vscode/*
+notarius!.vscode/extensions.json
+notarius.idea
+notarius.DS_Store
+notarius*.suo
+notarius*.ntvs*
+notarius*.njsproj
+notarius*.sln
+notarius*.sw?
 
 # Video files
-*.mov
-# *.mp4
+.mov
+#.mp4
 *.avi
 *.mkv
 notarius-main/src/assets/media/video_test.mov

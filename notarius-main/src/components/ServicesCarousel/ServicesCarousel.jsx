@@ -176,7 +176,9 @@ const ServicesCarousel = ({
     // Якщо є card_image в об'єкті сервісу, використовуємо його
     console.log("🖼️ ServicesCarousel - Getting image for service:", service);
     if (service?.cardImage) {
-      return `${MEDIA_BASE_URL}${service.cardImage}`;
+      return service.cardImage.startsWith('/media/') 
+        ? service.cardImage 
+        : `${MEDIA_BASE_URL}${service.cardImage}`;
     }
 
     // Fallback - картинка за замовчуванням

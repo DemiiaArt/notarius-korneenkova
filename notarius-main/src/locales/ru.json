@@ -23,10 +23,20 @@
       }
     },
     "NotaryServices": {
-      "orderConsultation": "Заказать консультацию"
+      "orderConsultation": "Заказать консультацию",
+      "moreDetails": "Подробнее"
+    },
+    "AboutTextBlock": {
+      "showMore": "ПОКАЗАТЬ БОЛЬШЕ",
+      "hide": "СКРЫТЬ",
+      "loading": "Загрузка...",
+      "error": "Ошибка загрузки"
     },
     "Certificates": {
       "title": "Квалификация и опыт",
+      "loading": "Загрузка...",
+      "error": "Ошибка загрузки",
+      "noImages": "Нет изображений",
       "tabs": {
         "certificates": "Сертификаты",
         "diploma": "Свидетельство"
@@ -184,6 +194,70 @@
         "submitError": "Ошибка при отправке. Попробуйте еще раз."
       }
     },
+    "OrderConsult": {
+      "title": "Заказать консультацию",
+      "description": "Хотите получить консультацию юриста? Заполните форму ниже.",
+      "fields": {
+        "name": {
+          "label": "Имя",
+          "placeholder": "Имя"
+        },
+        "phone": {
+          "label": "Номер телефона",
+          "placeholder": "Номер телефона"
+        },
+        "question": {
+          "label": "Вопрос, который вас интересует",
+          "placeholder": "Вопрос, который вас интересует"
+        }
+      },
+      "validation": {
+        "nameRequired": "Поле имя обязательное",
+        "phoneInvalid": "Введите номер в формате: +380....",
+        "questionRequired": "Поле вопрос не может быть пустым",
+        "submitError": "Ошибка при отправке. Попробуйте еще раз."
+      },
+      "buttons": {
+        "submit": "ОТПРАВИТЬ",
+        "loading": "Отправка...",
+        "success": "Ваша заявка успешно отправлена"
+      },
+      "closeButton": "Закрыть"
+    },
+    "FreeConsult": {
+      "title": "Получить бесплатную консультацию",
+      "fields": {
+        "name": {
+          "label": "Имя",
+          "placeholder": "Имя"
+        },
+        "phone": {
+          "label": "Номер телефона",
+          "placeholder": "Номер телефона"
+        },
+        "city": {
+          "label": "Город",
+          "placeholder": "Город"
+        },
+        "question": {
+          "label": "Вопрос, который вас интересует",
+          "placeholder": "Вопрос, который вас интересует"
+        }
+      },
+      "validation": {
+        "nameRequired": "Поле имя обязательное",
+        "phoneInvalid": "Введите номер в формате: +380....",
+        "cityRequired": "Поле город обязательное",
+        "questionRequired": "Поле вопрос не может быть пустым",
+        "submitError": "Ошибка при отправке. Попробуйте еще раз."
+      },
+      "buttons": {
+        "submit": "ОТПРАВИТЬ",
+        "loading": "Отправка...",
+        "success": "Ваша заявка успешно отправлена"
+      },
+      "closeButton": "Закрыть"
+    },
     "GroupServicesCarousel": {
       "loading": "Загрузка...",
       "titles": {
@@ -281,9 +355,12 @@
       },
       "TradeMarkPage": {
         "title": "Торговая марка",
+        "loading": "Загрузка PDF...",
+        "loadError": "Не удалось загрузить PDF.",
         "pdfNotFound": "PDF файл не найден",
         "browserNotSupported": "Ваш браузер не поддерживает отображение PDF.",
-        "downloadPdf": "Скачать PDF"
+        "downloadPdf": "Скачать PDF",
+        "downloadFile": "Скачать файл"
       }
     }
   }
