@@ -1,6 +1,6 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
 import Loader from "@components/Loader/Loader";
-import { MEDIA_BASE_URL } from "@/config/api";
+import { buildMediaUrl } from "@/config/api";
 import { normalizeAndConvertHtml } from "@/utils/html";
 /**
  * Универсальный шаблон страницы с NotaryServices и контентом
@@ -18,11 +18,8 @@ const PageTemplate = ({
   wrapperClassName = "",
   children,
 }) => {
-  // Если hero_image уже содержит полный путь с /media/, используем его как есть
-  // Иначе префиксируем с MEDIA_BASE_URL
-  const heroImageUrl = pageData?.hero_image?.startsWith('/media/') 
-    ? pageData.hero_image 
-    : `${MEDIA_BASE_URL}${pageData?.hero_image}`;
+  // Нормализуем hero_image, чтобы избежать двойного /media
+  const heroImageUrl = pageData?.hero_image ? buildMediaUrl(pageData.hero_image) : null;
   return (
     <>
       <div className={wrapperClassName}>
