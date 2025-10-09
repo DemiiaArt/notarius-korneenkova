@@ -1,15 +1,21 @@
 import "./VideoBlock.scss";
 import videoTest from "@media/video_test.mp4";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
+import { useLanguage } from "@hooks/useLanguage";
+import { API_BASE_URL, buildMediaUrl } from "@/config/api";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const VideoBlock = ({ title, description, pageType }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [serverTitle, setServerTitle] = useState("");
+  const [serverDescription, setServerDescription] = useState("");
   const videoRef = useRef(null);
   const { getTranslations } = useTranslation("components.VideoBlock");
+  const { currentLang } = useLanguage();
 
   // Получаем переводы для компонента
   const translations = getTranslations();
@@ -17,8 +23,37 @@ export const VideoBlock = ({ title, description, pageType }) => {
 
   // Получаем переводы для конкретной страницы
   const pageTranslations = pageType ? translations[pageType] : null;
-  const translatedTitle = pageTranslations?.title || title;
-  const translatedDescription = pageTranslations?.description || description;
+  const translatedTitle = serverTitle || pageTranslations?.title || title;
+  const translatedDescription = serverDescription || pageTranslations?.description || description;
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadVideoInterview() {
+      try {
+        const lang = ["ua", "ru", "en"].includes(currentLang) ? currentLang : "ua";
+        const resp = await fetch(`${API_BASE_URL}/video-interviews/?lang=${encodeURIComponent(lang)}`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        if (cancelled) return;
+        const first = Array.isArray(data) ? data[0] : null;
+        if (first) {
+          setVideoUrl(buildMediaUrl(first.video));
+          setServerTitle(first.title || "");
+          setServerDescription(first.text || "");
+        } else {
+          setVideoUrl("");
+          setServerTitle("");
+          setServerDescription("");
+        }
+      } catch (_e) {
+        // ignore, keep fallback video and texts
+      }
+    }
+    loadVideoInterview();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentLang]);
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -62,7 +97,7 @@ export const VideoBlock = ({ title, description, pageType }) => {
           <motion.video
             key="video"
             ref={videoRef}
-            src={videoTest}
+            src={videoUrl || videoTest}
             autoPlay
             controls
             className="video-block-video"
