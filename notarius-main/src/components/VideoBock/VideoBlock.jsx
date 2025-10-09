@@ -37,10 +37,13 @@ export const VideoBlock = ({ title, description, pageType }) => {
         if (cancelled) return;
         const first = Array.isArray(data) ? data[0] : null;
         if (first) {
-          setVideoUrl(buildMediaUrl(first.video));
+          // предпочитаем стрим эндпойнт
+          const streamUrl = first.id ? `${API_BASE_URL}/video-interviews/${first.id}/stream/` : null;
+          setVideoUrl(streamUrl || buildMediaUrl(first.video));
           setServerTitle(first.title || "");
           setServerDescription(first.text || "");
-        } else {
+        }
+        else {
           setVideoUrl("");
           setServerTitle("");
           setServerDescription("");

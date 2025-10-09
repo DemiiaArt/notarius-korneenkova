@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+import os
+import mimetypes
 from django.db.models import Count, Avg, Q
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -377,6 +379,68 @@ class VideoInterviewDetailView(generics.RetrieveAPIView):
     queryset = VideoInterview.objects.all()
     serializer_class = VideoInterviewSerializer
 
+
+class VideoInterviewStreamView(APIView):
+    """
+    HTTP Range-enabled streaming for VideoInterview files.
+    Works in production where /media isn't directly served.
+    GET /api/video-interviews/<id>/stream/
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk):
+        obj = get_object_or_404(VideoInterview, pk=pk)
+        if not obj.video:
+            return Response({"detail": "Video not found"}, status=404)
+
+        file_field = obj.video
+        try:
+            file_path = file_field.path
+        except Exception:
+            # Storage may be remote; fallback to open via storage
+            file = file_field.open("rb")
+            return FileResponse(file, content_type="video/mp4")
+
+        if not os.path.exists(file_path):
+            return Response({"detail": "Video file missing"}, status=404)
+
+        file_size = os.path.getsize(file_path)
+        content_type, _ = mimetypes.guess_type(file_path)
+        if not content_type:
+            content_type = "video/mp4"
+
+        range_header = request.headers.get("Range")
+        if range_header:
+            # Example header: "bytes=0-"
+            bytes_unit, _, range_spec = range_header.partition("=")
+            start_str, _, end_str = range_spec.partition("-")
+            try:
+                start = int(start_str) if start_str else 0
+            except ValueError:
+                start = 0
+            end = int(end_str) if end_str.isdigit() else file_size - 1
+            start = max(0, start)
+            end = min(end, file_size - 1)
+            length = end - start + 1
+
+            with open(file_path, "rb") as f:
+                f.seek(start)
+                data = f.read(length)
+
+            resp = Response(data, status=206, content_type=content_type)
+            resp["Content-Range"] = f"bytes {start}-{end}/{file_size}"
+            resp["Accept-Ranges"] = "bytes"
+            resp["Content-Length"] = str(length)
+            resp["Cache-Control"] = "public, max-age=31536000, immutable"
+            return resp
+
+        # No Range header -> send whole file
+        from django.http import FileResponse
+        response = FileResponse(open(file_path, "rb"), content_type=content_type)
+        response["Content-Length"] = str(file_size)
+        response["Accept-Ranges"] = "bytes"
+        response["Cache-Control"] = "public, max-age=31536000, immutable"
+        return response
 
 class ReviewCreateView(generics.CreateAPIView):
     """
