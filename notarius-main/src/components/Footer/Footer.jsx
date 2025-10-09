@@ -46,7 +46,7 @@ const helpLinks = {
   ua: [
     { link: "notarialni-offer", label: "Договір оферти" },
     { link: "notarialni-policy", label: "Політика конфіденційності" },
-    { link: "notarialni-torgivelna-marka", label: "Торгова марка" },
+    { link: "notarialni-torgivelna-marka", label: "Торговельна марка" },
   ],
   ru: [
     { link: "notarialni-offer", label: "Договор оферты" },
@@ -56,7 +56,7 @@ const helpLinks = {
   en: [
     { link: "notary-offer", label: "Offer contract" },
     { link: "notary-policy", label: "Privacy policy" },
-    { link: "notary-trade-mark", label: "Trade mark" },
+    { link: "notary-trade-mark", label: "Trademark" },
   ],
 };
 
