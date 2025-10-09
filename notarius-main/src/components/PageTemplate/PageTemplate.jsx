@@ -1,7 +1,7 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
 import Loader from "@components/Loader/Loader";
-import { MEDIA_BASE_URL } from "@/config/api";
 import { normalizeAndConvertHtml } from "@/utils/html";
+import { BACKEND_BASE_URL } from "@/config/api";
 /**
  * Универсальный шаблон страницы с NotaryServices и контентом
  * @param {Object} props
@@ -18,7 +18,7 @@ const PageTemplate = ({
   wrapperClassName = "",
   children,
 }) => {
-  const heroImageUrl = `${MEDIA_BASE_URL}${pageData?.hero_image}`;
+  const heroImageUrl = `${BACKEND_BASE_URL}${pageData?.hero_image}`;
   return (
     <>
       <div className={wrapperClassName}>

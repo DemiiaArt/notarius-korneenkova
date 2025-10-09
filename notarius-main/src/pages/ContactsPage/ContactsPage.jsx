@@ -10,7 +10,7 @@ import VideoBlock from "@components/VideoBock/VideoBlock";
 
 const ContactsPage = () => {
   const isPC = useIsPC();
-  const { t } = useTranslation("pages.ContactsPage");
+  const { t } = useTranslation("components.pages.ContactsPage");
   const { currentLang } = useLanguage();
   const { contacts, loading, error } = useContacts(currentLang);
   if (loading) {
