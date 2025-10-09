@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
 import { API_BASE_URL } from "@/config/api";
+import { normalizeAndConvertHtml } from "@/utils/html";
 
 /**
  * Функция для извлечения параграфов из HTML-строки
@@ -119,7 +120,7 @@ export const AboutTextBlock = () => {
               <p
                 key={idx}
                 className={`${isPC ? "fs-p--16px" : "fs-p--14px align-center"}  lh-150`}
-                dangerouslySetInnerHTML={{ __html: paragraph }}
+                dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(paragraph) }}
               />
             ))
           )}
