@@ -432,6 +432,8 @@ class VideoInterviewStreamView(APIView):
             resp["Accept-Ranges"] = "bytes"
             resp["Content-Length"] = str(length)
             resp["Cache-Control"] = "public, max-age=31536000, immutable"
+            resp["Access-Control-Allow-Origin"] = "*"
+            resp["Access-Control-Expose-Headers"] = "Content-Range, Accept-Ranges"
             return resp
 
         # No Range header -> send whole file
@@ -440,6 +442,8 @@ class VideoInterviewStreamView(APIView):
         response["Content-Length"] = str(file_size)
         response["Accept-Ranges"] = "bytes"
         response["Cache-Control"] = "public, max-age=31536000, immutable"
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Expose-Headers"] = "Content-Range, Accept-Ranges"
         return response
 
 class ReviewCreateView(generics.CreateAPIView):
