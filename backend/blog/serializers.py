@@ -143,7 +143,7 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
         """
         Получает похожие статьи для текущей статьи
         """
-        similar_posts = obj.get_similar_posts(limit=3)
+        similar_posts = obj.get_similar_posts(limit=30)
         return SimilarArticleSerializer(similar_posts, many=True, context=self.context).data
 
 

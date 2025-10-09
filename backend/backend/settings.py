@@ -119,48 +119,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 # Настройка БД с поддержкой переменной DATABASE_URL (Railway) и PG* переменных
-import dj_database_url  # type: ignore
-
-database_url = (
-    os.getenv('DATABASE_URL')
-    or os.getenv('POSTGRES_URL')
-    or os.getenv('POSTGRESQL_URL')
-    or os.getenv('NEON_DATABASE_URL')
-)
-
-if database_url:
-    parsed_db = dj_database_url.config(
-        default=database_url,
-        conn_max_age=600,
-        ssl_require=True,
-    )
-    # Если в URL отсутствует имя БД, подставим из env
-    if not parsed_db.get('NAME'):
-        # Жёсткий fallback имени БД, чтобы избежать ImproperlyConfigured
-        parsed_db['NAME'] = (
-            os.getenv('PGDATABASE')
-            or os.getenv('POSTGRES_DB')
-            or 'railway'
-        )
-    DATABASES = {
-        'default': parsed_db
-    }
-else:
-    # Если нет DATABASE_URL и PG*, используем SQLite по умолчанию для локальной разработки
-    use_sqlite = os.getenv('USE_SQLITE', 'true').lower() == 'true'
-    if use_sqlite:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-    else:
-        # Fallback к отдельным PG* переменным (локальная Postgres)
-        DATABASES = {
+DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.getenv('PGDATABASE') or os.getenv('POSTGRES_DB', 'notarius'),
+                'NAME': os.getenv('POSTGRES_DB'),
                 'USER': os.getenv('PGUSER', 'postgres'),
                 'PASSWORD': os.getenv('PGPASSWORD', ''),
                 'HOST': os.getenv('PGHOST', 'localhost'),
