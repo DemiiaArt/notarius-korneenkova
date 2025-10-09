@@ -64,6 +64,15 @@ export const useApiNavTree = () => {
       const response = await fetch(`${API_BASE_URL}/services/`);
 
       if (!response.ok) {
+        // Если 404 - возвращаем пустую структуру
+        if (response.status === 404) {
+          console.warn("[useApiNavTree] 404 - services not found in DB");
+          const emptyNavTree = { id: "root", kind: "section", children: [] };
+          saveToCache(emptyNavTree);
+          setNavTree(emptyNavTree);
+          setError(null);
+          return emptyNavTree;
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 

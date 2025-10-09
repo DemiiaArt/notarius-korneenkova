@@ -32,8 +32,21 @@ const getMediaBaseUrl = () => {
   return `${window.location.origin}/media`;
 };
 
+const getBackendBaseUrl = () => {
+  if (import.meta.env.DEV) {
+    return "http://localhost:8000";
+  }
+  if (import.meta.env.VITE_BACKEND_BASE_URL) {
+    return import.meta.env.VITE_BACKEND_BASE_URL;
+  }
+
+  // По умолчанию используем текущий origin
+  return `${window.location.origin}`;
+};
+
 export const API_BASE_URL = getApiBaseUrl();
 export const MEDIA_BASE_URL = getMediaBaseUrl();
+export const BACKEND_BASE_URL = getBackendBaseUrl();
 
 // Вспомогательные функции для API запросов
 // Безопасный билдер медиа-URL, чтобы избежать двойного /media
@@ -66,7 +79,9 @@ export const apiClient = {
   async get(endpoint) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`);
     if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
+      const error = new Error(`API Error: ${response.statusText}`);
+      error.status = response.status;
+      throw error;
     }
     return response.json();
   },
