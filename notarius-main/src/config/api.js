@@ -53,7 +53,9 @@ export const apiClient = {
   async get(endpoint) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`);
     if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
+      const error = new Error(`API Error: ${response.statusText}`);
+      error.status = response.status;
+      throw error;
     }
     return response.json();
   },

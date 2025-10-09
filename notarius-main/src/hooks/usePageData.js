@@ -103,6 +103,20 @@ export const usePageData = (navId) => {
         });
 
         if (!response.ok) {
+          // Обработка 404 ошибки - показываем заглушку вместо ошибки
+          if (response.status === 404) {
+            const fallbackData = {
+              title: node.label?.[currentLang] || "Сторінка",
+              description: "Тут немає контенту будь-ласка заповніть БД",
+              hero_image: null,
+              listItems: [],
+            };
+            console.warn(
+              `[usePageData] 404 for "${navId}", using fallback data`
+            );
+            setData(fallbackData);
+            return;
+          }
           throw new Error(`HTTP ${response.status} while fetching ${url}`);
         }
 
