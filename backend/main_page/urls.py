@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     # Контактные данные для шапки сайта (телефоны, email, адреса на 3 языках)
@@ -18,7 +19,7 @@ urlpatterns = [
     path('contacts/update/', views.ContactsView.as_view(), name='contacts-update'),
     
     # Иерархическая структура всех услуг (MPTT дерево)
-    path('services/', views.ServicesCategoryView.as_view(), name='services'),
+    path('services/', cache_page(60 * 60)(views.ServicesCategoryView.as_view()), name='services'),
 
     # ===== УСЛУГИ =====
     
