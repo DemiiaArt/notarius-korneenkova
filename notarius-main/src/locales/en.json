@@ -345,6 +345,9 @@
     "Header": {
       "contactButton": "Contact"
     },
+    "LeadsButton": {
+      "freeConsultation": "Free Consultation"
+    },
     "Footer": {
       "contacts": "Contacts",
       "navigation": "Navigation",

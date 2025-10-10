@@ -4,6 +4,7 @@
     width: 100vw;
     height: 70vh;
     overflow: hidden;
+    margin-bottom: 40px;
 
     &-player {
       position: absolute;
@@ -35,6 +36,5 @@
   .main-video {
     height: 100vh;
     background: #fcfcfc;
-    margin-bottom: 40px;
   }
 }
