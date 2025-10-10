@@ -3,6 +3,7 @@ import { useLanguage } from "@hooks/useLanguage";
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/config/api";
+import { normalizeAndConvertHtml } from "@/utils/html";
 import "./OfferAndPolicy.scss";
 
 const OfferPage = () => {
@@ -58,7 +59,7 @@ const OfferPage = () => {
         ) : (
           <div
             className="content"
-            dangerouslySetInnerHTML={{ __html: content }}
+            dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(content) }}
           />
         )}
       </div>

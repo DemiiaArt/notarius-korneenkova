@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import BlogPost, BlogCategory
+from .models import BlogPost, BlogCategory, BlogHome
 from django.utils.html import strip_tags
 
 
@@ -103,6 +103,7 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
             'title',
             'slug',
             'content',
+            'hero_image',
             'cover', 'published_at', 'status', 'categories', 'similar_posts'
         ]
 
@@ -143,7 +144,7 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
         """
         Получает похожие статьи для текущей статьи
         """
-        similar_posts = obj.get_similar_posts(limit=3)
+        similar_posts = obj.get_similar_posts(limit=30)
         return SimilarArticleSerializer(similar_posts, many=True, context=self.context).data
 
 
@@ -211,4 +212,29 @@ class BlogListResponseSerializer(serializers.Serializer):
     posts = BlogPostListSerializer(many=True)
     categories = BlogCategorySerializer(many=True)
 
+
+
+class BlogHomeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор главной страницы блога с мультиязычными полями.
+    Возвращает { title, slug, description, hero_image } согласно выбранному языку.
+    """
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogHome
+        fields = ['title', 'description', 'hero_image']
+
+    def _get_lang(self):
+        lang = self.context.get('lang', 'ua')
+        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
+
+    def get_title(self, obj):
+        lang = self._get_lang()
+        return getattr(obj, f'title_{lang}', '')
+
+    def get_description(self, obj):
+        lang = self._get_lang()
+        return getattr(obj, f'description_{lang}', '')
 

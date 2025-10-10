@@ -47,6 +47,8 @@ urlpatterns = [
     # Список видео интервью
     path('video-interviews/', views.VideoInterviewListView.as_view(), name='video-interview-list'),
     path('video-interviews/<int:pk>/', views.VideoInterviewDetailView.as_view(), name='video-interview-detail'),
+    # Range-enabled stream endpoint (fallback for prod)
+    path('video-interviews/<int:pk>/stream/', views.VideoInterviewStreamView.as_view(), name='video-interview-stream'),
 
     # ===== ОТЗЫВЫ И РЕЙТИНГ =====
     

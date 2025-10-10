@@ -62,6 +62,12 @@ class BlogPost(models.Model):
     content_en = CKEditor5Field(verbose_name="Описание (EN)")
 
     cover = models.ImageField(upload_to="blog/covers/", verbose_name="Обложка")
+    hero_image = models.ImageField(
+        upload_to='services/',
+        blank=True,
+        null=True,
+        verbose_name="Главное изображение"
+    )
 
     categories = models.ManyToManyField(BlogCategory, related_name="posts", blank=True)
 
@@ -100,3 +106,32 @@ class BlogPost(models.Model):
     def __str__(self) -> str:
         return self.title_ua
 
+
+class BlogHome(models.Model):
+    """
+    Главная страница блога. Используется для отображения заголовка, описания и hero-изображения.
+    Содержит мультиязычные поля title/slug/description.
+    """
+
+    # Заголовки
+    title_ua = models.CharField(max_length=255, verbose_name="Заголовок (UA)")
+    title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
+    title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
+
+    # Описание на трех языках
+    description_ua = CKEditor5Field(blank=True, null=True, verbose_name="Описание (UA)")
+    description_ru = CKEditor5Field(blank=True, null=True, verbose_name="Описание (RU)")
+    description_en = CKEditor5Field(blank=True, null=True, verbose_name="Описание (EN)")
+
+    # Картинка hero
+    hero_image = models.ImageField(upload_to="blog/home/", blank=True, null=True, verbose_name="Hero изображение")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Главная страница блога"
+        verbose_name_plural = "Главная страница блога"
+
+    def __str__(self) -> str:
+        return self.title_ua

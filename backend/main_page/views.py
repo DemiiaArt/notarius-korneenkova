@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+import os
+import mimetypes
 from django.db.models import Count, Avg, Q
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -9,6 +11,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from django.urls import reverse
 from rest_framework.permissions import AllowAny
+from django.http import FileResponse, HttpResponse
 
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
@@ -27,6 +30,7 @@ from .serializer import (
 
 
 from .utils import inject_services, root_data
+from blog.models import BlogPost, BlogHome
 # Create your views here.
 
 class HeaderView(generics.ListAPIView):
@@ -242,8 +246,49 @@ class ServicesCategoryView(APIView):
                 return Response({"children": []}, status=200)
             
             
-            serializer = ServiceCategorySerializer(root_categories, many=True)            
-            response_data = serializer.data            
+            serializer = ServiceCategorySerializer(root_categories, many=True)
+            response_data = serializer.data
+
+            # Добавляем секцию блога на уровень корневых разделов
+            blog_posts = BlogPost.objects.all().order_by('-created_at')
+            # Формируем детей-страницы из статей
+            blog_children = []
+            for post in blog_posts:
+                blog_children.append({
+                    'id': getattr(post, 'slug_en', None) or f"blog-post-{post.id}",
+                    'kind': 'page',
+                    'label': {
+                        'ua': post.title_ua,
+                        'ru': post.title_ru,
+                        'en': post.title_en,
+                    },
+                    'slug': {
+                        'ua': post.slug_ua,
+                        'ru': post.slug_ru,
+                        'en': post.slug_en,
+                    },
+                    'component': 'null',
+                    'showInMenu': post.status,
+                })
+
+            blog_home = BlogHome.objects.order_by('-id').first()
+            blog_card_image = None
+            try:
+                if blog_home and blog_home.hero_image and hasattr(blog_home.hero_image, 'url'):
+                    blog_card_image = blog_home.hero_image.url
+            except Exception:
+                blog_card_image = None
+
+            blog_section = {
+                'id': 'blog',
+                'kind': 'page',
+                'component': 'null',
+                'children': blog_children,
+                'showInMenu': True,
+                'showMegaPanel': True,
+            }
+
+            response_data.append(blog_section)
             
             return Response(response_data)
             
@@ -377,6 +422,71 @@ class VideoInterviewDetailView(generics.RetrieveAPIView):
     queryset = VideoInterview.objects.all()
     serializer_class = VideoInterviewSerializer
 
+
+class VideoInterviewStreamView(APIView):
+    """
+    HTTP Range-enabled streaming for VideoInterview files.
+    Works in production where /media isn't directly served.
+    GET /api/video-interviews/<id>/stream/
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk):
+        obj = get_object_or_404(VideoInterview, pk=pk)
+        if not obj.video:
+            return Response({"detail": "Video not found"}, status=404)
+
+        file_field = obj.video
+        try:
+            file_path = file_field.path
+        except Exception:
+            # Storage may be remote; fallback to open via storage
+            file = file_field.open("rb")
+            return FileResponse(file, content_type="video/mp4")
+
+        if not os.path.exists(file_path):
+            return Response({"detail": "Video file missing"}, status=404)
+
+        file_size = os.path.getsize(file_path)
+        content_type, _ = mimetypes.guess_type(file_path)
+        if not content_type:
+            content_type = "video/mp4"
+
+        range_header = request.headers.get("Range")
+        if range_header:
+            # Example header: "bytes=0-"
+            bytes_unit, _, range_spec = range_header.partition("=")
+            start_str, _, end_str = range_spec.partition("-")
+            try:
+                start = int(start_str) if start_str else 0
+            except ValueError:
+                start = 0
+            end = int(end_str) if end_str.isdigit() else file_size - 1
+            start = max(0, start)
+            end = min(end, file_size - 1)
+            length = end - start + 1
+
+            with open(file_path, "rb") as f:
+                f.seek(start)
+                data = f.read(length)
+
+            resp = HttpResponse(data, status=206, content_type=content_type)
+            resp["Content-Range"] = f"bytes {start}-{end}/{file_size}"
+            resp["Accept-Ranges"] = "bytes"
+            resp["Content-Length"] = str(length)
+            resp["Cache-Control"] = "public, max-age=31536000, immutable"
+            resp["Access-Control-Allow-Origin"] = "*"
+            resp["Access-Control-Expose-Headers"] = "Content-Range, Accept-Ranges"
+            return resp
+
+        # No Range header -> send whole file
+        response = FileResponse(open(file_path, "rb"), content_type=content_type)
+        response["Content-Length"] = str(file_size)
+        response["Accept-Ranges"] = "bytes"
+        response["Cache-Control"] = "public, max-age=31536000, immutable"
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Expose-Headers"] = "Content-Range, Accept-Ranges"
+        return response
 
 class ReviewCreateView(generics.CreateAPIView):
     """
@@ -551,6 +661,8 @@ class FreeConsultationCreateView(generics.CreateAPIView):
     """
     queryset = FreeConsultation.objects.all()
     serializer_class = FreeConsultationCreateSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
     
     def perform_create(self, serializer):
         # Сохраняем заявку с is_processed=False (требует обработки)
@@ -600,6 +712,8 @@ class ContactUsCreateView(generics.CreateAPIView):
     """
     queryset = ContactUs.objects.all()
     serializer_class = ContactUsCreateSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
     
     def perform_create(self, serializer):
         # Сохраняем заявку с is_processed=False (требует обработки)

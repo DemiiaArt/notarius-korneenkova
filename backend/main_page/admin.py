@@ -3,6 +3,7 @@ from mptt.admin import MPTTModelAdmin
 from django import forms
 from django.utils.html import format_html
 from django.urls import path
+from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Q
@@ -13,7 +14,7 @@ from .models import (
     ContactUs, FrequentlyAskedQuestion, AboutMeDetail,
     QualificationBlock, QualificationCertificate, QualificationDiploma
 )
-from blog.models import BlogCategory, BlogPost
+from blog.models import BlogCategory, BlogPost, BlogHome
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from .models import LegalDocument
 
@@ -663,7 +664,7 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
     prepopulated_fields = {
         "nav_id": ("label_en",),
         "slug_ua": ("label_ua",),
-        "slug_ru": ("label_ua",),
+        "slug_ru": ("label_ru",),
         "slug_en": ("label_en",),
     }
     exclude = ('component',)
@@ -671,10 +672,11 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
 
     list_display = (
         'label_ua',
+        'order',
         'parent',
         'kind',
         'show_in_menu',
-        'order',
+        
         # 'created_at',
         # 'updated_at',
     )
@@ -793,6 +795,27 @@ class BlogPostAdmin(admin.ModelAdmin):
         return '—'
     cover_preview.short_description = 'Обложка'
 
+class BlogHomeAdmin(admin.ModelAdmin):
+    list_display = ("title_ua",)
+    search_fields = ("title_ua", "title_ru", "title_en")
+
+    def has_add_permission(self, request):
+        # Разрешаем добавить запись только если её ещё нет
+        return not BlogHome.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        # Нельзя удалять — ведём себя как одиночная запись
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        # При заходе в раздел сразу редиректим на форму редактирования
+        obj = BlogHome.objects.first()
+        if obj:
+            url = reverse(f"{self.admin_site.name}:blog_bloghome_change", args=[obj.pk])
+            return redirect(url)
+        add_url = reverse(f"{self.admin_site.name}:blog_bloghome_add")
+        return redirect(add_url)
+
 # Группировка моделей в админке
 class NotariusAdminSite(admin.AdminSite):
     site_header = 'Панель администратора — Notarius'
@@ -814,7 +837,7 @@ class NotariusAdminSite(admin.AdminSite):
                 'priority': 1  # Высокий приоритет - будет отображаться первым
             },
             '📝 БЛОГ': {
-                'models': ['BlogCategory', 'BlogPost'],
+                'models': ['BlogCategory', 'BlogPost', 'BlogHome'],
                 'icon': 'fas fa-blog',
                 'description': 'Категории и статьи блога',
                 'priority': 2
@@ -903,6 +926,7 @@ admin_site.register(LegalDocument, LegalDocumentAdmin)
 # Регистрируем модели блога
 admin_site.register(BlogCategory, BlogCategoryAdmin)
 admin_site.register(BlogPost, BlogPostAdmin)
+admin_site.register(BlogHome, BlogHomeAdmin)
 
 # Кастомные представления для админки
 class DashboardView:

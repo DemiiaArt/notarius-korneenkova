@@ -119,48 +119,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 # Настройка БД с поддержкой переменной DATABASE_URL (Railway) и PG* переменных
-import dj_database_url  # type: ignore
-
-database_url = (
-    os.getenv('DATABASE_URL')
-    or os.getenv('POSTGRES_URL')
-    or os.getenv('POSTGRESQL_URL')
-    or os.getenv('NEON_DATABASE_URL')
-)
-
-if database_url:
-    parsed_db = dj_database_url.config(
-        default=database_url,
-        conn_max_age=600,
-        ssl_require=True,
-    )
-    # Если в URL отсутствует имя БД, подставим из env
-    if not parsed_db.get('NAME'):
-        # Жёсткий fallback имени БД, чтобы избежать ImproperlyConfigured
-        parsed_db['NAME'] = (
-            os.getenv('PGDATABASE')
-            or os.getenv('POSTGRES_DB')
-            or 'railway'
-        )
-    DATABASES = {
-        'default': parsed_db
-    }
-else:
-    # Если нет DATABASE_URL и PG*, используем SQLite по умолчанию для локальной разработки
-    use_sqlite = os.getenv('USE_SQLITE', 'true').lower() == 'true'
-    if use_sqlite:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-    else:
-        # Fallback к отдельным PG* переменным (локальная Postgres)
-        DATABASES = {
+DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.getenv('PGDATABASE') or os.getenv('POSTGRES_DB', 'notarius'),
+                'NAME': os.getenv('POSTGRES_DB'),
                 'USER': os.getenv('PGUSER', 'postgres'),
                 'PASSWORD': os.getenv('PGPASSWORD', ''),
                 'HOST': os.getenv('PGHOST', 'localhost'),
@@ -168,14 +130,7 @@ else:
             }
         }
 
-# Добавляем отладочную информацию для Railway
-if DEBUG:
-    print("DATABASE_URL set:" , bool(database_url))
-    print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
-    print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
-    print(f"PGDATABASE: {os.getenv('PGDATABASE', 'NOT_SET')}")
-    print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
-    print(f"PGPASSWORD: {'SET' if os.getenv('PGPASSWORD') else 'NOT_SET'}")
+
 
 
 # Password validation
@@ -227,12 +182,58 @@ CKEDITOR_5_CONFIGS = {
             '|',
             'bold', 'italic', 'underline', 'strikethrough', 'link',
             '|',
+            'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor',
+            '|',
             'bulletedList', 'numberedList', 'outdent', 'indent',
             '|',
             'alignment', 'blockQuote', 'code', 'codeBlock', 'horizontalLine', 'removeFormat',
             '|',
             'imageUpload', 'insertTable', 'mediaEmbed'
         ],
+        # Настройки шрифтов и размеров
+        'fontFamily': {
+            'options': [
+                'default',
+                'Montserrat, Arial, sans-serif',
+                'Arial, Helvetica, sans-serif',
+                'Times New Roman, Times, serif',
+                'Georgia, serif',
+                'Courier New, Courier, monospace',
+            ],
+            'supportAllValues': False,
+        },
+        'fontSize': {
+            'options': [10, 12, 14, 16, 18, 20, 24, 30, 36],
+            'supportAllValues': True,
+        },
+        'fontColor': {
+            'columns': 6,
+            'colors': [
+                { 'color': '#111111', 'label': 'Black' },
+                { 'color': '#ffffff', 'label': 'White' },
+                { 'color': '#1E293B', 'label': 'Slate-900' },
+                { 'color': '#0EA5E9', 'label': 'Sky' },
+                { 'color': '#22C55E', 'label': 'Green' },
+                { 'color': '#EF4444', 'label': 'Red' },
+                { 'color': '#F59E0B', 'label': 'Amber' },
+                { 'color': '#3B82F6', 'label': 'Blue' },
+                { 'color': '#8B5CF6', 'label': 'Violet' },
+                { 'color': '#F472B6', 'label': 'Pink' },
+            ],
+        },
+        'fontBackgroundColor': {
+            'columns': 6,
+            'colors': [
+                { 'color': '#000000', 'label': 'Black' },
+                { 'color': '#ffffff', 'label': 'White' },
+                { 'color': '#F1F5F9', 'label': 'Slate-50' },
+                { 'color': '#E2E8F0', 'label': 'Slate-200' },
+                { 'color': '#FEF9C3', 'label': 'Yellow-100' },
+                { 'color': '#DCFCE7', 'label': 'Green-100' },
+                { 'color': '#DBEAFE', 'label': 'Blue-100' },
+                { 'color': '#FCE7F3', 'label': 'Pink-100' },
+            ],
+        },
         'heading': {
             'options': [
                 {'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph'},

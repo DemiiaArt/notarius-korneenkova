@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
 import { API_BASE_URL } from "@/config/api";
+import { normalizeEditorHtml } from "@/utils/html";
 
 /**
  * Функция для извлечения параграфов из HTML-строки
@@ -89,14 +90,7 @@ export const AboutTextBlock = () => {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  // Преобразуем HTML-контент в массив параграфов
-  const aboutContent = useMemo(() => {
-    return extractParagraphsFromHTML(content);
-  }, [content]);
-
-  // Определяем, какие абзацы показывать
-  const visibleContent =
-    isMobileView && !expanded ? aboutContent.slice(0, 3) : aboutContent;
+const normalizedHtml = useMemo(() => normalizeEditorHtml(content), [content]);
 
   return (
     <div className="about-container">
@@ -105,7 +99,7 @@ export const AboutTextBlock = () => {
           {title}
         </h2>
 
-        <div className={`about-content ${expanded ? "expanded" : ""}`}>
+        <div className={`about-content text-content-html ${expanded ? "expanded" : ""}`}>
           {loading ? (
             <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"} lh-150`}>
               {t("loading")}
@@ -115,17 +109,14 @@ export const AboutTextBlock = () => {
               {t("error")}
             </p>
           ) : (
-            visibleContent.map((paragraph, idx) => (
-              <p
-                key={idx}
-                className={`${isPC ? "fs-p--16px" : "fs-p--14px align-center"}  lh-150`}
-                dangerouslySetInnerHTML={{ __html: paragraph }}
-              />
-            ))
+            <div
+              className={`${isPC ? "fs-p--16px" : "fs-p--14px"} lh-150`}
+              dangerouslySetInnerHTML={{ __html: normalizedHtml }}
+            />
           )}
         </div>
 
-        {isMobileView && aboutContent.length > 3 && (
+        {false && isMobileView && (
           <button
             className={`accordion-toggle toggle-btn ${isPC ? "fs-p--20px" : "fs-p--16px"}`}
             onClick={() => setExpanded(!expanded)}
