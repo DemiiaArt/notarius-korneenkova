@@ -1,10 +1,9 @@
-import instagram from "@media/social-media/instagram.svg";
-import facebook from "@media/social-media/facebook.svg";
+import instagram from "@media/footer/instagram.svg";
+import facebook from "@media/footer/facebook-f.svg";
 import ticktock from "@media/social-media/ticktock.svg";
-import x from "@media/social-media/x.svg";
-import youtube from "@media/social-media/youtube.svg";
+import telegram from "@media/footer/telegram.svg";
+import whatsapp from "@media/footer/whatsap.svg";
 import icon from "@media/footer/icon-accordion-footer.svg";
-import planet from "@media/footer/planet.svg";
 import logoFooter from "@media/footer/logo-footer.svg";
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
@@ -22,6 +21,7 @@ const navigationLinks = {
     { link: "notarialni-pereklad", label: "Нотаріальний переклад" },
     { link: "notarialni-inshi", label: "Інші послуги" },
     { link: "notarialni-dopomoga-viyskovim", label: "Допомога військовим" },
+    { link: "notarialni-blog", label: "Блог" },
     { link: "notarialni-contacty", label: "Контакти" },
   ],
   ru: [
@@ -30,6 +30,7 @@ const navigationLinks = {
     { link: "notarialni-pereklad", label: "Нотариальный перевод" },
     { link: "notarialni-inshi", label: "Другие услуги" },
     { link: "notarialni-pomosch-voennym", label: "Помощь военным" },
+    { link: "notarialni-blog", label: "Блог" },
     { link: "notarialni-contacty", label: "Контакты" },
   ],
   en: [
@@ -38,6 +39,7 @@ const navigationLinks = {
     { link: "notary-translate", label: "Notary translate" },
     { link: "notary-other", label: "Other services" },
     { link: "notary-military-help", label: "Military help" },
+    { link: "notary-blog", label: "Blog" },
     { link: "notary-contacts", label: "Contacts" },
   ],
 };
@@ -107,12 +109,12 @@ const Footer = () => {
               <p
                 className={`footer-social-media-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
               >
-                Стежте за нами
+                Ми в соцмережах
               </p>
               <a
                 className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
               >
-                Tiktok
+                Facebook
               </a>
               <a
                 className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -122,14 +124,23 @@ const Footer = () => {
               <a
                 className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
               >
-                Facebook
+                Tiktok
+              </a>
+              <p
+                className={`footer-social-media-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
+              >
+                Пишіть нам
+              </p>
+              <a
+                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+              >
+                WhatsApp
               </a>
               <a
                 className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
               >
-                X
+                Telegram
               </a>
-              <a className="footer-social-media-link c1">Youtube</a>
             </div>
             <div className="footer-contacts">
               <p
@@ -283,12 +294,16 @@ const Footer = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <img src={x} alt="X" className="footer-social-media-icon" />
+              <img
+                src={whatsapp}
+                alt="whatsapp"
+                className="footer-social-media-icon"
+              />
             </a>
             <a className="footer-social-media-item bg2">
               <img
-                src={youtube}
-                alt="Youtube"
+                src={telegram}
+                alt="Telegram"
                 className="footer-social-media-icon"
               />
             </a>

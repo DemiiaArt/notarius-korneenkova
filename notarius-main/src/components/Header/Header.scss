@@ -22,6 +22,11 @@ li {
     left: 0;
     z-index: 2000;
 
+    // Когда меню открыто, делаем хедер fixed
+    &.menu-open {
+      position: fixed;
+    }
+
     &.mega-open {
     }
     &-wrap {
@@ -99,7 +104,7 @@ li {
     background: map.get($colors, 8);
     z-index: 1100;
     overflow-y: auto;
-    height: calc(97.5vh - 50px);
+    height: calc(97.5vh - 25px);
     display: flex;
     flex-direction: column;
     transform: translateY(-120%);
@@ -141,6 +146,8 @@ li {
       display: inline-block;
       transform: rotate(180deg);
       transition: transform 0.3s ease;
+      padding: 5px;
+      pointer-events: none; // Іконка не перехоплює кліки
     }
 
     &-social-block {
@@ -153,8 +160,8 @@ li {
       position: relative;
       z-index: 10000;
       &-item {
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         background: map.get($colors, 4);
         &-link {
@@ -164,8 +171,8 @@ li {
           place-items: center;
         }
         &-img {
-          width: 15px;
-          height: 15px;
+          width: 20px;
+          height: 20px;
           color: map.get($colors, 1);
         }
       }
@@ -198,6 +205,19 @@ li {
     justify-content: space-between;
     align-items: center;
     font-weight: bold;
+    cursor: pointer;
+
+    &-link {
+      flex: 1;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      cursor: pointer;
+      // Щоб текст не виділявся при тапі на мобілці
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
     &-content {
       overflow: hidden;
       transition: height 0.3s ease;
@@ -228,6 +248,22 @@ li {
       text-decoration: none;
       color: inherit;
     }
+
+    // Вкладені меню (до 3 рівнів)
+    .nested-menu {
+      list-style: none;
+      padding: 0;
+      margin: 5px 0 0 0;
+
+      .accordion-header-content-item {
+        margin: 8px 0;
+        font-size: 14px;
+
+        a {
+          opacity: 0.9;
+        }
+      }
+    }
   }
 
   /* Бургер */
@@ -235,15 +271,15 @@ li {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 3px;
-    width: 18px;
-    height: 12px;
+    gap: 6px;
+    width: 24px;
+    height: 22px;
     cursor: pointer;
     position: relative;
 
     span {
       display: block;
-      height: 2px;
+      height: 1px;
       border-radius: 1px;
       transition:
         transform 0.3s ease,
@@ -253,13 +289,13 @@ li {
 
     &.active {
       span:nth-child(1) {
-        transform: rotate(45deg) translate(4px, 5px);
+        transform: rotate(45deg) translate(7px, 5px);
       }
       span:nth-child(2) {
         opacity: 0;
       }
       span:nth-child(3) {
-        transform: rotate(-45deg) translate(2px, -3px);
+        transform: rotate(-45deg) translate(4px, -3px);
       }
     }
   }
@@ -346,7 +382,7 @@ li {
     height: 40px;
     cursor: pointer;
     &-block-pc {
-      width: 220px;
+      width: 250px;
       display: flex;
       align-items: center;
       justify-content: space-between;

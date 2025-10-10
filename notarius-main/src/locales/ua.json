@@ -328,6 +328,9 @@
     "Header": {
       "contactButton": "Зв'язатися"
     },
+    "LeadsButton": {
+      "freeConsultation": "Безкоштовна консультація"
+    },
     "Footer": {
       "contacts": "Контакти",
       "navigation": "Навігація",

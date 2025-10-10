@@ -1,4 +1,4 @@
-import userIcon from "@media/icons/user-icon.png";
+import userIcon from "@media/icons/user-avatar.svg";
 import quotes from "@media/icons/quotes-icon.svg";
 import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -209,7 +209,7 @@ const CommentsCarousel = ({ comments }) => {
                 <div className="comments-carousel-card-header">
                   <img
                     className="comments-carousel-card-image"
-                    src={imgSrc}
+                    src={imgSrc ? imgSrc : userIcon}
                     alt={imgAlt}
                   />
                   <div className="comments-carousel-card-text-wrap">
