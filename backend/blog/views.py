@@ -3,8 +3,14 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
-from .models import BlogPost, BlogCategory
-from .serializers import BlogPostListSerializer, BlogPostDetailSerializer, BlogListResponseSerializer, BlogCategorySerializer
+from .models import BlogPost, BlogCategory, BlogHome
+from .serializers import (
+    BlogPostListSerializer,
+    BlogPostDetailSerializer,
+    BlogListResponseSerializer,
+    BlogCategorySerializer,
+    BlogHomeSerializer,
+)
 
 
 class BlogPagination(PageNumberPagination):
@@ -102,4 +108,27 @@ class BlogDetailView(APIView):
         
         # Сериализуем данные с передачей языка в контекст
         serializer = BlogPostDetailSerializer(post, context={'lang': lang})
+        return Response(serializer.data)
+
+
+class BlogHomeView(APIView):
+    """
+    Возвращает данные главной страницы блога (title, slug, description, hero_image).
+    Поддерживает параметр lang=ua|ru|en.
+    """
+
+    def get(self, request):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+
+        obj = BlogHome.objects.order_by('-id').first()
+        if not obj:
+            return Response({
+                'title': '',
+                'description': '',
+                'hero_image': None,
+            })
+
+        serializer = BlogHomeSerializer(obj, context={'lang': lang})
         return Response(serializer.data)
