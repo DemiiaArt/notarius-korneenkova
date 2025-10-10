@@ -30,6 +30,7 @@ from .serializer import (
 
 
 from .utils import inject_services, root_data
+from blog.models import BlogPost, BlogHome
 # Create your views here.
 
 class HeaderView(generics.ListAPIView):
@@ -245,8 +246,49 @@ class ServicesCategoryView(APIView):
                 return Response({"children": []}, status=200)
             
             
-            serializer = ServiceCategorySerializer(root_categories, many=True)            
-            response_data = serializer.data            
+            serializer = ServiceCategorySerializer(root_categories, many=True)
+            response_data = serializer.data
+
+            # Добавляем секцию блога на уровень корневых разделов
+            blog_posts = BlogPost.objects.all().order_by('-created_at')
+            # Формируем детей-страницы из статей
+            blog_children = []
+            for post in blog_posts:
+                blog_children.append({
+                    'id': getattr(post, 'slug_en', None) or f"blog-post-{post.id}",
+                    'kind': 'page',
+                    'label': {
+                        'ua': post.title_ua,
+                        'ru': post.title_ru,
+                        'en': post.title_en,
+                    },
+                    'slug': {
+                        'ua': post.slug_ua,
+                        'ru': post.slug_ru,
+                        'en': post.slug_en,
+                    },
+                    'component': 'null',
+                    'showInMenu': post.status,
+                })
+
+            blog_home = BlogHome.objects.order_by('-id').first()
+            blog_card_image = None
+            try:
+                if blog_home and blog_home.hero_image and hasattr(blog_home.hero_image, 'url'):
+                    blog_card_image = blog_home.hero_image.url
+            except Exception:
+                blog_card_image = None
+
+            blog_section = {
+                'id': 'blog',
+                'kind': 'page',
+                'component': 'null',
+                'children': blog_children,
+                'showInMenu': True,
+                'showMegaPanel': True,
+            }
+
+            response_data.append(blog_section)
             
             return Response(response_data)
             
