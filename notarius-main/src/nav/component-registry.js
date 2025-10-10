@@ -228,15 +228,21 @@ export function attachComponentsToTree(navTree) {
   // Создаем копию дерева, чтобы не мутировать оригинал
   const treeWithComponents = JSON.parse(JSON.stringify(navTree));
 
-  function assignComponents(node) {
+  function assignComponents(node, parentId = null) {
     // Прикрепляем компонент по ID
     if (node.id && hasComponent(node.id)) {
       node.component = getComponentById(node.id);
     }
+    // Специальная обработка для статей блога
+    // Если узел - это child блога и начинается с "article-", используем BlogArticlePage
+    else if (parentId === "blog" && node.id && node.id.startsWith("article-")) {
+      node.component = getComponentById("blog-article");
+      console.log(`📝 Назначен BlogArticlePage для статьи: ${node.id}`);
+    }
 
     // Рекурсивно обрабатываем дочерние элементы
     if (node.children && Array.isArray(node.children)) {
-      node.children.forEach(assignComponents);
+      node.children.forEach((child) => assignComponents(child, node.id));
     }
   }
 
