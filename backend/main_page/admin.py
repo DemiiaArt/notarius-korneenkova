@@ -840,7 +840,7 @@ class NotariusAdminSite(admin.AdminSite):
                 'priority': 2
             },
             'Основной контент': {
-                'models': ['Header', 'AboutMe', 'AboutMeDetail', 'QualificationBlock', 'ServicesFor', 'VideoInterview', 'BackgroundVideo'],
+                'models': ['Header', 'AboutMe', 'AboutMeDetail', 'QualificationBlock', 'ServicesFor', 'VideoBlock', 'BackgroundVideo'],
                 'icon': 'fas fa-home',
                 'priority': 3
             },
