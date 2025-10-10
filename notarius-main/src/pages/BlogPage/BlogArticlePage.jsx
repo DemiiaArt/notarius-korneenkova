@@ -1,20 +1,12 @@
-import TemplateBlogPage from "./TemplateBlogPage";
-import { getArticleById } from "./blogData";
+import BlogArticleDetailPage from "./BlogArticleDetailPage";
 
+/**
+ * Универсальный компонент для всех статей блога
+ * Использует BlogArticleDetailPage для загрузки данных из API
+ * Работает для всех статей из backend (article-1, article-2, etc.)
+ */
 const BlogArticlePage = () => {
-    // Получаем данные статьи по ID (в данном случае "blog-article")
-    const articleData = getArticleById("blog-article");
-
-    return (
-        <TemplateBlogPage 
-            title={articleData.title}
-            content={articleData.content}
-            heroImgClass={articleData.heroImgClass}
-            heroImage={articleData.heroImage}
-            tags={articleData.tags}
-            publishDate={articleData.publishDate}
-        />
-    );
+  return <BlogArticleDetailPage />;
 };
 
 export default BlogArticlePage;

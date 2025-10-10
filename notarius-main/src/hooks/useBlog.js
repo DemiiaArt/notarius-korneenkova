@@ -243,6 +243,62 @@ export const useBlogArticle = (slug) => {
 };
 
 /**
+ * Hook для получения данных главной страницы блога (home)
+ * @returns {Object} { blogHome, loading, error }
+ */
+export const useBlogHome = () => {
+  const { currentLang } = useLanguage();
+  const [blogHome, setBlogHome] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBlogHome = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const params = new URLSearchParams({
+          lang: currentLang,
+        });
+
+        const url = `/blog/notarialni-blog/home/?${params.toString()}`;
+        console.log("✅ Загружаем blog home:", url);
+
+        const data = await apiClient.get(url);
+
+        console.log("✅ Blog home загружен:", data);
+        setBlogHome(data);
+      } catch (err) {
+        // Если 404, возвращаем пустые данные без ошибки
+        if (err.status === 404) {
+          console.warn("useBlogHome: 404 - blog home not found");
+          setBlogHome({ title: "", description: "", hero_image: null });
+          setError(null);
+          return;
+        }
+
+        const errorMessage =
+          err.message || "Помилка при завантаженні blog home";
+        setError(errorMessage);
+        console.error("❌ Ошибка при загрузке blog home:", err);
+        setBlogHome(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogHome();
+  }, [currentLang]);
+
+  return {
+    blogHome,
+    loading,
+    error,
+  };
+};
+
+/**
  * Пример использования:
  *
  * // Список статей
@@ -250,4 +306,7 @@ export const useBlogArticle = (slug) => {
  *
  * // Отдельная статья
  * const { article, loading, error } = useBlogArticle('slug-stati');
+ *
+ * // Главная страница блога
+ * const { blogHome, loading, error } = useBlogHome();
  */
