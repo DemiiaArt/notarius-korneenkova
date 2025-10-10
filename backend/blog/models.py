@@ -63,7 +63,7 @@ class BlogPost(models.Model):
 
     cover = models.ImageField(upload_to="blog/covers/", verbose_name="Обложка")
     hero_image = models.ImageField(
-        upload_to='services/',
+        upload_to="blog/covers/",
         blank=True,
         null=True,
         verbose_name="Главное изображение"
