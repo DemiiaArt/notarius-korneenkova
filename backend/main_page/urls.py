@@ -42,13 +42,6 @@ urlpatterns = [
     path('contact-us/list/', views.ContactUsListView.as_view(), name='contact-us-list'),  # Админка
     path('contact-us/<int:pk>/', views.ContactUsDetailView.as_view(), name='contact-us-detail'),  # Админка
 
-    # ===== ВИДЕО ИНТЕРВЬЮ =====
-    
-    # Список видео интервью
-    path('video-interviews/', views.VideoInterviewListView.as_view(), name='video-interview-list'),
-    path('video-interviews/<int:pk>/', views.VideoInterviewDetailView.as_view(), name='video-interview-detail'),
-    # Range-enabled stream endpoint (fallback for prod)
-    path('video-interviews/<int:pk>/stream/', views.VideoInterviewStreamView.as_view(), name='video-interview-stream'),
 
     # ===== ОТЗЫВЫ И РЕЙТИНГ =====
     
@@ -90,4 +83,12 @@ urlpatterns = [
     # GET /api/legal/<key>/?lang=ua|ru|en -> один документ { key, title, content }
     path('legal/', views.LegalDocumentListView.as_view(), name='legal-document-list'),
     path('legal/<slug:key>/', views.LegalDocumentDetailView.as_view(), name='legal-document-detail'),
+    
+    # Видео блоки
+    # GET /api/video-blocks/?type=interview|about_me|contacts&lang=ua|ru|en -> список видео блоков
+    # GET /api/video-blocks/<id>/ -> детальная информация о видео блоке
+    # GET /api/video-blocks/<id>/stream/ -> стриминг видео файла
+    path('video-blocks/', views.VideoBlockListView.as_view(), name='video-block-list'),
+    path('video-blocks/<int:pk>/', views.VideoBlockDetailView.as_view(), name='video-block-detail'),
+    path('video-blocks/<int:pk>/stream/', views.VideoBlockStreamView.as_view(), name='video-block-stream'),
 ]
