@@ -8,6 +8,7 @@ import DynamicRenderer from "../components/DynamicRenderer/DynamicRenderer";
 import { getComponentById, hasComponent } from "../nav/component-registry";
 import DynamicChildrenLoader from "../components/DynamicChildrenLoader/DynamicChildrenLoader";
 import BlogArticlePage from "../pages/BlogPage/BlogArticlePage";
+import BlogArticleDetailPage from "../pages/BlogPage/BlogArticleDetailPage";
 import DynamicPageRenderer from "../components/DynamicPages/DynamicPageRenderer";
 
 // Loading component
@@ -105,6 +106,20 @@ export default function AppRoutes({ pageProps = {} }) {
           }
         />
       )}
+
+      {/* Blog article routes */}
+      {/* Ukrainian (no prefix) */}
+      <Route
+        path="/notarialni-blog/:slug"
+        element={<BlogArticleDetailPage />}
+      />
+      {/* Russian */}
+      <Route
+        path="/ru/notarialni-blog/:slug"
+        element={<BlogArticleDetailPage />}
+      />
+      {/* English */}
+      <Route path="/en/notary-blog/:slug" element={<BlogArticleDetailPage />} />
 
       {/* Dynamic routes for 3rd and 4th level pages */}
       {/* Ukrainian (no prefix) */}

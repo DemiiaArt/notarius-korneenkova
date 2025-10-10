@@ -8,7 +8,7 @@ import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
 import arrowRight from "@media/comments-carousel/arrow-right.svg";
 import "./ServicesCarousel.scss";
-import { MEDIA_BASE_URL } from "@/config/api";
+import { BACKEND_BASE_URL } from "@/config/api";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -176,9 +176,7 @@ const ServicesCarousel = ({
     // Якщо є card_image в об'єкті сервісу, використовуємо його
     console.log("🖼️ ServicesCarousel - Getting image for service:", service);
     if (service?.cardImage) {
-      return service.cardImage.startsWith('/media/') 
-        ? service.cardImage 
-        : `${MEDIA_BASE_URL}${service.cardImage}`;
+      return `${BACKEND_BASE_URL}${service.cardImage}`;
     }
 
     // Fallback - картинка за замовчуванням

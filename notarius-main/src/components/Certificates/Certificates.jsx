@@ -10,7 +10,7 @@ import { API_BASE_URL } from "@/config/api";
 import "swiper/css";
 import "swiper/css/navigation";
 import arrowRight from "@media/services-carousel/icons/arrow-right.svg";
-import { MEDIA_BASE_URL } from "@/config/api";
+import { BACKEND_BASE_URL } from "@/config/api";
 
 const Certificates = () => {
   const [activeTab, setActiveTab] = useState("diplomas");
@@ -46,16 +46,19 @@ const Certificates = () => {
         return r.json();
       })
       .then((resp) => {
+        console.log(resp);
         setData({
           title: resp.title || "",
           certificates:
-            resp.certificates.map((item) => 
-              item.image?.startsWith('/media/') ? item.image : `${MEDIA_BASE_URL}${item.image}`
-            ) || [],
+            resp.certificates.map((obj) => ({
+              ...obj,
+              image: `${BACKEND_BASE_URL}${obj.image}`,
+            })) || [],
           diplomas:
-            resp.diplomas.map((item) => 
-              item.image?.startsWith('/media/') ? item.image : `${MEDIA_BASE_URL}${item.image}`
-            ) || [],
+            resp.diplomas.map((obj) => ({
+              ...obj,
+              image: `${BACKEND_BASE_URL}${obj.image}`,
+            })) || [],
         });
       })
       .catch((e) => {
@@ -82,7 +85,7 @@ const Certificates = () => {
         </div>
       );
     }
-
+    console.log("🔍 Certificates - items:", items);
     return (
       <>
         <Swiper
@@ -116,9 +119,9 @@ const Certificates = () => {
               <div className="certificates-carousel-slide-inner">
                 <img
                   className="certificates-carousel-slide-image"
-                  src={item.image}
+                  src={item?.image}
                   alt={`${t("carousel.altText")} ${i + 1}`}
-                  onClick={() => setSelectedImage(item.image)}
+                  onClick={() => setSelectedImage(item?.image)}
                   style={{ cursor: "pointer" }}
                 />
               </div>

@@ -8,7 +8,7 @@ from .serializers import BlogPostListSerializer, BlogPostDetailSerializer, BlogL
 
 
 class BlogPagination(PageNumberPagination):
-    page_size = 2
+    page_size = 6
 
 
 class BlogListView(APIView):

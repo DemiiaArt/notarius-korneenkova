@@ -3,8 +3,8 @@
  * Завантажує список категорій "Для кого послуги" з API
  */
 
-import { useState, useEffect } from 'react';
-import { apiClient } from '@/config/api';
+import { useState, useEffect } from "react";
+import { apiClient } from "@/config/api";
 
 /**
  * Hook для отримання списку ServicesFor
@@ -19,17 +19,23 @@ export const useServicesFor = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      console.log('useServicesFor: Fetching from API...');
-      const data = await apiClient.get('/services-for/');
-      console.log('useServicesFor: API response:', data);
-      
+
+      console.log("useServicesFor: Fetching from API...");
+      const data = await apiClient.get("/services-for/");
+      console.log("useServicesFor: API response:", data);
+
       setServicesFor(Array.isArray(data) ? data : []);
-      
     } catch (err) {
-      setError(err.message);
-      console.error('useServicesFor ERROR:', err);
-      setServicesFor([]);
+      // Если 404 - возвращаем пустой массив без ошибки
+      if (err.status === 404) {
+        console.warn("useServicesFor: 404 - services-for not found in DB");
+        setServicesFor([]);
+        setError(null);
+      } else {
+        setError(err.message);
+        console.error("useServicesFor ERROR:", err);
+        setServicesFor([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -39,22 +45,22 @@ export const useServicesFor = () => {
     fetchServicesFor();
   }, []);
 
-  return { 
-    servicesFor, 
-    loading, 
-    error, 
-    refetch: fetchServicesFor 
+  return {
+    servicesFor,
+    loading,
+    error,
+    refetch: fetchServicesFor,
   };
 };
 
 /**
  * Приклад використання:
- * 
+ *
  * const { servicesFor, loading, error } = useServicesFor();
- * 
+ *
  * if (loading) return <div>Завантаження...</div>;
  * if (error) return <div>Помилка: {error}</div>;
- * 
+ *
  * return (
  *   <div>
  *     {servicesFor.map(service => (
@@ -67,4 +73,3 @@ export const useServicesFor = () => {
  *   </div>
  * );
  */
-

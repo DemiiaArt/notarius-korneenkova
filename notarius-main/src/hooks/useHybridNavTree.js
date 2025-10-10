@@ -53,6 +53,13 @@ const fetchAllServicesFromBackend = async () => {
     const response = await fetch(`${API_BASE_URL}/services/`);
 
     if (!response.ok) {
+      // Если 404 - возвращаем пустой массив вместо ошибки
+      if (response.status === 404) {
+        console.warn(
+          "[useHybridNavTree] 404 - services not found in DB, returning empty array"
+        );
+        return [];
+      }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 

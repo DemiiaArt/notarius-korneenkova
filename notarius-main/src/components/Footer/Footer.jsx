@@ -17,7 +17,7 @@ import { useContacts } from "@hooks/useContacts";
 
 const navigationLinks = {
   ua: [
-    { link: "notarialni-pro-mene", label: "Про себе" },
+    { link: "notarialni-pro-mene", label: "Про мене" },
     { link: "notarialni-poslugy", label: "Нотаріальні послуги" },
     { link: "notarialni-pereklad", label: "Нотаріальний переклад" },
     { link: "notarialni-inshi", label: "Інші послуги" },
@@ -28,14 +28,14 @@ const navigationLinks = {
     { link: "notarialni-pro-mene", label: "Про меня" },
     { link: "notarialni-poslugy", label: "Нотариальные услуги" },
     { link: "notarialni-pereklad", label: "Нотариальный перевод" },
-    { link: "notarialni-inshi", label: "Прочие услуги" },
+    { link: "notarialni-inshi", label: "Другие услуги" },
     { link: "notarialni-pomosch-voennym", label: "Помощь военным" },
     { link: "notarialni-contacty", label: "Контакты" },
   ],
   en: [
-    { link: "notary-about", label: "About" },
+    { link: "notary-about", label: "About me" },
     { link: "notary-services", label: "Services" },
-    { link: "notary-translation", label: "Translation" },
+    { link: "notary-translate", label: "Notary translate" },
     { link: "notary-other", label: "Other services" },
     { link: "notary-military-help", label: "Military help" },
     { link: "notary-contacts", label: "Contacts" },
@@ -46,7 +46,7 @@ const helpLinks = {
   ua: [
     { link: "notarialni-offer", label: "Договір оферти" },
     { link: "notarialni-policy", label: "Політика конфіденційності" },
-    { link: "notarialni-torgivelna-marka", label: "Торговельна марка" },
+    { link: "notarialni-torgivelna-marka", label: "Торгівельна марка" },
   ],
   ru: [
     { link: "notarialni-offer", label: "Договор оферты" },
@@ -55,8 +55,8 @@ const helpLinks = {
   ],
   en: [
     { link: "notary-offer", label: "Offer contract" },
-    { link: "notary-policy", label: "Privacy policy" },
-    { link: "notary-trade-mark", label: "Trademark" },
+    { link: "notary-policy", label: "Privacy Policy" },
+    { link: "notary-trade-mark", label: "Trade mark" },
   ],
 };
 
@@ -140,7 +140,7 @@ const Footer = () => {
               {contacts.phone_number && (
                 <a
                   className={`footer-contacts-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-                  href={`tel:${contacts.phone_number.replace(/\s|\+/g, '')}`}
+                  href={`tel:${contacts.phone_number.replace(/\s|\+/g, "")}`}
                 >
                   {contacts.phone_number}
                 </a>
@@ -193,7 +193,11 @@ const Footer = () => {
                 ({ link, label }) => (
                   <Link
                     key={link}
-                    to={`/${link}`}
+                    to={
+                      currentLang === "ua"
+                        ? `/${link}`
+                        : `/${currentLang}/${link}`
+                    }
                     className={`footer-navigation-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                   >
                     {label}
@@ -211,7 +215,11 @@ const Footer = () => {
                 ({ link, label }) => (
                   <Link
                     key={link}
-                    to={`/${link}`}
+                    to={
+                      currentLang === "ua"
+                        ? `/${link}`
+                        : `/${currentLang}/${link}`
+                    }
                     className={`footer-help-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
                   >
                     {label}
@@ -233,28 +241,48 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-social-media">
-            <a className="footer-social-media-item bg2" href={contacts.instagram_url || '#'} target="_blank" rel="noreferrer">
+            <a
+              className="footer-social-media-item bg2"
+              href={contacts.instagram_url || "#"}
+              target="_blank"
+              rel="noreferrer"
+            >
               <img
                 src={instagram}
                 alt="Inst"
                 className="footer-social-media-icon"
               />
             </a>
-            <a className="footer-social-media-item bg2" href={contacts.facebook_url || '#'} target="_blank" rel="noreferrer">
+            <a
+              className="footer-social-media-item bg2"
+              href={contacts.facebook_url || "#"}
+              target="_blank"
+              rel="noreferrer"
+            >
               <img
                 src={facebook}
                 alt="Facebook"
                 className="footer-social-media-icon"
               />
             </a>
-            <a className="footer-social-media-item bg2" href={contacts.twitter_url || contacts.x_url || '#'} target="_blank" rel="noreferrer">
+            <a
+              className="footer-social-media-item bg2"
+              href={contacts.twitter_url || contacts.x_url || "#"}
+              target="_blank"
+              rel="noreferrer"
+            >
               <img
                 src={ticktock}
                 alt="TickTock"
                 className="footer-social-media-icon"
               />
             </a>
-            <a className="footer-social-media-item bg2" href={contacts.youtube_url || '#'} target="_blank" rel="noreferrer">
+            <a
+              className="footer-social-media-item bg2"
+              href={contacts.youtube_url || "#"}
+              target="_blank"
+              rel="noreferrer"
+            >
               <img src={x} alt="X" className="footer-social-media-icon" />
             </a>
             <a className="footer-social-media-item bg2">
@@ -304,7 +332,7 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
           {contacts.phone_number && (
             <a
               className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-              href={`tel:${contacts.phone_number.replace(/\s|\+/g, '')}`}
+              href={`tel:${contacts.phone_number.replace(/\s|\+/g, "")}`}
             >
               {contacts.phone_number}
             </a>
@@ -318,12 +346,16 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
             </a>
           )}
           {contacts.address && (
-            <a className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}>
+            <a
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+            >
               {contacts.address}
             </a>
           )}
           {contacts.working_hours && (
-            <a className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}>
+            <a
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+            >
               {contacts.working_hours}
             </a>
           )}
