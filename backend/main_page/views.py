@@ -11,6 +11,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from django.urls import reverse
 from rest_framework.permissions import AllowAny
+from django.http import FileResponse, HttpResponse
 
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
@@ -427,7 +428,7 @@ class VideoInterviewStreamView(APIView):
                 f.seek(start)
                 data = f.read(length)
 
-            resp = Response(data, status=206, content_type=content_type)
+            resp = HttpResponse(data, status=206, content_type=content_type)
             resp["Content-Range"] = f"bytes {start}-{end}/{file_size}"
             resp["Accept-Ranges"] = "bytes"
             resp["Content-Length"] = str(length)
@@ -437,7 +438,6 @@ class VideoInterviewStreamView(APIView):
             return resp
 
         # No Range header -> send whole file
-        from django.http import FileResponse
         response = FileResponse(open(file_path, "rb"), content_type=content_type)
         response["Content-Length"] = str(file_size)
         response["Accept-Ranges"] = "bytes"
@@ -619,6 +619,8 @@ class FreeConsultationCreateView(generics.CreateAPIView):
     """
     queryset = FreeConsultation.objects.all()
     serializer_class = FreeConsultationCreateSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
     
     def perform_create(self, serializer):
         # Сохраняем заявку с is_processed=False (требует обработки)
@@ -668,6 +670,8 @@ class ContactUsCreateView(generics.CreateAPIView):
     """
     queryset = ContactUs.objects.all()
     serializer_class = ContactUsCreateSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
     
     def perform_create(self, serializer):
         # Сохраняем заявку с is_processed=False (требует обработки)

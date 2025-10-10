@@ -4,6 +4,7 @@ import "./FreeConsult.scss";
 import "./OrderConsult.scss";
 import { useModal } from "@components/ModalProvider/ModalProvider";
 import { useTranslation } from "@hooks/useTranslation";
+import { useContactUs } from "@/hooks/useContactUs";
 
 const formName = "freeOrder";
 
@@ -32,6 +33,7 @@ export const OrderConsult = () => {
   const openModalState = getOpenModalState(formName);
 
   const isPC = useIsPC();
+  const { submitContactUs } = useContactUs();
 
   // валидация телефона
   const validatePhone = (phone) => {
@@ -103,9 +105,23 @@ export const OrderConsult = () => {
     setIsLoading(true);
 
     try {
-      // имитация запроса
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setIsSubmitted(true);
+      const result = await submitContactUs({
+        name: formData.name,
+        phone_number: formData.tel,
+        question: formData.question,
+      });
+
+      if (result?.success) {
+        setIsSubmitted(true);
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          tel:
+            result?.message ||
+            validation?.submitError ||
+            "Помилка при відправці. Спробуйте ще раз.",
+        }));
+      }
     } catch (err) {
       setErrors((prev) => ({
         ...prev,
