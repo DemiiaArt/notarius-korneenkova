@@ -1,9 +1,10 @@
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import SimilarArticles from "@components/SimilarArticles/SimilarArticles";
-
+import { normalizeAndConvertHtml } from "@/utils/html";
 import { useIsPC } from "@hooks/isPC";
 
 import "./TemplateBlogPage.scss";
+import { BACKEND_BASE_URL } from "@/config/api";
 
 /**
  * Универсальный шаблон страницы
@@ -24,20 +25,20 @@ import "./TemplateBlogPage.scss";
  */
 const TemplateBlogPage = ({
   title,
-  content = [],
+  content = "",
   heroImgClass,
   heroImage,
   tags = [],
   publishDate,
 }) => {
   const isPC = useIsPC();
-
+console.log(content)
   return (
     <div className="hero">
       <div className="hero-img-shadow-target">
         <div
           className={`hero-img ${heroImgClass || ""}`}
-          style={heroImage ? { backgroundImage: `url(${heroImage})` } : {}}
+          style={heroImage ? { backgroundImage: `url(${BACKEND_BASE_URL}${heroImage})` } : {}}
         >
           <div className="container hero-container">
             <Breadcrumbs />
@@ -61,53 +62,14 @@ const TemplateBlogPage = ({
         <div className="container">
           <div className="article-wrapper">
             <article className="text-content">
-              {content.map((block, i) => {
-                switch (block.type) {
-                  case "paragraph":
-                    return (
-                      <p
-                        key={i}
-                        className={`text-content-text lh-150 ${
-                          isPC ? "fs-p--16px" : "fs-p--14px"
-                        }`}
-                      >
-                        {block.text}
-                      </p>
-                    );
-                  case "title":
-                    return (
-                      <h2
-                        key={i}
-                        className={`text-content-title ${
-                          isPC ? "fs-p--32px" : "fs-p--18px"
-                        } fw-semi-bold lh-100`}
-                      >
-                        {block.text}
-                      </h2>
-                    );
-                  case "list":
-                    return (
-                      <ul
-                        key={i}
-                        className={`text-content-list lh-150 ${
-                          isPC ? "fs-p--16px" : "fs-p--14px"
-                        }`}
-                      >
-                        {block.items.map((item, idx) => (
-                          <li key={idx}>{item}</li>
-                        ))}
-                      </ul>
-                    );
-                  case "image":
-                    return (
-                      <div key={i} className="text-content-image">
-                        <img src={block.src} alt={block.alt || ""} />
-                      </div>
-                    );
-                  default:
-                    return null;
-                }
-              })}
+            {content && (
+              <div
+                className="text-content-html"
+                dangerouslySetInnerHTML={{
+                  __html: normalizeAndConvertHtml(content),
+                }}
+              />
+            )}
 
               {/* Дата публикации */}
               {publishDate && (
