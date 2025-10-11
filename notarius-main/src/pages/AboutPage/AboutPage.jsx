@@ -1,3 +1,4 @@
+import Seo from "@components/Seo/Seo";
 import LeadsButton from "@components/LeadsButton/LeadsButton";
 import About from "@components/About/About";
 import AboutTextBlock from "@components/AboutTextBlock/AboutTextBlock";
@@ -12,6 +13,10 @@ import "./AboutPage.scss";
 const AboutPage = () => {
   return (
     <>
+      <Seo
+        title="Про мене — Приватний нотаріус Надія Корнієнкова"
+        description="Досвідчений нотаріус з багаторічною практикою в Дніпрі. Професійний підхід, індивідуальні консультації, швидке оформлення документів."
+      />
       <div className="about-page">
         <About showBreadcrumbs />
       </div>

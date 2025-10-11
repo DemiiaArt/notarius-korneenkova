@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useBlogArticle } from "@hooks/useBlog";
+import Seo from "@components/Seo/Seo";
 import TemplateBlogPage from "./TemplateBlogPage";
 import Loader from "@components/Loader/Loader";
 import { BACKEND_BASE_URL } from "@/config/api";
@@ -125,7 +126,7 @@ const BlogArticleDetailPage = () => {
       }
       return `${BACKEND_BASE_URL}/media/${imageField}`;
     }
-    
+
     if (article.cover) {
       const imageField = article.cover;
       if (imageField.startsWith("http")) {
@@ -136,7 +137,7 @@ const BlogArticleDetailPage = () => {
       }
       return `${BACKEND_BASE_URL}/media/${imageField}`;
     }
-    
+
     return null;
   };
 
@@ -161,14 +162,32 @@ const BlogArticleDetailPage = () => {
   // Парсим контент статьи
   const content = parseContent(article.content);
 
+  // Подготавливаем данные для SEO
+  const articleTitle = article.title || "Без назви";
+  const articleDescription =
+    article.excerpt ||
+    (article.content
+      ? article.content.substring(0, 160).replace(/<[^>]*>/g, "")
+      : "");
+  const articleImage = getCoverImage();
+
   return (
-    <TemplateBlogPage
-      title={article.title || "Без назви"}
-      content={content}
-      heroImage={getCoverImage()}
-      tags={tags}
-      publishDate={formatDate(article.published_at)}
-    />
+    <>
+      <Seo
+        title={articleTitle}
+        description={articleDescription}
+        ogImage={articleImage}
+        ogType="article"
+        noSuffix={true}
+      />
+      <TemplateBlogPage
+        title={articleTitle}
+        content={content}
+        heroImage={articleImage}
+        tags={tags}
+        publishDate={formatDate(article.published_at)}
+      />
+    </>
   );
 };
 

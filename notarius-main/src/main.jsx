@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
+import { HelmetProvider } from "@vuer-ai/react-helmet-async";
 import ModalProvider from "@components/ModalProvider/ModalProvider";
 import App from "./App.jsx";
 import "./main.scss";
@@ -9,10 +10,17 @@ import "./main.scss";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ModalProvider>
-      <Router>
-        <App />
-      </Router>
-    </ModalProvider>
+    <HelmetProvider>
+      <ModalProvider>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <App />
+        </Router>
+      </ModalProvider>
+    </HelmetProvider>
   </StrictMode>
 );
