@@ -185,26 +185,9 @@ export const NAV_TREE = {
         ru: "notarialni-blog",
         en: "notary-blog",
       },
-      showInMenu: false,
+      showInMenu: true,
       component: null,
-      children: [
-        {
-          id: "blog-article",
-          kind: "page",
-          label: {
-            ua: "Стаття блогу",
-            ru: "Статья блога",
-            en: "Blog article",
-          },
-          slug: {
-            ua: "blog-article",
-            ru: "blog-article",
-            en: "blog-article",
-          },
-          showInMenu: false,
-          component: null,
-        },
-      ],
+      children: [], // Статьи будут добавлены из backend
     },
     {
       id: "not-found-page",

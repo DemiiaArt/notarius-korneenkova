@@ -1,7 +1,7 @@
 import { useIsPC } from "@hooks/isPC";
 import OptimizedImage from "@components/OptimizedImage/OptimizedImage";
 import { Link } from "react-router-dom";
-import { BACKEND_BASE_URL } from "@/config/api";
+import { BACKEND_BASE_URL, buildMediaUrl } from "@/config/api";
 import { useLanguage } from "@hooks/useLanguage";
 import "./BlogCard.scss";
 
@@ -17,6 +17,7 @@ const BlogCard = ({
   slug,
   excerpt,
   cover,
+  hero_image,
   published_at,
   categories,
   // Настройки отображения
@@ -51,20 +52,15 @@ const BlogCard = ({
     );
   }
 
-  // Обрабатываем изображение
+  // Обрабатываем изображение для карточки
   const displayImage = (() => {
     if (image) return image;
+    
     if (cover) {
-      // Если cover начинается с /media, добавляем базовый URL
-      if (cover.startsWith("/media/")) {
-        return `${BACKEND_BASE_URL}${cover}`;
-      }
-      // Если уже полный URL
-      if (cover.startsWith("http")) {
-        return cover;
-      }
-      // Иначе добавляем /media/
-      return `${BACKEND_BASE_URL}/media/${cover}`;
+      return buildMediaUrl(cover);
+    }
+    if (hero_image) {
+      return buildMediaUrl(hero_image);
     }
     return null;
   })();

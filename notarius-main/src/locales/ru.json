@@ -331,6 +331,9 @@
     "Header": {
       "contactButton": "Связаться"
     },
+    "LeadsButton": {
+      "freeConsultation": "Бесплатная консультация"
+    },
     "Footer": {
       "contacts": "Контакты",
       "navigation": "Навигация",

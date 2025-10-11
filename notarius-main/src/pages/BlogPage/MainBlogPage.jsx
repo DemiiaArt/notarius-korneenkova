@@ -7,8 +7,9 @@ import BlogCard from "@components/Blog/BlogCard";
 import Loader from "@components/Loader/Loader";
 import ArrowLeft from "../../assets/media/icons/arrov-blog-pagination-left.svg";
 import ArrowRight from "../../assets/media/icons/arrov-blog-pagination-right.svg";
-import { useBlog } from "@hooks/useBlog";
+import { useBlog, useBlogHome } from "@hooks/useBlog";
 import { useTranslation } from "@hooks/useTranslation";
+import { BACKEND_BASE_URL } from "@/config/api";
 
 const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
   const isPC = useIsPC();
@@ -23,6 +24,9 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
       page: currentPage,
       category: activeFilter,
     });
+
+  // Загружаем hero_image для главной страницы блога
+  const { blogHome, loading: homeLoading } = useBlogHome();
 
   // Формируем категории фильтров
   const filterCategories = [
@@ -70,17 +74,34 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
     }
   };
 
+  // Формируем URL для hero_image
+  const getHeroImageUrl = () => {
+    if (!blogHome?.hero_image) return null;
+
+    const heroImage = blogHome.hero_image;
+
+    // Иначе добавляем /media/
+    return `${BACKEND_BASE_URL}${heroImage}`;
+  };
+
+  const heroImageUrl = getHeroImageUrl();
+
   return (
     <>
       <div className="hero">
         <div className="hero-img-shadow-target">
-          <div className={`hero-img ${heroBlogImgClass || ""}`}>
+          <div
+            className={`hero-img ${heroBlogImgClass || ""}`}
+            style={
+              heroImageUrl ? { backgroundImage: `url(${heroImageUrl})` } : {}
+            }
+          >
             <div className="container hero-container">
               <Breadcrumbs />
               <h1
                 className={`fw-bold uppercase ${isPC ? "fs-p--40px" : "fs-p--24px"} c1`}
               >
-                {t("title") || "Блог"}
+                {blogHome?.title || t("title") || "Блог"}
               </h1>
               {!loading && totalCount > 0 && (
                 <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"} c2 mt-2`}>

@@ -104,24 +104,6 @@ class AboutMeDetail(models.Model):
         verbose_name_plural = "Блоки про мене (детали)"
         ordering = ['-created_at']
 
-class VideoInterview(models.Model):
-    title_video_uk = models.CharField(max_length=255)
-    title_video_en = models.CharField(max_length=255)
-    title_video_ru = models.CharField(max_length=255)
-
-    text_video_uk = CKEditor5Field('Text', config_name='default')
-    text_video_en = CKEditor5Field('Text', config_name='default')
-    text_video_ru = CKEditor5Field('Text', config_name='default')
-
-    video = models.FileField(upload_to='video_interview/')
-
-    def __str__(self):
-        return self.title_video_uk
-    
-    class Meta:
-        verbose_name = "Видео интервью"
-        verbose_name_plural = "Видео интервью"
-
 class ServicesFor(models.Model):
     title_uk = models.CharField(max_length=255)
     title_en = models.CharField(max_length=255)
@@ -618,3 +600,52 @@ class QualificationDiploma(models.Model):
 
     def __str__(self):
         return f"Diploma #{self.id}"
+
+
+class VideoBlock(models.Model):
+    """
+    Универсальная модель для управления видео блоками на сайте.
+    Позволяет выбирать тип видео: интервью, обо мне, контакты.
+    """
+    
+    VIDEO_TYPE_CHOICES = [
+        ('interview', 'Видео интервью'),
+        ('about_me', 'Обо мне'),
+        ('contacts', 'Как добраться до офиса'),
+    ]
+    
+    # Тип видео блока
+    video_type = models.CharField(
+        max_length=20,
+        choices=VIDEO_TYPE_CHOICES,
+        unique=True,
+        verbose_name="Тип видео блока"
+    )
+    
+    # Заголовки на трех языках
+    title_ua = models.CharField(max_length=255, verbose_name="Заголовок (UA)")
+    title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
+    title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
+    
+    # Описания на трех языках
+    description_ua = CKEditor5Field(blank=True, null=True, verbose_name="Описание (UA)")
+    description_ru = CKEditor5Field(blank=True, null=True, verbose_name="Описание (RU)")
+    description_en = CKEditor5Field(blank=True, null=True, verbose_name="Описание (EN)")
+    
+    # Видеофайл
+    video = models.FileField(upload_to='video_blocks/', verbose_name="Видеофайл")
+    
+    # Активность блока
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    
+    # Метаданные
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    
+    class Meta:
+        verbose_name = "Видео блок"
+        verbose_name_plural = "Видео блоки"
+        ordering = ['video_type']
+    
+    def __str__(self):
+        return f"{self.get_video_type_display()} - {self.title_ua}"

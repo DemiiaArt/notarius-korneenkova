@@ -10,9 +10,9 @@ from django.db.models import Q
 from django.contrib.admin import SimpleListFilter
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature,
-    ServicesFor, Application, VideoInterview, Review, FreeConsultation, 
+    ServicesFor, Application, Review, FreeConsultation, 
     ContactUs, FrequentlyAskedQuestion, AboutMeDetail,
-    QualificationBlock, QualificationCertificate, QualificationDiploma
+    QualificationBlock, QualificationCertificate, QualificationDiploma, VideoBlock
 )
 from blog.models import BlogCategory, BlogPost, BlogHome
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -465,38 +465,6 @@ class ContactUsAdmin(FormsAdmin):
     
 
 
-class VideoInterviewAdmin(admin.ModelAdmin):
-    list_display = ['title_video_uk', 'video_thumb']
-    list_filter = ['title_video_uk']
-    search_fields = ['title_video_uk', 'title_video_en', 'title_video_ru', 'text_video_uk', 'text_video_en', 'text_video_ru']
-    readonly_fields = ['video_thumb']
-    save_on_top = True
-    list_per_page = 20
-    
-    fieldsets = (
-        ('Українська мова', {
-            'fields': ('title_video_uk', 'text_video_uk'),
-            'description': 'Контент українською мовою'
-        }),
-        ('English', {
-            'fields': ('title_video_en', 'text_video_en'),
-            'description': 'Content in English'
-        }),
-        ('Русский язык', {
-            'fields': ('title_video_ru', 'text_video_ru'),
-            'description': 'Контент на русском языке'
-        }),
-        ('Відео', {
-            'fields': ('video_thumb', 'video'),
-            'description': 'Відеофайл (загальний для всіх мов)'
-        }),
-    )
-    
-    def video_thumb(self, obj):
-        if obj.video:
-            return format_html('<video src="{}" style="height:60px;border-radius:4px;object-fit:cover;" controls></video>', obj.video.url)
-        return '—'
-    video_thumb.short_description = 'Превью'
 
 
 class ReviewAdmin(BaseAdmin):
@@ -584,6 +552,35 @@ class ReviewAdmin(BaseAdmin):
         
         return response
     export_reviews_to_csv.short_description = 'Экспорт отзывов в CSV'
+
+
+class VideoBlockAdmin(ContentAdmin):
+    list_display = ['video_type', 'title_ua', 'is_active', 'updated_at']
+    list_filter = ['video_type', 'is_active', 'created_at']
+    search_fields = ['title_ua', 'title_ru', 'title_en', 'description_ua', 'description_ru', 'description_en']
+    readonly_fields = ['created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Основные параметры', {
+            'fields': ('video_type', 'is_active', 'video'),
+            'description': 'Тип видео блока и файл'
+        }),
+        ('Українська мова', {
+            'fields': ('title_ua', 'description_ua'),
+        }),
+        ('Русский язык', {
+            'fields': ('title_ru', 'description_ru'),
+        }),
+        ('English', {
+            'fields': ('title_en', 'description_en'),
+        }),
+        ('Параметры', {
+            'fields': ('created_at', 'updated_at'),
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).order_by('video_type')
 
 
 class FrequentlyAskedQuestionAdmin(ContentAdmin):
@@ -920,7 +917,7 @@ class NotariusAdminSite(admin.AdminSite):
                 'priority': 2
             },
             'Основной контент': {
-                'models': ['Header', 'AboutMe', 'AboutMeDetail', 'QualificationBlock', 'ServicesFor', 'VideoInterview', 'BackgroundVideo'],
+                'models': ['Header', 'AboutMe', 'AboutMeDetail', 'QualificationBlock', 'ServicesFor', 'VideoBlock', 'BackgroundVideo'],
                 'icon': 'fas fa-home',
                 'priority': 3
             },
@@ -994,7 +991,7 @@ admin_site.register(FreeConsultation, FreeConsultationAdmin)
 admin_site.register(QualificationBlock, QualificationBlockAdmin)
 admin_site.register(AboutMeDetail, AboutMeDetailAdmin)
 admin_site.register(ContactUs, ContactUsAdmin)
-admin_site.register(VideoInterview, VideoInterviewAdmin)
+admin_site.register(VideoBlock, VideoBlockAdmin)
 admin_site.register(Review, ReviewAdmin)
 admin_site.register(FrequentlyAskedQuestion, FrequentlyAskedQuestionAdmin)
 admin_site.register(ServiceCategory, ServiceCategoryAdmin)

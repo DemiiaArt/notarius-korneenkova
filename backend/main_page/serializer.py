@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature
-from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, VideoInterview, Review
+from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, Review
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory,
-    ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs,
-    FrequentlyAskedQuestion, AboutMeDetail
+    ServicesFor, Application, Review, FreeConsultation, ContactUs,
+    FrequentlyAskedQuestion, AboutMeDetail, VideoBlock
 )
 from .models import Header
 from .models import LegalDocument
@@ -372,41 +372,6 @@ class ApplicationCreateSerializer(serializers.ModelSerializer):
         fields = ['name', 'phone_number']
 
 
-class VideoInterviewSerializer(serializers.ModelSerializer):
-    # Агрегированные поля с выбором языка через контекст
-    title = serializers.SerializerMethodField()
-    text = serializers.SerializerMethodField()
-
-    class Meta:
-        model = VideoInterview
-        fields = [
-            'id',
-            'title',
-            'text',
-            'video'
-        ]
-
-    def _get_lang(self):
-        lang = self.context.get('lang', 'ua')
-        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
-
-    def get_title(self, obj):
-        lang = self._get_lang()
-        mapping = {
-            'ua': 'title_video_uk',
-            'ru': 'title_video_ru',
-            'en': 'title_video_en',
-        }
-        return getattr(obj, mapping[lang], '')
-
-    def get_text(self, obj):
-        lang = self._get_lang()
-        mapping = {
-            'ua': 'text_video_uk',
-            'ru': 'text_video_ru',
-            'en': 'text_video_en',
-        }
-        return getattr(obj, mapping[lang], '')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -795,3 +760,55 @@ class QualificationBlockSerializer(serializers.ModelSerializer):
 
     def get_diplomas(self, obj):
         return self._serialize_images(obj.diplomas.all().order_by('order', 'id'))
+
+
+class VideoBlockSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для видео блоков с поддержкой многоязычности
+    """
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    video_url = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = VideoBlock
+        fields = [
+            'id',
+            'video_type',
+            'title',
+            'description',
+            'video_url',
+            'is_active',
+            'created_at',
+            'updated_at'
+        ]
+    
+    def get_title(self, obj):
+        """Возвращает заголовок в зависимости от выбранного языка"""
+        lang = self.context.get('lang', 'ua')
+        if lang in ['ua', 'ru', 'en']:
+            mapping = {
+                'ua': 'title_ua',
+                'ru': 'title_ru',
+                'en': 'title_en',
+            }
+            return getattr(obj, mapping[lang], '')
+        return obj.title_ua
+    
+    def get_description(self, obj):
+        """Возвращает описание в зависимости от выбранного языка"""
+        lang = self.context.get('lang', 'ua')
+        if lang in ['ua', 'ru', 'en']:
+            mapping = {
+                'ua': 'description_ua',
+                'ru': 'description_ru',
+                'en': 'description_en',
+            }
+            return getattr(obj, mapping[lang], '')
+        return obj.description_ua
+    
+    def get_video_url(self, obj):
+        """Возвращает URL видео файла"""
+        if obj.video:
+            return obj.video.url
+        return None

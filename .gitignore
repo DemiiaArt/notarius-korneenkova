@@ -3,7 +3,7 @@
 .vscode
 notarius\venv
 backend/pycache/
-backend/migrations/
+
 backend/*.pyc
 **/pycache/
 *.pyc

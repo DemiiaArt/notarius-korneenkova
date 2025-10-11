@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
+from django.core.cache import cache
 from .models import BlogPost, BlogCategory, BlogHome
 from .serializers import (
     BlogPostListSerializer,
@@ -37,8 +38,8 @@ class BlogListView(APIView):
         category_slug = request.GET.get('category', None)
         print(category_slug)
         
-        # Получаем статьи с пагинацией
-        posts_queryset = BlogPost.objects.published().order_by('-published_at', '-created_at')
+        # Получаем статьи с пагинацией и оптимизируем запросы
+        posts_queryset = BlogPost.objects.published().select_related().prefetch_related('categories').order_by('-published_at', '-created_at')
         
         # Применяем фильтрацию по категории, если указана
         if category_slug:
@@ -63,8 +64,12 @@ class BlogListView(APIView):
         paginator = BlogPagination()
         paginated_posts = paginator.paginate_queryset(posts_queryset, request)
         
-        # Получаем все категории, которые показываются в фильтрах
-        categories = BlogCategory.objects.filter(show_in_filters=True).order_by('order', 'name_ua')
+        # Получаем все категории с кэшированием
+        cache_key = f'blog_categories_{lang}'
+        categories = cache.get(cache_key)
+        if not categories:
+            categories = BlogCategory.objects.filter(show_in_filters=True).order_by('order', 'name_ua').only('name_ua', 'name_ru', 'name_en', 'slug_ua', 'slug_ru', 'slug_en', 'order')
+            cache.set(cache_key, categories, 3600)  # Кэшируем на 1 час
         
         # Сериализуем данные с передачей языка в контекст
         posts_serializer = BlogPostListSerializer(paginated_posts, many=True, context={'lang': lang})
@@ -94,9 +99,9 @@ class BlogDetailView(APIView):
         if lang not in ['ua', 'ru', 'en']:
             lang = 'ua'
         
-        # Ищем статью по slug на любом языке
+        # Ищем статью по slug на любом языке (оптимизированный запрос)
         try:
-            post = BlogPost.objects.published().filter(
+            post = BlogPost.objects.published().select_related().prefetch_related('categories').filter(
                 Q(slug_ua=slug) | Q(slug_ru=slug) | Q(slug_en=slug)
             ).first()
             
@@ -122,13 +127,23 @@ class BlogHomeView(APIView):
         if lang not in ['ua', 'ru', 'en']:
             lang = 'ua'
 
+        # Кэшируем данные главной страницы блога
+        cache_key = f'blog_home_{lang}'
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data)
+
         obj = BlogHome.objects.order_by('-id').first()
         if not obj:
-            return Response({
+            response_data = {
                 'title': '',
                 'description': '',
                 'hero_image': None,
-            })
+            }
+            cache.set(cache_key, response_data, 3600)  # Кэшируем на 1 час
+            return Response(response_data)
 
         serializer = BlogHomeSerializer(obj, context={'lang': lang})
-        return Response(serializer.data)
+        response_data = serializer.data
+        cache.set(cache_key, response_data, 3600)  # Кэшируем на 1 час
+        return Response(response_data)

@@ -60,9 +60,9 @@ const SimilarArticles = () => {
               nextEl: ".similar-articles-carousel-next",
               prevEl: ".similar-articles-carousel-prev",
             }}
-            pagination={{
-              clickable: true,
-            }}
+            // pagination={{
+            //   clickable: true,
+            // }}
             className="similar-articles-carousel"
           >
             {similarArticles.map((article, index) => (

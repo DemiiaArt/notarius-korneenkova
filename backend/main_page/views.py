@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 import os
 import mimetypes
+import re
 from django.db.models import Count, Avg, Q
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -15,17 +16,18 @@ from django.http import FileResponse, HttpResponse
 
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
-    ServicesFor, Application, VideoInterview, Review, FreeConsultation, ContactUs,
-    FrequentlyAskedQuestion, AboutMeDetail, QualificationBlock
+    ServicesFor, Application, Review, FreeConsultation, ContactUs,
+    FrequentlyAskedQuestion, AboutMeDetail, QualificationBlock, VideoBlock
 )
 from .serializer import (
     HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer,
     ServiceCategorySerializer, ServiceCategoryDetailSerializer,
     ServicesForSerializer, ApplicationSerializer, ApplicationCreateSerializer,
-    VideoInterviewSerializer, ReviewSerializer, ReviewCreateSerializer,
+    ReviewSerializer, ReviewCreateSerializer,
     FreeConsultationSerializer, FreeConsultationCreateSerializer,
     ContactUsSerializer, ContactUsCreateSerializer, FrequentlyAskedQuestionSerializer,
-    ContactsSerializer, AboutMeDetailSerializer, QualificationBlockSerializer
+    ContactsSerializer, AboutMeDetailSerializer, QualificationBlockSerializer,
+    VideoBlockSerializer
 )
 
 
@@ -397,96 +399,6 @@ class ApplicationDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = ApplicationSerializer
 
 
-class VideoInterviewListView(generics.ListAPIView):
-    """
-    Список видео интервью
-    """
-    queryset = VideoInterview.objects.all()
-    serializer_class = VideoInterviewSerializer
-
-    def list(self, request, *args, **kwargs):
-        # Определяем язык из query параметра
-        lang = request.GET.get('lang', 'ua')
-        if lang not in ['ua', 'ru', 'en']:
-            lang = 'ua'
-
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
-        return Response(serializer.data)
-
-
-class VideoInterviewDetailView(generics.RetrieveAPIView):
-    """
-    Детальная информация о видео интервью
-    """
-    queryset = VideoInterview.objects.all()
-    serializer_class = VideoInterviewSerializer
-
-
-class VideoInterviewStreamView(APIView):
-    """
-    HTTP Range-enabled streaming for VideoInterview files.
-    Works in production where /media isn't directly served.
-    GET /api/video-interviews/<id>/stream/
-    """
-    permission_classes = [AllowAny]
-
-    def get(self, request, pk):
-        obj = get_object_or_404(VideoInterview, pk=pk)
-        if not obj.video:
-            return Response({"detail": "Video not found"}, status=404)
-
-        file_field = obj.video
-        try:
-            file_path = file_field.path
-        except Exception:
-            # Storage may be remote; fallback to open via storage
-            file = file_field.open("rb")
-            return FileResponse(file, content_type="video/mp4")
-
-        if not os.path.exists(file_path):
-            return Response({"detail": "Video file missing"}, status=404)
-
-        file_size = os.path.getsize(file_path)
-        content_type, _ = mimetypes.guess_type(file_path)
-        if not content_type:
-            content_type = "video/mp4"
-
-        range_header = request.headers.get("Range")
-        if range_header:
-            # Example header: "bytes=0-"
-            bytes_unit, _, range_spec = range_header.partition("=")
-            start_str, _, end_str = range_spec.partition("-")
-            try:
-                start = int(start_str) if start_str else 0
-            except ValueError:
-                start = 0
-            end = int(end_str) if end_str.isdigit() else file_size - 1
-            start = max(0, start)
-            end = min(end, file_size - 1)
-            length = end - start + 1
-
-            with open(file_path, "rb") as f:
-                f.seek(start)
-                data = f.read(length)
-
-            resp = HttpResponse(data, status=206, content_type=content_type)
-            resp["Content-Range"] = f"bytes {start}-{end}/{file_size}"
-            resp["Accept-Ranges"] = "bytes"
-            resp["Content-Length"] = str(length)
-            resp["Cache-Control"] = "public, max-age=31536000, immutable"
-            resp["Access-Control-Allow-Origin"] = "*"
-            resp["Access-Control-Expose-Headers"] = "Content-Range, Accept-Ranges"
-            return resp
-
-        # No Range header -> send whole file
-        response = FileResponse(open(file_path, "rb"), content_type=content_type)
-        response["Content-Length"] = str(file_size)
-        response["Accept-Ranges"] = "bytes"
-        response["Cache-Control"] = "public, max-age=31536000, immutable"
-        response["Access-Control-Allow-Origin"] = "*"
-        response["Access-Control-Expose-Headers"] = "Content-Range, Accept-Ranges"
-        return response
 
 class ReviewCreateView(generics.CreateAPIView):
     """
@@ -838,3 +750,110 @@ class QualificationBlockView(generics.RetrieveAPIView):
             return Response({'title': '', 'certificates': [], 'diplomas': []})
         serializer = self.get_serializer(obj, context={'lang': lang, 'request': request})
         return Response(serializer.data)
+
+
+class VideoBlockListView(generics.ListAPIView):
+    """
+    Список видео блоков с фильтрацией по типу
+    """
+    queryset = VideoBlock.objects.filter(is_active=True)
+    serializer_class = VideoBlockSerializer
+    
+    def list(self, request, *args, **kwargs):
+        video_type = request.GET.get('type')
+        lang = request.GET.get('lang', 'ua')
+        
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        
+        queryset = self.get_queryset()
+        
+        if video_type:
+            queryset = queryset.filter(video_type=video_type)
+        
+        serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
+        return Response(serializer.data)
+
+
+class VideoBlockDetailView(generics.RetrieveAPIView):
+    """
+    Детальная информация о видео блоке
+    """
+    queryset = VideoBlock.objects.filter(is_active=True)
+    serializer_class = VideoBlockSerializer
+    
+    def retrieve(self, request, *args, **kwargs):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        
+        obj = self.get_object()
+        serializer = self.get_serializer(obj, context={'lang': lang})
+        return Response(serializer.data)
+
+
+class VideoBlockStreamView(APIView):
+    """
+    HTTP Range-enabled streaming for VideoBlock files.
+    Works in production where /media isn't directly served.
+    GET /api/video-blocks/<id>/stream/
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request, pk):
+        obj = get_object_or_404(VideoBlock, pk=pk, is_active=True)
+        if not obj.video:
+            return Response({"detail": "Video not found"}, status=404)
+        
+        file_field = obj.video
+        try:
+            file_path = file_field.path
+        except Exception:
+            # Storage may be remote; fallback to open via storage
+            file = file_field.open("rb")
+            return FileResponse(file, content_type="video/mp4")
+        
+        # Local file system
+        if not os.path.exists(file_path):
+            return Response({"detail": "Video file not found"}, status=404)
+        
+        # Get file size
+        file_size = os.path.getsize(file_path)
+        
+        # Handle Range requests for video streaming
+        range_header = request.META.get('HTTP_RANGE')
+        if range_header:
+            # Parse range header
+            range_match = re.match(r'bytes=(\d+)-(\d*)', range_header)
+            if range_match:
+                start = int(range_match.group(1))
+                end = int(range_match.group(2)) if range_match.group(2) else file_size - 1
+                
+                # Ensure end doesn't exceed file size
+                end = min(end, file_size - 1)
+                
+                # Calculate content length
+                content_length = end - start + 1
+                
+                # Create response with partial content
+                response = FileResponse(
+                    open(file_path, 'rb'),
+                    status=206,
+                    content_type='video/mp4'
+                )
+                response['Content-Range'] = f'bytes {start}-{end}/{file_size}'
+                response['Content-Length'] = str(content_length)
+                response['Accept-Ranges'] = 'bytes'
+                
+                # Seek to start position
+                response.file.seek(start)
+                return response
+        
+        # Full file response
+        response = FileResponse(
+            open(file_path, 'rb'),
+            content_type='video/mp4'
+        )
+        response['Content-Length'] = str(file_size)
+        response['Accept-Ranges'] = 'bytes'
+        return response

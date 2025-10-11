@@ -52,6 +52,31 @@ export const Header = () => {
     }
   }, [isPC, setMenuOpen]);
 
+  // Блокируем скролл страницы, когда меню открыто
+  useEffect(() => {
+    if (menuOpen) {
+      // Сохраняем текущую позицию скролла
+      const scrollY = window.scrollY;
+
+      // Блокируем скролл и фиксируем позицию
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        // Восстанавливаем скролл
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflow = "";
+
+        // Возвращаем позицию скролла
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [menuOpen]);
+
   const [activeIndexes, setActiveIndexes] = useState([]);
   const itemsRef = useRef({});
 
@@ -221,28 +246,38 @@ export const Header = () => {
   return (
     <>
       <header
-        className={`header${menuOpen ? "menu-open bg8" : ""}${openKey ? "mega-open" : ""}`}
+        className={`header${menuOpen ? " menu-open bg8" : ""}${openKey ? " mega-open" : ""}`}
       >
         <div className="header-info bg4">
           <div className="container">
             <div className="header-info-content fs-p--16px lh-150 text-decoration--none c1">
-              <a className="header-info-email" href={`mailto:${contacts.email || ''}`}>
-                {contacts.email || 'nknotary.dnipro@gmail.com'}
+              <a
+                className="header-info-email"
+                href={`mailto:${contacts.email || ""}`}
+              >
+                {contacts.email || "nknotary.dnipro@gmail.com"}
               </a>
               <div className="header-info-phones-wrap">
                 {contacts.phone_number && (
-                  <a className="header-info-phones" href={`tel:${contacts.phone_number.replace(/\s|\+/g, '')}`}>
+                  <a
+                    className="header-info-phones"
+                    href={`tel:${contacts.phone_number.replace(/\s|\+/g, "")}`}
+                  >
                     {contacts.phone_number}
                   </a>
                 )}
                 {contacts.phone_number_2 && (
-                  <a className="header-info-phones" href={`tel:${contacts.phone_number_2.replace(/\s|\+/g, '')}`}>
+                  <a
+                    className="header-info-phones"
+                    href={`tel:${contacts.phone_number_2.replace(/\s|\+/g, "")}`}
+                  >
                     {contacts.phone_number_2}
                   </a>
                 )}
               </div>
               <a className="header-info-address" href="#">
-                {contacts.address || 'м. Дніпро, пр. Дмитра Яворницького, 2, 49100'}
+                {contacts.address ||
+                  "м. Дніпро, пр. Дмитра Яворницького, 2, 49100"}
               </a>
             </div>
           </div>
@@ -262,36 +297,12 @@ export const Header = () => {
               </div>
               <div className="navbar-social-link-block-pc-wrap">
                 <div className="navbar-social-link-block-pc">
-                  <a className="navbar-social-link bg4" href={contacts.instagram_url || "#"} target="_blank" rel="noreferrer">
-                    <svg
-                      className="navbar-social-link-icon c1"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_254_819)">
-                        <path
-                          d="M5.1202 0C8.37354 0 11.6269 0 14.8802 0C15.0869 0.0333333 15.2935 0.0533333 15.4935 0.1C17.7602 0.606667 19.2135 1.98 19.8335 4.22C19.9135 4.51333 19.9469 4.82 20.0002 5.12V14.88C19.9869 14.9467 19.9802 15.02 19.9602 15.0867C19.8269 15.6067 19.7602 16.16 19.5402 16.64C18.5469 18.7933 16.8335 19.9467 14.4535 19.98C11.4869 20.02 8.5202 19.9933 5.55354 19.9867C4.40687 19.9867 3.3402 19.6733 2.4002 19.0067C0.813536 17.8733 0.0135359 16.3133 0.00686921 14.3667C0.000202546 11.4533 0.00686921 8.54 0.00686921 5.62C0.00686921 5.24667 0.0268692 4.86 0.106869 4.49333C0.613536 2.23333 1.99354 0.786667 4.2202 0.166667C4.51354 0.0866667 4.8202 0.0533333 5.1202 0ZM18.2202 10C18.2202 8.55333 18.2202 7.11333 18.2202 5.66667C18.2202 5.20667 18.1735 4.76 18.0202 4.32667C17.4535 2.74 16.0869 1.78 14.3602 1.78C11.4535 1.78 8.54687 1.77333 5.6402 1.78667C5.20687 1.78667 4.74687 1.84667 4.3402 1.98667C2.7402 2.52 1.78687 3.90667 1.78687 5.63333C1.78687 8.54 1.78687 11.4467 1.78687 14.3533C1.78687 14.8067 1.83354 15.2467 1.99354 15.6733C2.5602 17.2467 3.91354 18.2067 5.6202 18.2133C8.54687 18.22 11.4735 18.2133 14.4002 18.2133C15.7135 18.2133 16.7669 17.6867 17.5402 16.62C18.0335 15.9467 18.2269 15.1733 18.2269 14.3467C18.2269 12.8933 18.2269 11.4467 18.2269 9.99333L18.2202 10Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          d="M15.1526 9.99368C15.1526 12.8203 12.8259 15.1537 9.99926 15.147C7.16593 15.147 4.83926 12.8137 4.8526 9.98701C4.85926 7.16035 7.16593 4.85368 9.99926 4.84035C12.8259 4.83368 15.1526 7.16035 15.1593 9.98701L15.1526 9.99368ZM13.3726 9.99368C13.3726 8.13368 11.8526 6.62035 9.99926 6.62035C8.13926 6.62035 6.62593 8.14035 6.62593 9.99368C6.62593 11.8537 8.14593 13.367 9.99926 13.367C11.8593 13.367 13.3726 11.847 13.3726 9.99368Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          d="M15.4004 3.34719C16.1137 3.36719 16.6937 3.96719 16.6737 4.66053C16.6537 5.39386 16.0537 5.96053 15.3271 5.93386C14.6271 5.90719 14.0538 5.30719 14.0738 4.62053C14.0938 3.89386 14.6871 3.32719 15.4004 3.34719Z"
-                          fill="currentColor"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_254_819">
-                          <rect width="20" height="20" fill="white" />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                  </a>
-                  <a className="navbar-social-link bg4" href={contacts.facebook_url || "#"} target="_blank" rel="noreferrer">
+                  <a
+                    className="navbar-social-link bg4"
+                    href={contacts.facebook_url || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <svg
                       className="navbar-social-link-icon c1"
                       width="20"
@@ -313,7 +324,32 @@ export const Header = () => {
                       </defs>
                     </svg>
                   </a>
-                  <a className="navbar-social-link bg4" href={contacts.telegram_url || "#"} target="_blank" rel="noreferrer">
+                  <a
+                    className="navbar-social-link bg4"
+                    href={contacts.instagram_url || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <svg
+                      className="navbar-social-link-icon c1"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M17.9395 5.29C17.8695 3.85 17.5395 2.57001 16.4895 1.52001C15.4395 0.470007 14.1595 0.14001 12.7195 0.0700098C11.2295 -0.00999023 6.77953 -0.00999023 5.29953 0.0700098C3.85953 0.14001 2.58954 0.470007 1.52954 1.52001C0.469543 2.57001 0.149531 3.85 0.0795312 5.29C-0.00046875 6.78 -0.00046875 11.23 0.0795312 12.72C0.149531 14.16 0.479543 15.44 1.52954 16.49C2.58954 17.54 3.85953 17.87 5.29953 17.94C6.78953 18.02 11.2395 18.02 12.7195 17.94C14.1595 17.87 15.4395 17.54 16.4895 16.49C17.5395 15.44 17.8695 14.16 17.9395 12.72C18.0195 11.23 18.0195 6.78001 17.9395 5.30001V5.29ZM8.99955 13.75C6.37955 13.75 4.24954 11.62 4.24954 9C4.24954 6.38 6.37955 4.25 8.99955 4.25C11.6195 4.25 13.7495 6.38 13.7495 9C13.7495 11.62 11.6195 13.75 8.99955 13.75ZM14.5195 4.5C13.9695 4.5 13.5195 4.05 13.5195 3.5C13.5195 2.95 13.9595 2.5 14.5195 2.5C15.0695 2.5 15.5195 2.95 15.5195 3.5C15.5195 4.05 15.0695 4.5 14.5195 4.5ZM12.2495 9C12.2495 10.79 10.7895 12.25 8.99955 12.25C7.20955 12.25 5.74954 10.79 5.74954 9C5.74954 7.21 7.20955 5.75 8.99955 5.75C10.7895 5.75 12.2495 7.21 12.2495 9Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </a>
+                  <a
+                    className="navbar-social-link bg4"
+                    href={contacts.ticktock_url || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <svg
                       className="navbar-social-link-icon c1"
                       width="19"
@@ -328,17 +364,42 @@ export const Header = () => {
                       />
                     </svg>
                   </a>
-                  <a className="navbar-social-link bg4" href={contacts.x_url || contacts.twitter_url || "#"} target="_blank" rel="noreferrer">
+                  <a
+                    className="navbar-social-link bg4"
+                    href={contacts.whatsapp_url || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <svg
                       className="navbar-social-link-icon c1"
-                      width="24"
-                      height="20"
-                      viewBox="0 0 24 20"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M20.9483 4.11166C20.8589 3.76108 20.6048 3.49637 20.3142 3.41519C19.8001 3.27049 17.2942 2.94108 12.0001 2.94108C6.70594 2.94108 4.20241 3.27049 3.68359 3.41519C3.39653 3.49519 3.14241 3.7599 3.05182 4.11166C2.92359 4.61049 2.58829 6.70108 2.58829 9.9999C2.58829 13.2987 2.92359 15.3881 3.05182 15.8893C3.14123 16.2387 3.39535 16.5034 3.68476 16.5834C4.20241 16.7293 6.70594 17.0587 12.0001 17.0587C17.2942 17.0587 19.7989 16.7293 20.3165 16.5846C20.6036 16.5046 20.8577 16.2399 20.9483 15.8881C21.0765 15.3893 21.4118 13.294 21.4118 9.9999C21.4118 6.70578 21.0765 4.61166 20.9483 4.11166ZM23.2271 3.52696C23.7648 5.62343 23.7648 9.9999 23.7648 9.9999C23.7648 9.9999 23.7648 14.3764 23.2271 16.4728C22.9283 17.6317 22.0542 18.5434 20.9471 18.8517C18.9365 19.4117 12.0001 19.4117 12.0001 19.4117C12.0001 19.4117 5.06712 19.4117 3.053 18.8517C1.94123 18.5387 1.06829 17.6281 0.772999 16.4728C0.235352 14.3764 0.235352 9.9999 0.235352 9.9999C0.235352 9.9999 0.235352 5.62343 0.772999 3.52696C1.07182 2.36813 1.94594 1.45637 3.053 1.14813C5.06712 0.588135 12.0001 0.588135 12.0001 0.588135C12.0001 0.588135 18.9365 0.588135 20.9471 1.14813C22.0589 1.46108 22.9318 2.37166 23.2271 3.52696ZM9.64712 14.1175V5.88225L16.7059 9.9999L9.64712 14.1175Z"
+                        d="M9 0C4.03 0 0 4.03 0 9C0 10.67 0.46001 12.24 1.26001 13.59L0 18L4.40997 16.74C5.75997 17.54 7.33 18 9 18C13.97 18 18 13.97 18 9C18 4.03 13.97 0 9 0ZM13.82 12.44C13.61 13.03 12.61 13.57 12.16 13.62C11.71 13.67 11.29 13.83 9.21002 13.01C6.71002 12.01 5.12 9.43 5 9.27C4.88 9.11 4 7.93001 4 6.71001C4 5.49001 4.62999 4.9 4.85999 4.64C5.08999 4.39 5.36002 4.33 5.52002 4.33C5.69002 4.33 5.85 4.33 6 4.34C6.17 4.34 6.36999 4.33999 6.54999 4.75999C6.76999 5.24999 7.23999 6.47 7.29999 6.58C7.35999 6.7 7.40001 6.84999 7.32001 7.00999C7.23001 7.16999 7.19001 7.28 7.07001 7.42C6.95001 7.56 6.81001 7.74001 6.70001 7.85001C6.57001 7.97001 6.45003 8.10001 6.59003 8.35001C6.74003 8.59001 7.23002 9.41 7.96002 10.06C8.90002 10.91 9.69 11.17 9.94 11.29C10.18 11.41 10.33 11.39 10.47 11.23C10.62 11.07 11.09 10.51 11.25 10.26C11.41 10.02 11.57 10.06 11.8 10.14C12.03 10.22 13.23 10.83 13.48 10.95C13.72 11.08 13.89 11.14 13.95 11.24C14.01 11.34 14.01 11.84 13.81 12.42L13.82 12.44Z"
+                        fill="#FCFCFC"
+                      />
+                    </svg>
+                  </a>
+                  <a
+                    className="navbar-social-link bg4"
+                    href={contacts.telegram_url || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <svg
+                      className="navbar-social-link-icon c1"
+                      width="18"
+                      height="15"
+                      viewBox="0 0 18 15"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1.23806 6.46001C6.06806 4.34001 9.28807 2.95 10.9081 2.27C15.5081 0.340004 16.4681 0.01 17.0881 0C17.2281 0 17.5281 0.0300024 17.7281 0.190002C17.8981 0.330002 17.9381 0.509999 17.9681 0.639999C17.9881 0.769999 18.0181 1.07 17.9981 1.3C17.7481 3.94 16.6681 10.33 16.1181 13.28C15.8881 14.53 15.4281 14.95 14.9881 14.99C14.0281 15.08 13.2981 14.35 12.3581 13.74C10.8981 12.78 10.0781 12.18 8.65807 11.24C7.01807 10.16 8.07806 9.56 9.01806 8.59C9.25806 8.34 13.5081 4.46001 13.5881 4.10001C13.5981 4.06001 13.6081 3.89 13.5081 3.81C13.4081 3.72 13.2681 3.75 13.1681 3.78C13.0181 3.81 10.6881 5.35999 6.17806 8.42999C5.51806 8.88999 4.91807 9.11001 4.37807 9.10001C3.78807 9.09001 2.64806 8.76001 1.79806 8.49001C0.758055 8.15001 -0.0619228 7.97 0.00807725 7.39C0.0480772 7.09 0.458058 6.78 1.23806 6.47V6.46001Z"
                         fill="currentColor"
                       />
                     </svg>
@@ -714,6 +775,7 @@ export const Header = () => {
       <nav className={`mobile-menu ${menuOpen ? "open" : ""}`}>
         <div className="container">
           <ul className="mobile-menu-list">
+            {/* Про мене */}
             <Link
               onClick={closeMenu}
               to={getNavUrl("about")}
@@ -722,151 +784,105 @@ export const Header = () => {
               {getNavLabel("about")}
             </Link>
 
-            {/* Послуги */}
-            <li
-              className={`mobile-menu-item ${activeIndexes.includes(0) ? "active" : ""}`}
+            {/* Нотаріальні послуги */}
+            <MobileMenuItem
+              index={0}
+              nodeId="services"
+              navTree={navTree}
+              lang={lang}
+              activeIndexes={activeIndexes}
+              toggleAccordion={toggleAccordion}
+              itemsRef={itemsRef}
+              closeMenu={closeMenu}
+            />
+
+            {/* Нотаріальний переклад */}
+            <MobileMenuItem
+              index={1}
+              nodeId="notary-translate"
+              navTree={navTree}
+              lang={lang}
+              activeIndexes={activeIndexes}
+              toggleAccordion={toggleAccordion}
+              itemsRef={itemsRef}
+              closeMenu={closeMenu}
+            />
+
+            {/* Інші послуги */}
+            <MobileMenuItem
+              index={2}
+              nodeId="other-services"
+              navTree={navTree}
+              lang={lang}
+              activeIndexes={activeIndexes}
+              toggleAccordion={toggleAccordion}
+              itemsRef={itemsRef}
+              closeMenu={closeMenu}
+            />
+
+            {/* Допомога військовим */}
+            <MobileMenuItem
+              index={3}
+              nodeId="military-help"
+              navTree={navTree}
+              lang={lang}
+              activeIndexes={activeIndexes}
+              toggleAccordion={toggleAccordion}
+              itemsRef={itemsRef}
+              closeMenu={closeMenu}
+            />
+
+            {/* Блог */}
+            <Link
+              onClick={closeMenu}
+              to={getNavUrl("blog")}
+              className="mobile-menu-item fs-p--16px fw-medium lh-100 c9"
             >
-              <div
-                className="accordion-header fw-medium"
-                onClick={() => toggleAccordion(0)}
-              >
-                {getSectionLabel("services")}
-                <span className="mobile-menu-item-icon">
-                  <img src={arrow} alt="Arrow" />
-                </span>
-              </div>
-              <div
-                ref={(el) => (itemsRef.current[0] = el)}
-                className="accordion-header-content"
-                style={{
-                  height: activeIndexes.includes(0)
-                    ? `${itemsRef.current[0]?.scrollHeight}px`
-                    : "0px",
-                }}
-              >
-                <ul>
-                  <li className="accordion-header-content-item">
-                    <Link onClick={closeMenu} to={getNavUrl("services")}>
-                      {getNavLabel("services")}
-                    </Link>
-                  </li>
-                  <li className="accordion-header-content-item">
-                    <Link
-                      onClick={closeMenu}
-                      to={getNavUrl("notary-translate")}
-                    >
-                      {getNavLabel("notary-translate")}
-                    </Link>
-                  </li>
-                  <li className="accordion-header-content-item">
-                    <Link onClick={closeMenu} to={getNavUrl("military-help")}>
-                      {getNavLabel("military-help")}
-                    </Link>
-                  </li>
-                  <li className="fs-p--16px lh-100">
-                    <Link onClick={closeMenu} to={getNavUrl("other-services")}>
-                      {getNavLabel("other-services")}
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </li>
+              {getNavLabel("blog")}
+            </Link>
 
             {/* Контакти */}
-            <li
-              className={`mobile-menu-item ${activeIndexes.includes(1) ? "active" : ""}`}
+            <Link
+              onClick={closeMenu}
+              to={getNavUrl("contacts")}
+              className="mobile-menu-item fs-p--16px fw-medium lh-100 c9"
             >
-              <div
-                className="accordion-header fw-medium"
-                onClick={() => toggleAccordion(1)}
-              >
-                {getSectionLabel("contacts")}
-                <span className="mobile-menu-item-icon">
-                  <img src={arrow} alt="Arrow" />
-                </span>
-              </div>
-              <div
-                ref={(el) => (itemsRef.current[1] = el)}
-                className="accordion-header-content"
-                style={{
-                  height: activeIndexes.includes(1)
-                    ? `${itemsRef.current[1]?.scrollHeight}px`
-                    : "0px",
-                }}
-              >
-                <ul>
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="">+380 67 820 07 00</a>
-                  </li>
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="">+380 67 544 07 00</a>
-                  </li>
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="">nknotary.dnipro@gmail.com</a>
-                  </li>
-                  <li className="accordion-header-content-item fs-p--16px lh-100 c9">
-                    <a href="">м. Дніпро, пр. Дмитра Яворницького, 2, 49100 </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
+              {getNavLabel("contacts")}
+            </Link>
             <li className="mobile-menu-item">
               <div className="accordion-header fw-medium">
-                {getSectionLabel("social")}
                 <ul className="mobile-menu-social-block">
                   <li className="mobile-menu-social-block-item">
                     <a href="#" className="mobile-menu-social-block-item-link">
                       <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
+                        width="9"
+                        height="18"
+                        viewBox="0 0 9 18"
                         className="mobile-menu-social-block-item-img"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
-                        <g clipPath="url(#clip0_254_819)">
-                          <path
-                            d="M5.1202 0C8.37354 0 11.6269 0 14.8802 0C15.0869 0.0333333 15.2935 0.0533333 15.4935 0.1C17.7602 0.606667 19.2135 1.98 19.8335 4.22C19.9135 4.51333 19.9469 4.82 20.0002 5.12V14.88C19.9869 14.9467 19.9802 15.02 19.9602 15.0867C19.8269 15.6067 19.7602 16.16 19.5402 16.64C18.5469 18.7933 16.8335 19.9467 14.4535 19.98C11.4869 20.02 8.5202 19.9933 5.55354 19.9867C4.40687 19.9867 3.3402 19.6733 2.4002 19.0067C0.813536 17.8733 0.0135359 16.3133 0.00686921 14.3667C0.000202546 11.4533 0.00686921 8.54 0.00686921 5.62C0.00686921 5.24667 0.0268692 4.86 0.106869 4.49333C0.613536 2.23333 1.99354 0.786667 4.2202 0.166667C4.51354 0.0866667 4.8202 0.0533333 5.1202 0ZM18.2202 10C18.2202 8.55333 18.2202 7.11333 18.2202 5.66667C18.2202 5.20667 18.1735 4.76 18.0202 4.32667C17.4535 2.74 16.0869 1.78 14.3602 1.78C11.4535 1.78 8.54687 1.77333 5.6402 1.78667C5.20687 1.78667 4.74687 1.84667 4.3402 1.98667C2.7402 2.52 1.78687 3.90667 1.78687 5.63333C1.78687 8.54 1.78687 11.4467 1.78687 14.3533C1.78687 14.8067 1.83354 15.2467 1.99354 15.6733C2.5602 17.2467 3.91354 18.2067 5.6202 18.2133C8.54687 18.22 11.4735 18.2133 14.4002 18.2133C15.7135 18.2133 16.7669 17.6867 17.5402 16.62C18.0335 15.9467 18.2269 15.1733 18.2269 14.3467C18.2269 12.8933 18.2269 11.4467 18.2269 9.99333L18.2202 10Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M15.1526 9.99368C15.1526 12.8203 12.8259 15.1537 9.99926 15.147C7.16593 15.147 4.83926 12.8137 4.8526 9.98701C4.85926 7.16035 7.16593 4.85368 9.99926 4.84035C12.8259 4.83368 15.1526 7.16035 15.1593 9.98701L15.1526 9.99368ZM13.3726 9.99368C13.3726 8.13368 11.8526 6.62035 9.99926 6.62035C8.13926 6.62035 6.62593 8.14035 6.62593 9.99368C6.62593 11.8537 8.14593 13.367 9.99926 13.367C11.8593 13.367 13.3726 11.847 13.3726 9.99368Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M15.4004 3.34719C16.1137 3.36719 16.6937 3.96719 16.6737 4.66053C16.6537 5.39386 16.0537 5.96053 15.3271 5.93386C14.6271 5.90719 14.0538 5.30719 14.0738 4.62053C14.0938 3.89386 14.6871 3.32719 15.4004 3.34719Z"
-                            fill="currentColor"
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_254_819">
-                            <rect width="20" height="20" fill="white" />
-                          </clipPath>
-                        </defs>
+                        <path
+                          d="M5.74001 10.12V18H2.22V10.12H0V6.86H2.22V4.38C2.22 1.56 3.9 0 6.48 0C7.71 0 9 0.220001 9 0.220001V2.99001H7.58C6.18 2.99001 5.74001 3.86 5.74001 4.75V6.86H8.87L8.37 10.12H5.74001Z"
+                          fill="currentColor"
+                        />
                       </svg>
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
                     <a href="#" className="mobile-menu-social-block-item-link">
                       <svg
-                        className="mobile-menu-social-block-item-img"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 18 18"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        className="mobile-menu-social-block-item-img"
                       >
-                        <g clipPath="url(#clip0_254_825)">
-                          <path
-                            d="M11.8892 12.1117V20.8333H7.67121V12.1117H4.16699V8.57526H7.67121V7.28858C7.67121 2.51171 9.77212 0 14.2173 0C15.58 0 15.9207 0.208025 16.667 0.377527V3.87543C15.8315 3.73675 15.5963 3.6597 14.7283 3.6597C13.6981 3.6597 13.1465 3.93707 12.6436 4.4841C12.1407 5.03113 11.8892 5.9788 11.8892 7.33481V8.58296H16.667L15.3854 12.1194H11.8892V12.1117Z"
-                            fill="currentColor"
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_254_825">
-                            <rect width="20" height="20" fill="white" />
-                          </clipPath>
-                        </defs>
+                        <path
+                          d="M17.9395 5.29C17.8695 3.85 17.5395 2.57001 16.4895 1.52001C15.4395 0.470007 14.1595 0.14001 12.7195 0.0700098C11.2295 -0.00999023 6.77953 -0.00999023 5.29953 0.0700098C3.85953 0.14001 2.58954 0.470007 1.52954 1.52001C0.469543 2.57001 0.149531 3.85 0.0795312 5.29C-0.00046875 6.78 -0.00046875 11.23 0.0795312 12.72C0.149531 14.16 0.479543 15.44 1.52954 16.49C2.58954 17.54 3.85953 17.87 5.29953 17.94C6.78953 18.02 11.2395 18.02 12.7195 17.94C14.1595 17.87 15.4395 17.54 16.4895 16.49C17.5395 15.44 17.8695 14.16 17.9395 12.72C18.0195 11.23 18.0195 6.78001 17.9395 5.30001V5.29ZM8.99955 13.75C6.37955 13.75 4.24954 11.62 4.24954 9C4.24954 6.38 6.37955 4.25 8.99955 4.25C11.6195 4.25 13.7495 6.38 13.7495 9C13.7495 11.62 11.6195 13.75 8.99955 13.75ZM14.5195 4.5C13.9695 4.5 13.5195 4.05 13.5195 3.5C13.5195 2.95 13.9595 2.5 14.5195 2.5C15.0695 2.5 15.5195 2.95 15.5195 3.5C15.5195 4.05 15.0695 4.5 14.5195 4.5ZM12.2495 9C12.2495 10.79 10.7895 12.25 8.99955 12.25C7.20955 12.25 5.74954 10.79 5.74954 9C5.74954 7.21 7.20955 5.75 8.99955 5.75C10.7895 5.75 12.2495 7.21 12.2495 9Z"
+                          fill="currentColor"
+                        />
                       </svg>
                     </a>
                   </li>
@@ -891,14 +907,31 @@ export const Header = () => {
                     <a href="#" className="mobile-menu-social-block-item-link">
                       <svg
                         className="mobile-menu-social-block-item-img"
-                        width="24"
-                        height="20"
-                        viewBox="0 0 24 20"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 18 18"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          d="M20.9483 4.11166C20.8589 3.76108 20.6048 3.49637 20.3142 3.41519C19.8001 3.27049 17.2942 2.94108 12.0001 2.94108C6.70594 2.94108 4.20241 3.27049 3.68359 3.41519C3.39653 3.49519 3.14241 3.7599 3.05182 4.11166C2.92359 4.61049 2.58829 6.70108 2.58829 9.9999C2.58829 13.2987 2.92359 15.3881 3.05182 15.8893C3.14123 16.2387 3.39535 16.5034 3.68476 16.5834C4.20241 16.7293 6.70594 17.0587 12.0001 17.0587C17.2942 17.0587 19.7989 16.7293 20.3165 16.5846C20.6036 16.5046 20.8577 16.2399 20.9483 15.8881C21.0765 15.3893 21.4118 13.294 21.4118 9.9999C21.4118 6.70578 21.0765 4.61166 20.9483 4.11166ZM23.2271 3.52696C23.7648 5.62343 23.7648 9.9999 23.7648 9.9999C23.7648 9.9999 23.7648 14.3764 23.2271 16.4728C22.9283 17.6317 22.0542 18.5434 20.9471 18.8517C18.9365 19.4117 12.0001 19.4117 12.0001 19.4117C12.0001 19.4117 5.06712 19.4117 3.053 18.8517C1.94123 18.5387 1.06829 17.6281 0.772999 16.4728C0.235352 14.3764 0.235352 9.9999 0.235352 9.9999C0.235352 9.9999 0.235352 5.62343 0.772999 3.52696C1.07182 2.36813 1.94594 1.45637 3.053 1.14813C5.06712 0.588135 12.0001 0.588135 12.0001 0.588135C12.0001 0.588135 18.9365 0.588135 20.9471 1.14813C22.0589 1.46108 22.9318 2.37166 23.2271 3.52696ZM9.64712 14.1175V5.88225L16.7059 9.9999L9.64712 14.1175Z"
+                          d="M9 0C4.03 0 0 4.03 0 9C0 10.67 0.46001 12.24 1.26001 13.59L0 18L4.40997 16.74C5.75997 17.54 7.33 18 9 18C13.97 18 18 13.97 18 9C18 4.03 13.97 0 9 0ZM13.82 12.44C13.61 13.03 12.61 13.57 12.16 13.62C11.71 13.67 11.29 13.83 9.21002 13.01C6.71002 12.01 5.12 9.43 5 9.27C4.88 9.11 4 7.93001 4 6.71001C4 5.49001 4.62999 4.9 4.85999 4.64C5.08999 4.39 5.36002 4.33 5.52002 4.33C5.69002 4.33 5.85 4.33 6 4.34C6.17 4.34 6.36999 4.33999 6.54999 4.75999C6.76999 5.24999 7.23999 6.47 7.29999 6.58C7.35999 6.7 7.40001 6.84999 7.32001 7.00999C7.23001 7.16999 7.19001 7.28 7.07001 7.42C6.95001 7.56 6.81001 7.74001 6.70001 7.85001C6.57001 7.97001 6.45003 8.10001 6.59003 8.35001C6.74003 8.59001 7.23002 9.41 7.96002 10.06C8.90002 10.91 9.69 11.17 9.94 11.29C10.18 11.41 10.33 11.39 10.47 11.23C10.62 11.07 11.09 10.51 11.25 10.26C11.41 10.02 11.57 10.06 11.8 10.14C12.03 10.22 13.23 10.83 13.48 10.95C13.72 11.08 13.89 11.14 13.95 11.24C14.01 11.34 14.01 11.84 13.81 12.42L13.82 12.44Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </a>
+                  </li>
+                  <li className="mobile-menu-social-block-item">
+                    <a href="#" className="mobile-menu-social-block-item-link">
+                      <svg
+                        className="mobile-menu-social-block-item-img"
+                        width="18"
+                        height="15"
+                        viewBox="0 0 18 15"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1.23806 6.46001C6.06806 4.34001 9.28807 2.95 10.9081 2.27C15.5081 0.340004 16.4681 0.01 17.0881 0C17.2281 0 17.5281 0.0300024 17.7281 0.190002C17.8981 0.330002 17.9381 0.509999 17.9681 0.639999C17.9881 0.769999 18.0181 1.07 17.9981 1.3C17.7481 3.94 16.6681 10.33 16.1181 13.28C15.8881 14.53 15.4281 14.95 14.9881 14.99C14.0281 15.08 13.2981 14.35 12.3581 13.74C10.8981 12.78 10.0781 12.18 8.65807 11.24C7.01807 10.16 8.07806 9.56 9.01806 8.59C9.25806 8.34 13.5081 4.46001 13.5881 4.10001C13.5981 4.06001 13.6081 3.89 13.5081 3.81C13.4081 3.72 13.2681 3.75 13.1681 3.78C13.0181 3.81 10.6881 5.35999 6.17806 8.42999C5.51806 8.88999 4.91807 9.11001 4.37807 9.10001C3.78807 9.09001 2.64806 8.76001 1.79806 8.49001C0.758055 8.15001 -0.0619228 7.97 0.00807725 7.39C0.0480772 7.09 0.458058 6.78 1.23806 6.47V6.46001Z"
                           fill="currentColor"
                         />
                       </svg>
@@ -930,6 +963,90 @@ export const Header = () => {
         </div>
       </nav>
     </>
+  );
+};
+
+// Компонент для випадаючого пункту меню з рекурсивним рендерингом дітей
+const MobileMenuItem = ({
+  index,
+  nodeId,
+  navTree,
+  lang,
+  activeIndexes,
+  toggleAccordion,
+  itemsRef,
+  closeMenu,
+}) => {
+  // Рекурсивна функція для рендерингу підменю (до 3 рівнів)
+  const renderChildren = (children, level = 0) => {
+    if (!children || children.length === 0 || level >= 3) return null;
+
+    return children.map((child) => {
+      const label = getLabel(child, lang);
+      const path = buildFullPathForId(navTree, child.id, lang);
+      const hasChildren = child.children && child.children.length > 0;
+
+      return (
+        <li
+          key={child.id}
+          className="accordion-header-content-item fs-p--16px lh-100 c9"
+          style={{ paddingLeft: level > 0 ? `${level * 15}px` : "0" }}
+        >
+          <Link onClick={closeMenu} to={path || "#"}>
+            {label}
+          </Link>
+          {hasChildren && level < 2 && (
+            <ul className="nested-menu">
+              {renderChildren(child.children, level + 1)}
+            </ul>
+          )}
+        </li>
+      );
+    });
+  };
+
+  const node = navTree ? findNodeById(navTree, nodeId) : null;
+
+  if (!node) return null;
+
+  const label = getLabel(node, lang);
+  const path = buildFullPathForId(navTree, nodeId, lang);
+  const hasChildren = node.children && node.children.length > 0;
+
+  return (
+    <li
+      className={`mobile-menu-item ${activeIndexes.includes(index) ? "active" : ""}`}
+    >
+      <div
+        className="accordion-header fw-medium"
+        onClick={() => toggleAccordion(index)}
+      >
+        <Link
+          onClick={(e) => {
+            e.stopPropagation(); // Зупиняємо спливання події, щоб не відкривався акордеон
+            closeMenu();
+          }}
+          to={path || "#"}
+          className="accordion-header-link"
+        >
+          {label}
+        </Link>
+        <span className="mobile-menu-item-icon">
+          <img src={arrow} alt="Arrow" />
+        </span>
+      </div>
+      <div
+        ref={(el) => (itemsRef.current[index] = el)}
+        className="accordion-header-content"
+        style={{
+          height: activeIndexes.includes(index)
+            ? `${itemsRef.current[index]?.scrollHeight}px`
+            : "0px",
+        }}
+      >
+        <ul>{hasChildren && renderChildren(node.children)}</ul>
+      </div>
+    </li>
   );
 };
 

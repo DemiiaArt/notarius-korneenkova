@@ -28,20 +28,30 @@ export const VideoBlock = ({ title, description, pageType }) => {
 
   useEffect(() => {
     let cancelled = false;
-    async function loadVideoInterview() {
+    async function loadVideoData() {
       try {
         const lang = ["ua", "ru", "en"].includes(currentLang) ? currentLang : "ua";
-        const resp = await fetch(`${API_BASE_URL}/video-interviews/?lang=${encodeURIComponent(lang)}`);
+        
+        // Определяем тип видео на основе pageType
+        let videoType = 'interview'; // по умолчанию
+        if (pageType === 'aboutPage') {
+          videoType = 'about_me';
+        } else if (pageType === 'contactsPage') {
+          videoType = 'contacts';
+        }
+        
+        // Запрашиваем данные в зависимости от типа
+        const resp = await fetch(`${API_BASE_URL}/video-blocks/?type=${videoType}&lang=${encodeURIComponent(lang)}`);
         if (!resp.ok) return;
         const data = await resp.json();
         if (cancelled) return;
         const first = Array.isArray(data) ? data[0] : null;
         if (first) {
           // предпочитаем стрим эндпойнт
-          const streamUrl = first.id ? `${API_BASE_URL}/video-interviews/${first.id}/stream/` : null;
-          setVideoUrl(streamUrl || buildMediaUrl(first.video));
+          const streamUrl = first.id ? `${API_BASE_URL}/video-blocks/${first.id}/stream/` : null;
+          setVideoUrl(streamUrl || buildMediaUrl(first.video_url));
           setServerTitle(first.title || "");
-          setServerDescription(first.text || "");
+          setServerDescription(first.description || "");
         }
         else {
           setVideoUrl("");
@@ -52,11 +62,11 @@ export const VideoBlock = ({ title, description, pageType }) => {
         // ignore, keep fallback video and texts
       }
     }
-    loadVideoInterview();
+    loadVideoData();
     return () => {
       cancelled = true;
     };
-  }, [currentLang]);
+  }, [currentLang, pageType]);
 
   const handlePlay = () => {
     setIsPlaying(true);
