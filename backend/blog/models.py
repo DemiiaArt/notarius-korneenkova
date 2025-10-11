@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.cache import cache
 from django_ckeditor_5.fields import CKEditor5Field
 
 
@@ -26,6 +27,12 @@ class BlogCategory(models.Model):
         verbose_name = "Категория блога"
         verbose_name_plural = "Категории блога"
         ordering = ["order", "name_ua"]
+        indexes = [
+            models.Index(fields=['show_in_filters', 'order']),
+            models.Index(fields=['slug_ua']),
+            models.Index(fields=['slug_ru']),
+            models.Index(fields=['slug_en']),
+        ]
 
     def __str__(self) -> str:
         return self.name_ua
@@ -83,23 +90,39 @@ class BlogPost(models.Model):
         verbose_name = "Статья блога"
         verbose_name_plural = "Статьи блога"
         ordering = ["-published_at", "-created_at"]
+        indexes = [
+            models.Index(fields=['status', 'published_at']),
+            models.Index(fields=['slug_ua']),
+            models.Index(fields=['slug_ru']),
+            models.Index(fields=['slug_en']),
+            models.Index(fields=['published_at', 'created_at']),
+        ]
 
     def get_similar_posts(self, limit=3):
         """
-        Возвращает похожие статьи на основе общих категорий
+        Возвращает похожие статьи на основе общих категорий (оптимизированная версия с кэшированием)
         """
         if not self.categories.exists():
             return BlogPost.objects.none()
         
-        # Получаем ID категорий текущей статьи
-        category_ids = self.categories.values_list('id', flat=True)
+        # Кэшируем похожие статьи
+        cache_key = f'similar_posts_{self.id}_{limit}'
+        similar_posts = cache.get(cache_key)
         
-        # Находим статьи с общими категориями, исключая текущую статью
-        similar_posts = BlogPost.objects.published().filter(
-            categories__in=category_ids
-        ).exclude(
-            id=self.id
-        ).distinct().order_by('-published_at', '-created_at')[:limit]
+        if similar_posts is None:
+            # Получаем ID категорий текущей статьи
+            category_ids = self.categories.values_list('id', flat=True)
+            
+            # Находим статьи с общими категориями, исключая текущую статью
+            # Используем select_related и prefetch_related для оптимизации
+            similar_posts = BlogPost.objects.published().select_related().prefetch_related('categories').filter(
+                categories__in=category_ids
+            ).exclude(
+                id=self.id
+            ).distinct().order_by('-published_at', '-created_at')[:limit]
+            
+            # Кэшируем на 30 минут
+            cache.set(cache_key, similar_posts, 1800)
         
         return similar_posts
 
