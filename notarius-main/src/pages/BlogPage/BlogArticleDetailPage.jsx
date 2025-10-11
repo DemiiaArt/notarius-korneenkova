@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 const BlogArticleDetailPage = () => {
   const { slug } = useParams();
   const { article, loading, error } = useBlogArticle(slug);
-  
+
   // Состояние для прямого запроса к API
   const [politikaData, setPolitikaData] = useState(null);
   const [politikaLoading, setPolitikaLoading] = useState(false);
@@ -61,92 +61,6 @@ const BlogArticleDetailPage = () => {
     );
   }
 
-  // Преобразуем HTML контент в формат для TemplateBlogPage
-  // const parseContent = (htmlContent) => {
-  //   if (!htmlContent) return [];
-
-  //   // Создаем временный элемент для парсинга HTML
-  //   const parser = new DOMParser();
-  //   const doc = parser.parseFromString(htmlContent, "text/html");
-  //   const elements = Array.from(doc.body.children);
-
-  //   return elements.map((el) => {
-  //     const tagName = el.tagName.toLowerCase();
-
-  //     if (tagName === "h2" || tagName === "h3" || tagName === "h4") {
-  //       return {
-  //         type: "title",
-  //         text: el.textContent,
-  //       };
-  //     }
-
-  //     if (tagName === "p") {
-  //       return {
-  //         type: "paragraph",
-  //         text: el.textContent,
-  //       };
-  //     }
-
-  //     if (tagName === "ul" || tagName === "ol") {
-  //       return {
-  //         type: "list",
-  //         items: Array.from(el.querySelectorAll("li")).map(
-  //           (li) => li.textContent
-  //         ),
-  //       };
-  //     }
-
-  //     if (tagName === "img") {
-  //       let src = el.getAttribute("src");
-  //       // Обрабатываем относительные пути к изображениям
-  //       if (src && !src.startsWith("http")) {
-  //         src = src.startsWith("/")
-  //           ? `${BACKEND_BASE_URL}${src}`
-  //           : `${BACKEND_BASE_URL}/${src}`;
-  //       }
-  //       return {
-  //         type: "image",
-  //         src: src,
-  //         alt: el.getAttribute("alt") || "",
-  //       };
-  //     }
-
-  //     // Fallback для других элементов
-  //     return {
-  //       type: "paragraph",
-  //       text: el.textContent,
-  //     };
-  //   });
-  // };
-
-  // // Обрабатываем обложку статьи (используем hero_image для обложки страницы)
-  // const getCoverImage = () => {
-  //   // Приоритет: hero_image для обложки страницы, cover как fallback
-  //   if (article.hero_image) {
-  //     const imageField = article.hero_image;
-  //     if (imageField.startsWith("http")) {
-  //       return imageField;
-  //     }
-  //     if (imageField.startsWith("/media/")) {
-  //       return `${BACKEND_BASE_URL}${imageField}`;
-  //     }
-  //     return `${BACKEND_BASE_URL}/media/${imageField}`;
-  //   }
-    
-  //   if (article.cover) {
-  //     const imageField = article.cover;
-  //     if (imageField.startsWith("http")) {
-  //       return imageField;
-  //     }
-  //     if (imageField.startsWith("/media/")) {
-  //       return `${BACKEND_BASE_URL}${imageField}`;
-  //     }
-  //     return `${BACKEND_BASE_URL}/media/${imageField}`;
-  //   }
-    
-  //   return null;
-  // };
-
   // Форматируем дату публикации
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -166,7 +80,7 @@ const BlogArticleDetailPage = () => {
   const tags = article.categories?.map((cat) => cat.name) || [];
 
   // Парсим контент статьи
-  const content = article.content
+  const content = article.content;
 
   // Подготавливаем данные для SEO
   const articleTitle = article.title || "Без назви";
@@ -175,7 +89,7 @@ const BlogArticleDetailPage = () => {
     (article.content
       ? article.content.substring(0, 160).replace(/<[^>]*>/g, "")
       : "");
-  const articleImage = getCoverImage();
+  const articleImage = article.hero_image;
 
   return (
     <>
