@@ -112,19 +112,32 @@ const BlogArticleDetailPage = () => {
     });
   };
 
-  // Обрабатываем обложку статьи
+  // Обрабатываем обложку статьи (используем hero_image для обложки страницы)
   const getCoverImage = () => {
-    if (!article.cover) return null;
-
-    if (article.cover.startsWith("http")) {
-      return article.cover;
+    // Приоритет: hero_image для обложки страницы, cover как fallback
+    if (article.hero_image) {
+      const imageField = article.hero_image;
+      if (imageField.startsWith("http")) {
+        return imageField;
+      }
+      if (imageField.startsWith("/media/")) {
+        return `${BACKEND_BASE_URL}${imageField}`;
+      }
+      return `${BACKEND_BASE_URL}/media/${imageField}`;
     }
-
-    if (article.cover.startsWith("/media/")) {
-      return `${BACKEND_BASE_URL}${article.cover}`;
+    
+    if (article.cover) {
+      const imageField = article.cover;
+      if (imageField.startsWith("http")) {
+        return imageField;
+      }
+      if (imageField.startsWith("/media/")) {
+        return `${BACKEND_BASE_URL}${imageField}`;
+      }
+      return `${BACKEND_BASE_URL}/media/${imageField}`;
     }
-
-    return `${BACKEND_BASE_URL}/media/${article.cover}`;
+    
+    return null;
   };
 
   // Форматируем дату публикации

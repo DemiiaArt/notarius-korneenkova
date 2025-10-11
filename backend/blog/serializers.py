@@ -47,7 +47,7 @@ class BlogPostListSerializer(serializers.ModelSerializer):
             'title',
             'slug',
             'excerpt',
-            'cover', 'published_at', 'status', 'categories'
+            'cover', 'hero_image', 'published_at', 'status', 'categories'
         ]
 
     def _short(self, html: str):
