@@ -1,3 +1,4 @@
+import Seo from "@components/Seo/Seo";
 import MainVideo from "@components/MainVideo/MainVideo";
 import About from "@components/About/About";
 import Skills from "@components/Skills/Skills";
@@ -12,6 +13,11 @@ import "./MainPage.scss";
 const MainPage = ({ lang }) => {
   return (
     <>
+      <Seo
+        title="Приватний нотаріус у Дніпрі — Надія Корнієнкова"
+        description="Нотаріальні послуги у Дніпрі: довіреності, договори, спадщина, апостиль, афідевіт. Пн–Чт 10:00–18:00, Пт 10:00–17:00. Дзвінок: +380 67 544 07 00."
+        noSuffix={true}
+      />
       <MainVideo lang={lang} />
       <About />
       <Skills />
