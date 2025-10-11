@@ -56,11 +56,11 @@ const PageTemplate = ({
       <div className="template-text-content">
         <div className="container">
           <article className="text-content">
-            {content?.description && (
+            {pageData?.description && (
               <div
                 className="text-content-html"
                 dangerouslySetInnerHTML={{
-                  __html: normalizeAndConvertHtml(content.description),
+                  __html: normalizeAndConvertHtml(pageData.description),
                 }}
               />
             )}
