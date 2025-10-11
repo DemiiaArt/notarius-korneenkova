@@ -95,6 +95,7 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     slug = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
+    canonical_url = serializers.SerializerMethodField()
 
     class Meta:
         model = BlogPost
@@ -104,7 +105,7 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
             'slug',
             'content',
             'hero_image',
-            'cover', 'published_at', 'status', 'categories', 'similar_posts'
+            'cover', 'published_at', 'status', 'canonical_url', 'categories', 'similar_posts'
         ]
 
     def get_title(self, obj):
@@ -146,6 +147,16 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
         """
         similar_posts = obj.get_similar_posts(limit=30)
         return SimilarArticleSerializer(similar_posts, many=True, context=self.context).data
+
+    def get_canonical_url(self, obj):
+        """
+        Возвращает канонический URL для текущего языка
+        """
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Используем метод модели для получения canonical URL
+        return obj.get_canonical_url(lang)
 
 
 class SimilarArticleSerializer(serializers.ModelSerializer):

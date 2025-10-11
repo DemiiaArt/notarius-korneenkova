@@ -301,6 +301,15 @@ class ServiceCategory(MPTTModel):
     description_ru = CKEditor5Field(blank=True, null=True, verbose_name="Описание (RU)")
     description_en = CKEditor5Field(blank=True, null=True, verbose_name="Описание (EN)")
     
+    # Канонический URL для SEO
+    canonical_url = models.CharField(
+        max_length=500,
+        blank=True, 
+        null=True,
+        verbose_name="Канонический URL (опционально)",
+        help_text=""
+    )
+    
     # Метаданные
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
@@ -314,6 +323,58 @@ class ServiceCategory(MPTTModel):
         
     class MPTTMeta:
         verbose_name_plural = "Категории услуг"
+
+    def get_canonical_url(self, language='ua'):
+        """
+        Возвращает канонический URL для конкретного языка
+        """
+        if self.canonical_url:
+            # Если canonical_url уже полный URL - возвращаем как есть
+            if self.canonical_url.startswith(('http://', 'https://')):
+                # Убеждаемся, что полный URL заканчивается слешем
+                return self.canonical_url if self.canonical_url.endswith('/') else f"{self.canonical_url}/"
+            # Если относительный путь - добавляем базовый URL
+            else:
+                # Убеждаемся, что путь начинается со слеша
+                path = self.canonical_url if self.canonical_url.startswith('/') else f"/{self.canonical_url}"
+                # Убеждаемся, что путь заканчивается слешем
+                path = path if path.endswith('/') else f"{path}/"
+                return f"https://notarius-korneenkova.com.ua{path}"
+        
+        # Автоматическая генерация на основе языка с учетом иерархии
+        base_url = "https://notarius-korneenkova.com.ua"
+        full_path = self._get_full_path_for_canonical(language)
+        return f"{base_url}{full_path}"
+
+    def _get_full_path_for_canonical(self, language):
+        """
+        Строит полный путь с учетом иерархии родительских категорий для canonical URL
+        """
+        path_parts = []
+        current = self
+        
+        # Собираем путь от текущего объекта до корня
+        while current:
+            if language == 'ua' and current.slug_ua:
+                path_parts.insert(0, current.slug_ua)
+            elif language == 'ru' and current.slug_ru:
+                path_parts.insert(0, current.slug_ru)
+            elif language == 'en' and current.slug_en:
+                path_parts.insert(0, current.slug_en)
+            else:
+                # Если нет slug для нужного языка, используем UA
+                if current.slug_ua:
+                    path_parts.insert(0, current.slug_ua)
+            
+            current = current.parent
+        
+        # Добавляем префикс языка для RU и EN
+        if language == 'ru':
+            return f"/ru/{'/'.join(path_parts)}/"
+        elif language == 'en':
+            return f"/en/{'/'.join(path_parts)}/"
+        else:
+            return f"/{'/'.join(path_parts)}/"
 
     def __str__(self):
         return f"{self.label_ua}"

@@ -74,6 +74,15 @@ class BlogPost(models.Model):
     status = models.BooleanField(default=False, verbose_name="Опубликовано")
     published_at = models.DateField(null=True, blank=True, verbose_name="Дата публикации")
 
+    # Канонический URL для SEO
+    canonical_url = models.CharField(
+        max_length=500,
+        blank=True, 
+        null=True,
+        verbose_name="Канонический URL (опционально)",
+        help_text=""
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -83,6 +92,34 @@ class BlogPost(models.Model):
         verbose_name = "Статья блога"
         verbose_name_plural = "Статьи блога"
         ordering = ["-published_at", "-created_at"]
+
+    def get_canonical_url(self, language='ua'):
+        """
+        Возвращает канонический URL для конкретного языка
+        """
+        if self.canonical_url:
+            # Если canonical_url уже полный URL - возвращаем как есть
+            if self.canonical_url.startswith(('http://', 'https://')):
+                # Убеждаемся, что полный URL заканчивается слешем
+                return self.canonical_url if self.canonical_url.endswith('/') else f"{self.canonical_url}/"
+            # Если относительный путь - добавляем базовый URL
+            else:
+                # Убеждаемся, что путь начинается со слеша
+                path = self.canonical_url if self.canonical_url.startswith('/') else f"/{self.canonical_url}"
+                # Убеждаемся, что путь заканчивается слешем
+                path = path if path.endswith('/') else f"{path}/"
+                return f"https://notarius-korneenkova.com.ua{path}"
+        
+        # Автоматическая генерация на основе языка с учетом структуры блога
+        base_url = "https://notarius-korneenkova.com.ua"
+        if language == 'ua':
+            return f"{base_url}/notarialni-blog/{self.slug_ua}/"
+        elif language == 'ru':
+            return f"{base_url}/ru/notarialni-blog/{self.slug_ru}/"
+        elif language == 'en':
+            return f"{base_url}/en/notary-blog/{self.slug_en}/"
+        else:
+            return f"{base_url}/notarialni-blog/{self.slug_ua}/"  # По умолчанию UA
 
     def get_similar_posts(self, limit=3):
         """
