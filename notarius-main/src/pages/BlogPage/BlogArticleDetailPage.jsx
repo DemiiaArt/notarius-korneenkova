@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useBlogArticle } from "@hooks/useBlog";
+import Seo from "@components/Seo/Seo";
 import TemplateBlogPage from "./TemplateBlogPage";
 import Loader from "@components/Loader/Loader";
 import { API_BASE_URL, apiClient } from "@/config/api";
@@ -167,38 +168,32 @@ const BlogArticleDetailPage = () => {
   // Парсим контент статьи
   const content = article.content
 
-  return (
-    <div>
-      {/* Отображаем информацию о запросе к API */}
-      {politikaLoading && (
-        <div style={{ padding: "20px", textAlign: "center", backgroundColor: "#f0f0f0" }}>
-          <p>Загружаем данные из API /api/blog/notarialni-blog/politika/...</p>
-        </div>
-      )}
-      
-      {politikaError && (
-        <div style={{ padding: "20px", textAlign: "center", backgroundColor: "#ffe6e6" }}>
-          <p style={{ color: "red" }}>Ошибка при загрузке данных: {politikaError}</p>
-        </div>
-      )}
-      
-      {politikaData && (
-        <div style={{ padding: "20px", textAlign: "center", backgroundColor: "#e6ffe6" }}>
-          <p style={{ color: "green" }}>✅ Данные успешно загружены из API!</p>
-          <pre style={{ fontSize: "12px", textAlign: "left", marginTop: "10px" }}>
-            {JSON.stringify(politikaData, null, 2)}
-          </pre>
-        </div>
-      )}
+  // Подготавливаем данные для SEO
+  const articleTitle = article.title || "Без назви";
+  const articleDescription =
+    article.excerpt ||
+    (article.content
+      ? article.content.substring(0, 160).replace(/<[^>]*>/g, "")
+      : "");
+  const articleImage = getCoverImage();
 
+  return (
+    <>
+      <Seo
+        title={articleTitle}
+        description={articleDescription}
+        ogImage={articleImage}
+        ogType="article"
+        noSuffix={true}
+      />
       <TemplateBlogPage
-        title={article.title || "Без назви"}
+        title={articleTitle}
         content={content}
-        heroImage={article.hero_image}
+        heroImage={articleImage}
         tags={tags}
         publishDate={formatDate(article.published_at)}
       />
-    </div>
+    </>
   );
 };
 
