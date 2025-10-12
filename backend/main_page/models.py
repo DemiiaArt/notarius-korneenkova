@@ -22,7 +22,8 @@ class Header(models.Model):
     instagram_url = models.URLField(max_length=500, blank=True, null=True)
     facebook_url = models.URLField(max_length=500, blank=True, null=True)
     twitter_url = models.URLField(max_length=500, blank=True, null=True)
-    x_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="X (ex-Twitter)")
+    tiktok_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="TikTok")
+    whatsapp_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="WhatsApp")
     telegram_url = models.URLField(max_length=500, blank=True, null=True)
     
 

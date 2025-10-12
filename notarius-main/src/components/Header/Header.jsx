@@ -346,7 +346,7 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.ticktock_url || "#"}
+                    href={contacts.tiktok_url || "#"}
                     target="_blank"
                     rel="noreferrer"
                   >
