@@ -278,7 +278,7 @@ const Footer = () => {
             </a>
             <a
               className="footer-social-media-item bg2"
-              href={contacts.twitter_url || contacts.x_url || "#"}
+              href={contacts.tiktok_url || "#"}
               target="_blank"
               rel="noreferrer"
             >
@@ -290,7 +290,7 @@ const Footer = () => {
             </a>
             <a
               className="footer-social-media-item bg2"
-              href={contacts.youtube_url || "#"}
+              href={contacts.whatsapp_url || "#"}
               target="_blank"
               rel="noreferrer"
             >
@@ -300,7 +300,12 @@ const Footer = () => {
                 className="footer-social-media-icon"
               />
             </a>
-            <a className="footer-social-media-item bg2">
+            <a
+              className="footer-social-media-item bg2"
+              href={contacts.telegram_url || "#"}
+              target="_blank"
+              rel="noreferrer"
+            >
               <img
                 src={telegram}
                 alt="Telegram"

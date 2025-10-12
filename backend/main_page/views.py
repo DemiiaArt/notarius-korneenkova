@@ -90,7 +90,8 @@ class ContactsView(APIView):
                 'instagram_url': None,
                 'facebook_url': None,
                 'twitter_url': None,
-                'x_url': None,
+                'tiktok_url': None,
+                'whatsapp_url': None,
                 'telegram_url': None,
             })
             return Response(data)
@@ -104,7 +105,8 @@ class ContactsView(APIView):
             'instagram_url': None,
             'facebook_url': None,
             'twitter_url': None,
-            'x_url': None,
+            'tiktok_url': None,
+            'whatsapp_url': None,
             'telegram_url': None,
         })
 
@@ -126,7 +128,8 @@ class ContactsView(APIView):
                 instagram_url=data.get('instagram_url'),
                 facebook_url=data.get('facebook_url'),
                 twitter_url=data.get('twitter_url'),
-                x_url=data.get('x_url'),
+                tiktok_url=data.get('tiktok_url'),
+                whatsapp_url=data.get('whatsapp_url'),
                 telegram_url=data.get('telegram_url'),
             )
         else:
@@ -146,7 +149,8 @@ class ContactsView(APIView):
             contacts.instagram_url = data.get('instagram_url', contacts.instagram_url)
             contacts.facebook_url = data.get('facebook_url', contacts.facebook_url)
             contacts.twitter_url = data.get('twitter_url', contacts.twitter_url)
-            contacts.x_url = data.get('x_url', contacts.x_url)
+            contacts.tiktok_url = data.get('tiktok_url', contacts.tiktok_url)
+            contacts.whatsapp_url = data.get('whatsapp_url', contacts.whatsapp_url)
             contacts.telegram_url = data.get('telegram_url', contacts.telegram_url)
             contacts.save()
 

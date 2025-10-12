@@ -50,7 +50,7 @@ class ContactsSerializer(serializers.ModelSerializer):
             'email', 'phone_number', 'phone_number_2',
             'address',
             'working_hours',
-            'instagram_url', 'facebook_url', 'twitter_url', 'x_url', 'telegram_url'
+            'instagram_url', 'facebook_url', 'twitter_url', 'tiktok_url', 'whatsapp_url', 'telegram_url'
         ]
 
     def _get_lang(self):

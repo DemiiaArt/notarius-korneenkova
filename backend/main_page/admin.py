@@ -200,14 +200,14 @@ class HeaderAdmin(admin.ModelAdmin):
     list_display = [
         'email', 'phone_number', 'phone_number_2',
         'address_ua', 'address_en', 'address_ru',
-        'working_hours_ua', 'instagram_url', 'facebook_url', 'twitter_url', 'x_url', 'telegram_url'
+        'working_hours_ua', 'instagram_url', 'facebook_url', 'twitter_url', 'tiktok_url', 'whatsapp_url', 'telegram_url'
     ]
     list_filter = ['email']
     search_fields = [
         'email', 'phone_number', 'phone_number_2',
         'address_ua', 'address_en', 'address_ru',
         'working_hours_ua', 'working_hours_ru', 'working_hours_en',
-        'instagram_url', 'facebook_url', 'twitter_url', 'x_url', 'telegram_url'
+        'instagram_url', 'facebook_url', 'twitter_url', 'tiktok_url', 'whatsapp_url', 'telegram_url'
     ]
     save_on_top = True
     list_per_page = 25
@@ -225,7 +225,7 @@ class HeaderAdmin(admin.ModelAdmin):
             'description': 'Локализованные часы работы'
         }),
         ('Социальные сети', {
-            'fields': ('instagram_url', 'facebook_url', 'twitter_url', 'x_url', 'telegram_url')
+            'fields': ('instagram_url', 'facebook_url', 'twitter_url', 'tiktok_url', 'whatsapp_url', 'telegram_url')
         }),
     )
     
