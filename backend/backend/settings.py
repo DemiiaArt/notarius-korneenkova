@@ -34,24 +34,28 @@ if not SECRET_KEY:
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # Для Railway
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+                 '127.0.0.1',
+                 'localhost',
+                 'notarius-korneenkova.com.ua',
+                 'www.notarius-korneenkova.com.ua'
+                ]
 
 # CSRF настройки для Railway
 CSRF_TRUSTED_ORIGINS = [
-    'https://notarius-korneenkova-production.up.railway.app',
-    'https://*.railway.app',
-    'https://*.up.railway.app',
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
+    'https://notarius-korneenkova.com.ua',
+    'https://www.notarius-korneenkova.com.ua',
 ]
 
 # Дополнительные настройки для Railway
-CSRF_COOKIE_SECURE = False  # Для Railway
-SESSION_COOKIE_SECURE = False  # Для Railway
+CSRF_COOKIE_SECURE = True  
+SESSION_COOKIE_SECURE = True  
 CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
+#for proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Настройки для статических файлов
 _static_dir = BASE_DIR / "static"
