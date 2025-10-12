@@ -1,8 +1,6 @@
 @use "sass:map";
 
-
-
-@media (min-width : 375px) {
+@media (min-width: 375px) {
   .video-block {
     position: relative;
     width: 100%;
@@ -110,15 +108,73 @@
       cursor: pointer;
       z-index: 2;
     }
+
+    // Стили для состояния загрузки
+    &-loading {
+      text-align: center;
+      padding: 2rem;
+      color: map.get($colors, 1);
+
+      .loading-spinner {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+    }
+
+    // Стили для отсутствия видео
+    &-no-video {
+      text-align: center;
+      padding: 2rem;
+      max-width: 400px;
+      margin: 0 auto;
+
+      .no-video-icon {
+        color: map.get($colors, 1);
+        opacity: 0.5;
+        margin-bottom: 1.5rem;
+      }
+
+      .no-video-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: map.get($colors, 1);
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+      }
+
+      .no-video-description {
+        font-size: 0.95rem;
+        color: map.get($colors, 1);
+        line-height: 1.6;
+        margin: 0 0 1.5rem 0;
+        opacity: 0.8;
+      }
+
+      .retry-button {
+        padding: 0.75rem 1.5rem;
+        background-color: map.get($colors, 1);
+        color: map.get($colors, 3);
+        border: 2px solid map.get($colors, 1);
+        border-radius: 4px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: transparent;
+          color: map.get($colors, 1);
+        }
+      }
+    }
   }
 }
 
-@media (min-width : 768px) {
+@media (min-width: 768px) {
   .video-block {
-
     &-preview {
-        background-size: cover;
-        background-position: 0 95%;
+      background-size: cover;
+      background-position: 0 95%;
     }
 
     &-content {
@@ -134,7 +190,6 @@
     }
 
     &-button {
-
       margin-top: 0;
 
       svg {
@@ -142,15 +197,29 @@
         height: 100px;
       }
     }
-  }
-}
 
-@media (min-width : 1200px) {
-  .video-block {
-    height: 700px;
-    &-preview {
-        background-position: 0% 80%;
+    &-no-video {
+      .no-video-icon {
+        width: 80px;
+        height: 80px;
+      }
+
+      .no-video-title {
+        font-size: 1.5rem;
+      }
+
+      .no-video-description {
+        font-size: 1rem;
+      }
     }
   }
 }
 
+@media (min-width: 1200px) {
+  .video-block {
+    height: 700px;
+    &-preview {
+      background-position: 0% 80%;
+    }
+  }
+}

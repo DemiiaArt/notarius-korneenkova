@@ -810,12 +810,26 @@ class VideoBlockStreamView(APIView):
             return Response({"detail": "Video not found"}, status=404)
         
         file_field = obj.video
+        
+        # Определяем MIME-тип по расширению файла
+        file_name = file_field.name
+        if file_name.lower().endswith('.mp4'):
+            content_type = 'video/mp4'
+        elif file_name.lower().endswith('.webm'):
+            content_type = 'video/webm'
+        elif file_name.lower().endswith('.mov'):
+            content_type = 'video/quicktime'
+        elif file_name.lower().endswith('.avi'):
+            content_type = 'video/x-msvideo'
+        else:
+            content_type = mimetypes.guess_type(file_name)[0] or 'video/mp4'
+        
         try:
             file_path = file_field.path
         except Exception:
             # Storage may be remote; fallback to open via storage
             file = file_field.open("rb")
-            return FileResponse(file, content_type="video/mp4")
+            return FileResponse(file, content_type=content_type)
         
         # Local file system
         if not os.path.exists(file_path):
@@ -839,24 +853,26 @@ class VideoBlockStreamView(APIView):
                 # Calculate content length
                 content_length = end - start + 1
                 
+                # Open file and seek to start position
+                file_handle = open(file_path, 'rb')
+                file_handle.seek(start)
+                
                 # Create response with partial content
                 response = FileResponse(
-                    open(file_path, 'rb'),
+                    file_handle,
                     status=206,
-                    content_type='video/mp4'
+                    content_type=content_type
                 )
                 response['Content-Range'] = f'bytes {start}-{end}/{file_size}'
                 response['Content-Length'] = str(content_length)
                 response['Accept-Ranges'] = 'bytes'
                 
-                # Seek to start position
-                response.file.seek(start)
                 return response
         
         # Full file response
         response = FileResponse(
             open(file_path, 'rb'),
-            content_type='video/mp4'
+            content_type=content_type
         )
         response['Content-Length'] = str(file_size)
         response['Accept-Ranges'] = 'bytes'
