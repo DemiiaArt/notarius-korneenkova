@@ -138,6 +138,9 @@ export const FreeConsult = () => {
           validation?.submitError || "Помилка при відправці. Спробуйте ще раз.",
       }));
     } finally {
+      setTimeout(() => setIsSubmitted(false), 3000);
+      setFormData({ name: "", tel: "", city: "", question: "" });
+      setErrors({ name: "", tel: "", city: "", question: "" });
       setIsLoading(false);
     }
   };

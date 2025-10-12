@@ -129,6 +129,9 @@ export const OrderConsult = () => {
           validation?.submitError || "Помилка при відправці. Спробуйте ще раз.",
       }));
     } finally {
+      setTimeout(() => setIsSubmitted(false), 3000);
+      setFormData({ name: "", tel: "", question: "" });
+      setErrors({ name: "", tel: "", question: "" });
       setIsLoading(false);
     }
   };
