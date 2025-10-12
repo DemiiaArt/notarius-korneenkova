@@ -36,15 +36,38 @@ class Header(models.Model):
 
 
 class BackgroundVideo(models.Model):
-    video_name = models.CharField(max_length=255)
-    video = models.FileField(upload_to='background_videos/')
+    MEDIA_TYPE_CHOICES = [
+        ('video', 'Видео'),
+        ('image', 'Изображение'),
+    ]
+    
+    name = models.CharField(max_length=255, verbose_name="Название", default="Фоновое медиа")
+    media_type = models.CharField(
+        max_length=10,
+        choices=MEDIA_TYPE_CHOICES,
+        default='video',
+        verbose_name="Тип медиа"
+    )
+    video = models.FileField(
+        upload_to='background_videos/',
+        blank=True,
+        null=True,
+        verbose_name="Видеофайл"
+    )
+    image = models.ImageField(
+        upload_to='background_videos/',
+        blank=True,
+        null=True,
+        verbose_name="Изображение"
+    )
+    is_active = models.BooleanField(default=True, verbose_name="Активно")
 
     def __str__(self):
-        return self.video_name
+        return f"{self.name} ({self.get_media_type_display()})"
 
     class Meta:
-        verbose_name = "Фоновое видео"
-        verbose_name_plural = "Фоновые видео"
+        verbose_name = "Фоновый медиа"
+        verbose_name_plural = "Фоновые медиа"
 
 
 class AboutMe(models.Model):

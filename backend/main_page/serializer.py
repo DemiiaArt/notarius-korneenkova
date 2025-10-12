@@ -78,9 +78,25 @@ class ContactsSerializer(serializers.ModelSerializer):
         return value or 'Пн-Пт 9:00–18:00'
 
 class BackgroundVideoSerializer(serializers.ModelSerializer):
+    media_url = serializers.SerializerMethodField()
+    
     class Meta:
         model = BackgroundVideo
-        fields = ['id', 'video_name', 'video']
+        fields = ['id', 'name', 'media_type', 'media_url', 'is_active']
+    
+    def get_media_url(self, obj):
+        """Возвращает URL медиа файла (видео или изображения)"""
+        request = self.context.get('request')
+        try:
+            if obj.media_type == 'video' and obj.video:
+                url = obj.video.url
+                return request.build_absolute_uri(url) if request else url
+            elif obj.media_type == 'image' and obj.image:
+                url = obj.image.url
+                return request.build_absolute_uri(url) if request else url
+        except Exception:
+            return None
+        return None
 
 class AboutMeSerializer(serializers.ModelSerializer):
     # Агрегированные поля с выбором языка через контекст

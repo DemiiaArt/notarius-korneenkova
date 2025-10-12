@@ -238,27 +238,36 @@ class HeaderAdmin(admin.ModelAdmin):
         return False
 
 class BackgroundVideoAdmin(admin.ModelAdmin):
-    list_display = ['video_name', 'video', 'video_preview']
-    list_filter = ['video_name']
-    search_fields = ['video_name']
-    readonly_fields = ['video_preview']
+    list_display = ['name', 'media_type', 'is_active', 'media_preview']
+    list_filter = ['media_type', 'is_active']
+    search_fields = ['name']
+    readonly_fields = ['media_preview']
     save_on_top = True
     list_per_page = 25
     
-    def video_preview(self, obj):
-        """Превью видео"""
-        if obj.video:
+    def media_preview(self, obj):
+        """Превью медиа (видео или изображение)"""
+        if obj.media_type == 'video' and obj.video:
             return format_html(
                 '<video src="{}" style="height:40px;border-radius:4px;object-fit:cover;" controls></video>', 
                 obj.video.url
             )
+        elif obj.media_type == 'image' and obj.image:
+            return format_html(
+                '<img src="{}" style="height:40px;border-radius:4px;object-fit:cover;" />', 
+                obj.image.url
+            )
         return '—'
-    video_preview.short_description = 'Превью'
+    media_preview.short_description = 'Превью'
     
     fieldsets = (
-        ('Информация о видео', {
-            'fields': ('video_name', 'video'),
-            'description': 'Загрузите фоновое видео для сайта'
+        ('Основная информация', {
+            'fields': ('name', 'media_type', 'is_active'),
+            'description': 'Название и тип медиа'
+        }),
+        ('Медиа файлы', {
+            'fields': ('video', 'image', 'media_preview'),
+            'description': 'Загрузите видео или изображение в зависимости от выбранного типа'
         }),
     )
 
