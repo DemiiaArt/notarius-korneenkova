@@ -13,6 +13,9 @@ backend/db.sqlite3
 backend/nixpacks.toml
 venv/
 
+# Cache directories
+backend/main_page/cache_page/
+
 
 # Logs
 notarius\logs

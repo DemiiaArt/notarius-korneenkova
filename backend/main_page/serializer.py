@@ -250,16 +250,17 @@ class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
     """
     Детальный сериализатор для категории услуг.
     Поддерживает выбор языка через параметр lang в контексте.
-    Включает титул, описание, hero_image и особенности услуг.
+    Включает титул, описание, hero_image, особенности услуг и canonical_url.
     """
     label = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
     hero_image = serializers.ImageField(read_only=True)
     features = serializers.SerializerMethodField()
+    canonical_url = serializers.SerializerMethodField()
 
     class Meta:
         model = ServiceCategory
-        fields = ['label', 'description', 'hero_image', 'features']
+        fields = ['label', 'description', 'hero_image', 'features', 'canonical_url']
 
     def get_label(self, obj):
         # Получаем язык из контекста
@@ -310,6 +311,16 @@ class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
                 feature_texts.append(text)
         
         return feature_texts
+
+    def get_canonical_url(self, obj):
+        """
+        Возвращает канонический URL для текущего языка
+        """
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Используем метод модели для получения canonical URL
+        return obj.get_canonical_url(lang)
         
 class ServicesForSerializer(serializers.ModelSerializer):
     # Агрегированные поля с выбором языка через контекст

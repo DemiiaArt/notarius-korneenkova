@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import reverse
+from django import forms
 from .models import BlogCategory, BlogPost, BlogHome
 
 
@@ -16,18 +17,61 @@ class BlogCategoryAdmin(admin.ModelAdmin):
     }
 
 
+class BlogPostForm(forms.ModelForm):
+    """Кастомная форма для BlogPost с подсказкой для canonical_url"""
+    
+    class Meta:
+        model = BlogPost
+        fields = '__all__'
+        widgets = {
+            'canonical_url': forms.TextInput(attrs={
+                'placeholder': 'Например: /page/ или https://notarius-korneenkova.com.ua/page/',
+                'style': 'width: 100%;'
+            })
+        }
+
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ("title_ua", "status", "published_at")
+    form = BlogPostForm
+    list_display = ("title_ua", "status", "published_at", "get_categories")
+    list_editable = ("status",)
     list_filter = ("status", "categories")
     search_fields = ("title_ua", "title_ru", "title_en")
     filter_horizontal = ("categories",)
     date_hierarchy = "published_at"
+    save_on_top = True
     prepopulated_fields = {
         "slug_ua": ("title_ua",),
         "slug_ru": ("title_ru",),
         "slug_en": ("title_en",),
     }
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('title_ua', 'title_ru', 'title_en')
+        }),
+        ('URL настройки', {
+            'fields': ('slug_ua', 'slug_ru', 'slug_en', 'canonical_url'),
+            'description': 'Настройки URL для разных языков'
+        }),
+        ('Контент', {
+            'fields': ('content_ua', 'content_ru', 'content_en')
+        }),
+        ('Медиа', {
+            'fields': ('cover', 'hero_image')
+        }),
+        ('Настройки публикации', {
+            'fields': ('status', 'published_at', 'categories')
+        }),
+    )
+
+    def get_categories(self, obj):
+        """Отображение категорий статьи"""
+        categories = obj.categories.all()
+        if categories:
+            return ', '.join([cat.name_ua for cat in categories])
+        return '—'
+    get_categories.short_description = 'Категории'
 
 
 @admin.register(BlogHome)

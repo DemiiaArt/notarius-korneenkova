@@ -666,7 +666,22 @@ class ServiceFeatureInline(admin.TabularInline):
         }
 
 
+class ServiceCategoryForm(forms.ModelForm):
+    """Кастомная форма для ServiceCategory с подсказкой для canonical_url"""
+    
+    class Meta:
+        model = ServiceCategory
+        fields = '__all__'
+        widgets = {
+            'canonical_url': forms.TextInput(attrs={
+                'placeholder': 'Например: /page/ или  https://notarius-korneenkova.com.ua/page/',
+                'style': 'width: 100%;'
+            })
+        }
+    
+
 class ServiceCategoryAdmin(MPTTModelAdmin):
+    form = ServiceCategoryForm
     prepopulated_fields = {
         "nav_id": ("label_en",),
         "slug_ua": ("label_ua",),
@@ -675,6 +690,26 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
     }
     exclude = ('component',)
     inlines = [ServiceFeatureInline]
+    save_on_top = True
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('kind', 'parent', 'label_ua', 'label_ru', 'label_en', 'nav_id')
+        }),
+        ('URL настройки', {
+            'fields': ('slug_ua', 'slug_ru', 'slug_en', 'canonical_url'),
+            'description': 'Настройки URL для разных языков'
+        }),
+        ('Отображение', {
+            'fields': ('show_in_menu', 'show_mega_panel', 'order')
+        }),
+        ('Изображения', {
+            'fields': ('hero_image', 'card_image')
+        }),
+        ('Контент', {
+            'fields': ('description_ua', 'description_ru', 'description_en')
+        }),
+    )
 
     list_display = (
         'label_ua',
@@ -779,8 +814,23 @@ class BlogCategoryAdmin(admin.ModelAdmin):
     save_on_top = True
     list_per_page = 25
 
+class BlogPostForm(forms.ModelForm):
+    """Кастомная форма для BlogPost с подсказкой для canonical_url"""
+    
+    class Meta:
+        model = BlogPost
+        fields = '__all__'
+        widgets = {
+            'canonical_url': forms.TextInput(attrs={
+                'placeholder': 'Например: /page/ или https://notarius-korneenkova.com.ua/page/',
+                'style': 'width: 100%;'
+            })
+        }
+
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ("title_ua", "status", "published_at", "cover_preview")
+    form = BlogPostForm
+    list_display = ("title_ua", "status", "get_categories", "published_at")
+    list_editable = ("status",)
     list_filter = ("status", "categories", "published_at")
     search_fields = ("title_ua", "title_ru", "title_en")
     filter_horizontal = ("categories",)
@@ -790,6 +840,25 @@ class BlogPostAdmin(admin.ModelAdmin):
         "slug_ru": ("title_ru",),
         "slug_en": ("title_en",),
     }
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('title_ua', 'title_ru', 'title_en')
+        }),
+        ('URL настройки', {
+            'fields': ('slug_ua', 'slug_ru', 'slug_en', 'canonical_url'),
+            'description': 'Настройки URL для разных языков'
+        }),
+        ('Контент', {
+            'fields': ('content_ua', 'content_ru', 'content_en')
+        }),
+        ('Медиа', {
+            'fields': ('cover', 'hero_image')
+        }),
+        ('Настройки публикации', {
+            'fields': ('status', 'published_at', 'categories')
+        }),
+    )
     readonly_fields = ("cover_preview",)
     save_on_top = True
     list_per_page = 25
@@ -800,6 +869,14 @@ class BlogPostAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" style="height:40px;border-radius:4px;object-fit:cover;" />', obj.cover.url)
         return '—'
     cover_preview.short_description = 'Обложка'
+
+    def get_categories(self, obj):
+        """Отображение категорий статьи"""
+        categories = obj.categories.all()
+        if categories:
+            return ', '.join([cat.name_ua for cat in categories])
+        return '—'
+    get_categories.short_description = 'Категории'
 
 class BlogHomeAdmin(admin.ModelAdmin):
     list_display = ("title_ua",)
