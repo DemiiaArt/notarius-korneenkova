@@ -23,11 +23,9 @@ export const VideoBlock = ({ title, description, pageType }) => {
   const translations = getTranslations();
   const { playButton } = translations;
 
-  // Получаем переводы для конкретной страницы
-  const pageTranslations = pageType ? translations[pageType] : null;
-  const translatedTitle = serverTitle || pageTranslations?.title || title;
-  const translatedDescription =
-    serverDescription || pageTranslations?.description || description;
+  // Переводы приходят с backend
+  const translatedTitle = serverTitle || title || "";
+  const translatedDescription = serverDescription || description || "";
 
   useEffect(() => {
     let cancelled = false;
@@ -266,9 +264,10 @@ export const VideoBlock = ({ title, description, pageType }) => {
               >
                 {translatedTitle}
               </h2>
-              <p className={` ${isPC ? "fs-p--24px" : "fs-p--16px"} lh-150`}>
-                {translatedDescription}
-              </p>
+              <div
+                className={` ${isPC ? "fs-p--24px" : "fs-p--16px"} lh-150`}
+                dangerouslySetInnerHTML={{ __html: translatedDescription }}
+              />
             </motion.div>
 
             <motion.button
