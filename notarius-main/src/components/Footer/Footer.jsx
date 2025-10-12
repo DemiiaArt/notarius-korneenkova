@@ -111,36 +111,71 @@ const Footer = () => {
               >
                 Ми в соцмережах
               </p>
-              <a
-                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-              >
-                Facebook
-              </a>
-              <a
-                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-              >
-                Instagram
-              </a>
-              <a
-                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-              >
-                Tiktok
-              </a>
+              {contacts.facebook_url && (
+                <a
+                  href={contacts.facebook_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                >
+                  Facebook
+                </a>
+              )}
+              {contacts.instagram_url && (
+                <a
+                  href={contacts.instagram_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                >
+                  Instagram
+                </a>
+              )}
+              {contacts.tiktok_url && (
+                <a
+                  href={contacts.tiktok_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                >
+                  TikTok
+                </a>
+              )}
+              {contacts.twitter_url && (
+                <a
+                  href={contacts.twitter_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                >
+                  Twitter
+                </a>
+              )}
               <p
                 className={`footer-social-media-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
               >
                 Пишіть нам
               </p>
-              <a
-                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-              >
-                WhatsApp
-              </a>
-              <a
-                className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
-              >
-                Telegram
-              </a>
+              {contacts.whatsapp_url && (
+                <a
+                  href={contacts.whatsapp_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                >
+                  WhatsApp
+                </a>
+              )}
+              {contacts.telegram_url && (
+                <a
+                  href={contacts.telegram_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
+                >
+                  Telegram
+                </a>
+              )}
             </div>
             <div className="footer-contacts">
               <p
@@ -252,66 +287,90 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-social-media">
-            <a
-              className="footer-social-media-item bg2"
-              href={contacts.instagram_url || "#"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src={instagram}
-                alt="Inst"
-                className="footer-social-media-icon"
-              />
-            </a>
-            <a
-              className="footer-social-media-item bg2"
-              href={contacts.facebook_url || "#"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src={facebook}
-                alt="Facebook"
-                className="footer-social-media-icon"
-              />
-            </a>
-            <a
-              className="footer-social-media-item bg2"
-              href={contacts.tiktok_url || "#"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src={ticktock}
-                alt="TickTock"
-                className="footer-social-media-icon"
-              />
-            </a>
-            <a
-              className="footer-social-media-item bg2"
-              href={contacts.whatsapp_url || "#"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src={whatsapp}
-                alt="whatsapp"
-                className="footer-social-media-icon"
-              />
-            </a>
-            <a
-              className="footer-social-media-item bg2"
-              href={contacts.telegram_url || "#"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src={telegram}
-                alt="Telegram"
-                className="footer-social-media-icon"
-              />
-            </a>
+            {contacts.instagram_url && (
+              <a
+                className="footer-social-media-item bg2"
+                href={contacts.instagram_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src={instagram}
+                  alt="Instagram"
+                  className="footer-social-media-icon"
+                />
+              </a>
+            )}
+            {contacts.facebook_url && (
+              <a
+                className="footer-social-media-item bg2"
+                href={contacts.facebook_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src={facebook}
+                  alt="Facebook"
+                  className="footer-social-media-icon"
+                />
+              </a>
+            )}
+            {contacts.tiktok_url && (
+              <a
+                className="footer-social-media-item bg2"
+                href={contacts.tiktok_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src={ticktock}
+                  alt="TikTok"
+                  className="footer-social-media-icon"
+                />
+              </a>
+            )}
+            {contacts.whatsapp_url && (
+              <a
+                className="footer-social-media-item bg2"
+                href={contacts.whatsapp_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src={whatsapp}
+                  alt="WhatsApp"
+                  className="footer-social-media-icon"
+                />
+              </a>
+            )}
+            {contacts.telegram_url && (
+              <a
+                className="footer-social-media-item bg2"
+                href={contacts.telegram_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src={telegram}
+                  alt="Telegram"
+                  className="footer-social-media-icon"
+                />
+              </a>
+            )}
+            {contacts.twitter_url && (
+              <a
+                className="footer-social-media-item bg2"
+                href={contacts.twitter_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src={ticktock}
+                  alt="Twitter"
+                  className="footer-social-media-icon"
+                />
+              </a>
+            )}
           </div>
           <FooterAccordion openIndex={openIndex} setOpenIndex={setOpenIndex} />
         </div>
