@@ -39,12 +39,71 @@ export const LanguageProvider = ({
     // Определяем текущий язык из пути
     const currentLang = detectLocaleFromPath(currentPath);
 
-    // Нормализуем текущий путь для поиска в INDICES
-    const normalizedPath = currentPath.replace(/\/+$/, "/");
-
-    console.log("🔍 Текущий путь:", normalizedPath);
+    console.log("🔍 Текущий путь:", currentPath);
     console.log("🔍 Текущий язык:", currentLang);
     console.log("🔍 Новый язык:", newLang);
+
+    // СПЕЦИАЛЬНАЯ ОБРАБОТКА ДЛЯ БЛОГА
+    // Проверяем, является ли это страницей блога или статьи блога
+    const blogPatterns = {
+      ua: /^\/notarialni-blog(\/[^\/]+)?$/,
+      ru: /^\/ru\/notarialni-blog(\/[^\/]+)?$/,
+      en: /^\/en\/notary-blog(\/[^\/]+)?$/,
+    };
+
+    // Проверяем, соответствует ли текущий путь паттерну блога
+    const isBlogPage = Object.values(blogPatterns).some((pattern) =>
+      pattern.test(currentPath)
+    );
+
+    if (isBlogPage) {
+      console.log("📝 Это страница блога, используем специальную логику");
+
+      // Определяем slug статьи (если есть)
+      const blogSlugs = {
+        ua: "notarialni-blog",
+        ru: "notarialni-blog",
+        en: "notary-blog",
+      };
+
+      // Извлекаем slug статьи из пути
+      let articleSlug = null;
+      const pathParts = currentPath.split("/").filter(Boolean);
+
+      // Убираем префикс языка если есть
+      const partsWithoutLang =
+        pathParts[0] === "ru" || pathParts[0] === "en"
+          ? pathParts.slice(1)
+          : pathParts;
+
+      // Если есть что-то после slug блога, это slug статьи
+      if (partsWithoutLang.length > 1) {
+        articleSlug = partsWithoutLang[1];
+      }
+
+      // Строим новый путь
+      let newPath;
+      if (articleSlug) {
+        // Статья блога
+        newPath =
+          newLang === "ua"
+            ? `/${blogSlugs[newLang]}/${articleSlug}`
+            : `/${newLang}/${blogSlugs[newLang]}/${articleSlug}`;
+      } else {
+        // Главная страница блога
+        newPath =
+          newLang === "ua"
+            ? `/${blogSlugs[newLang]}`
+            : `/${newLang}/${blogSlugs[newLang]}`;
+      }
+
+      console.log("✅ Новый путь блога:", newPath);
+      navigate(newPath + search + hash);
+      return;
+    }
+
+    // Нормализуем текущий путь для поиска в INDICES
+    const normalizedPath = currentPath.replace(/\/+$/, "/");
 
     // Ищем ID страницы через INDICES
     let pageId = INDICES.idByPath[currentLang]?.[normalizedPath];
