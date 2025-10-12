@@ -3,6 +3,22 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from mptt.models import MPTTModel, TreeForeignKey
 from django.core.exceptions import ValidationError
 from django_ckeditor_5.fields import CKEditor5Field
+import os
+
+
+def validate_video_format(file):
+    """
+    Валидатор для проверки формата видео.
+    Разрешены только MP4 файлы.
+    """
+    ext = os.path.splitext(file.name)[1].lower()
+    valid_extensions = ['.mp4']
+    
+    if ext not in valid_extensions:
+        raise ValidationError(
+            f'Непідтримуваний формат файлу. Тільки MP4 дозволено. '
+            f'Ваш файл: {ext}'
+        )
 
 
 class Header(models.Model):
@@ -52,7 +68,9 @@ class BackgroundVideo(models.Model):
         upload_to='background_videos/',
         blank=True,
         null=True,
-        verbose_name="Видеофайл"
+        verbose_name="Видеофайл",
+        validators=[validate_video_format],
+        help_text="Тільки MP4 формат"
     )
     image = models.ImageField(
         upload_to='background_videos/',
@@ -656,7 +674,12 @@ class VideoBlock(models.Model):
     description_en = CKEditor5Field(blank=True, null=True, verbose_name="Описание (EN)")
     
     # Видеофайл
-    video = models.FileField(upload_to='video_blocks/', verbose_name="Видеофайл")
+    video = models.FileField(
+        upload_to='video_blocks/', 
+        verbose_name="Видеофайл",
+        validators=[validate_video_format],
+        help_text="Тільки MP4 формат"
+    )
     
     # Активность блока
     is_active = models.BooleanField(default=True, verbose_name="Активен")

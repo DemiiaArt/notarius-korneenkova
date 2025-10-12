@@ -1,5 +1,4 @@
 import "./VideoBlock.scss";
-import videoTest from "@media/video_test.mp4";
 import { useState, useRef, useEffect } from "react";
 import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
@@ -13,6 +12,9 @@ export const VideoBlock = ({ title, description, pageType }) => {
   const [videoUrl, setVideoUrl] = useState("");
   const [serverTitle, setServerTitle] = useState("");
   const [serverDescription, setServerDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasVideo, setHasVideo] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
   const { getTranslations } = useTranslation("components.VideoBlock");
   const { currentLang } = useLanguage();
@@ -24,42 +26,62 @@ export const VideoBlock = ({ title, description, pageType }) => {
   // Получаем переводы для конкретной страницы
   const pageTranslations = pageType ? translations[pageType] : null;
   const translatedTitle = serverTitle || pageTranslations?.title || title;
-  const translatedDescription = serverDescription || pageTranslations?.description || description;
+  const translatedDescription =
+    serverDescription || pageTranslations?.description || description;
 
   useEffect(() => {
     let cancelled = false;
     async function loadVideoData() {
+      setIsLoading(true);
       try {
-        const lang = ["ua", "ru", "en"].includes(currentLang) ? currentLang : "ua";
-        
+        const lang = ["ua", "ru", "en"].includes(currentLang)
+          ? currentLang
+          : "ua";
+
         // Определяем тип видео на основе pageType
-        let videoType = 'interview'; // по умолчанию
-        if (pageType === 'aboutPage') {
-          videoType = 'about_me';
-        } else if (pageType === 'contactsPage') {
-          videoType = 'contacts';
+        let videoType = "interview"; // по умолчанию
+        if (pageType === "aboutPage") {
+          videoType = "about_me";
+        } else if (pageType === "contactsPage") {
+          videoType = "contacts";
         }
-        
+
         // Запрашиваем данные в зависимости от типа
-        const resp = await fetch(`${API_BASE_URL}/video-blocks/?type=${videoType}&lang=${encodeURIComponent(lang)}`);
-        if (!resp.ok) return;
+        const resp = await fetch(
+          `${API_BASE_URL}/video-blocks/?type=${videoType}&lang=${encodeURIComponent(lang)}`
+        );
+        if (!resp.ok) {
+          if (cancelled) return;
+          setHasVideo(false);
+          setIsLoading(false);
+          return;
+        }
         const data = await resp.json();
         if (cancelled) return;
         const first = Array.isArray(data) ? data[0] : null;
-        if (first) {
+        if (first && first.video_url) {
           // предпочитаем стрим эндпойнт
-          const streamUrl = first.id ? `${API_BASE_URL}/video-blocks/${first.id}/stream/` : null;
+          const streamUrl = first.id
+            ? `${API_BASE_URL}/video-blocks/${first.id}/stream/`
+            : null;
           setVideoUrl(streamUrl || buildMediaUrl(first.video_url));
           setServerTitle(first.title || "");
           setServerDescription(first.description || "");
-        }
-        else {
+          setHasVideo(true);
+        } else {
           setVideoUrl("");
           setServerTitle("");
           setServerDescription("");
+          setHasVideo(false);
         }
-      } catch (_e) {
-        // ignore, keep fallback video and texts
+      } catch (err) {
+        console.error("Error loading video block:", err);
+        if (cancelled) return;
+        setHasVideo(false);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     }
     loadVideoData();
@@ -88,7 +110,103 @@ export const VideoBlock = ({ title, description, pageType }) => {
     setIsPlaying(false); // сразу возвращаем текст/кнопку
   };
 
+  const handleVideoError = (e) => {
+    console.error("Video playback error:", e);
+    setVideoError(true);
+    setShowVideo(false);
+    setIsPlaying(false);
+  };
+
   const isPC = useIsPC();
+
+  // Показываем загрузку
+  if (isLoading) {
+    return (
+      <div className="video-block">
+        <div className="video-block-preview" />
+        <div className="video-block-content container">
+          <div className="video-block-loading">
+            <div className="loading-spinner">Завантаження відео...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Показываем сообщение если видео нет
+  if (!hasVideo || !videoUrl) {
+    return (
+      <div className="video-block">
+        <div className="video-block-preview" />
+        <div className="video-block-content container">
+          <div className="video-block-no-video">
+            <svg
+              className="no-video-icon"
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polygon points="23 7 16 12 23 17 23 7" />
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+            </svg>
+            <h3 className="no-video-title">Відео не завантажено</h3>
+            <p className="no-video-description">
+              Будь ласка, додайте відео в адмін-панелі для цього типу блоку
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Показываем сообщение об ошибке воспроизведения
+  if (videoError) {
+    return (
+      <div className="video-block">
+        <div className="video-block-preview" />
+        <div className="video-block-content container">
+          <div className="video-block-no-video">
+            <svg
+              className="no-video-icon"
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <h3 className="no-video-title">Помилка відтворення відео</h3>
+            <p className="no-video-description">
+              Формат відео не підтримується браузером. Рекомендуємо
+              використовувати MP4 (H.264/AAC)
+            </p>
+            <button
+              className="retry-button"
+              onClick={() => {
+                setVideoError(false);
+                setIsPlaying(false);
+                setShowVideo(false);
+              }}
+            >
+              Спробувати знову
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="video-block">
       {/* Превью */}
@@ -110,7 +228,7 @@ export const VideoBlock = ({ title, description, pageType }) => {
           <motion.video
             key="video"
             ref={videoRef}
-            src={videoUrl || videoTest}
+            src={videoUrl}
             autoPlay
             controls
             className="video-block-video"
@@ -118,6 +236,9 @@ export const VideoBlock = ({ title, description, pageType }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onEnded={handleStop}
+            onError={handleVideoError}
+            playsInline
+            // Звук включен (без muted)
           />
         )}
       </AnimatePresence>

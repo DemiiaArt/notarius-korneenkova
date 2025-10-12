@@ -237,7 +237,22 @@ class HeaderAdmin(admin.ModelAdmin):
         # Запрещаем удаление, так как это единственная запись для шапки
         return False
 
+class BackgroundVideoForm(forms.ModelForm):
+    """Кастомная форма для BackgroundVideo с ограничением на MP4"""
+    
+    class Meta:
+        model = BackgroundVideo
+        fields = '__all__'
+        widgets = {
+            'video': forms.FileInput(attrs={
+                'accept': 'video/mp4,.mp4',
+                'title': 'Тільки MP4 формат'
+            })
+        }
+
+
 class BackgroundVideoAdmin(admin.ModelAdmin):
+    form = BackgroundVideoForm
     list_display = ['name', 'media_type', 'is_active', 'media_preview']
     list_filter = ['media_type', 'is_active']
     search_fields = ['name']
@@ -267,7 +282,7 @@ class BackgroundVideoAdmin(admin.ModelAdmin):
         }),
         ('Медиа файлы', {
             'fields': ('video', 'image', 'media_preview'),
-            'description': 'Загрузите видео или изображение в зависимости от выбранного типа'
+            'description': 'Загрузите видео (тільки MP4) або зображення в залежності від обраного типу'
         }),
     )
 
@@ -563,7 +578,22 @@ class ReviewAdmin(BaseAdmin):
     export_reviews_to_csv.short_description = 'Экспорт отзывов в CSV'
 
 
+class VideoBlockForm(forms.ModelForm):
+    """Кастомная форма для VideoBlock с ограничением на MP4"""
+    
+    class Meta:
+        model = VideoBlock
+        fields = '__all__'
+        widgets = {
+            'video': forms.FileInput(attrs={
+                'accept': 'video/mp4,.mp4',
+                'title': 'Тільки MP4 формат'
+            })
+        }
+
+
 class VideoBlockAdmin(ContentAdmin):
+    form = VideoBlockForm
     list_display = ['video_type', 'title_ua', 'is_active', 'updated_at']
     list_filter = ['video_type', 'is_active', 'created_at']
     search_fields = ['title_ua', 'title_ru', 'title_en', 'description_ua', 'description_ru', 'description_en']
@@ -572,7 +602,7 @@ class VideoBlockAdmin(ContentAdmin):
     fieldsets = (
         ('Основные параметры', {
             'fields': ('video_type', 'is_active', 'video'),
-            'description': 'Тип видео блока и файл'
+            'description': 'Тип видео блока и файл (тільки MP4 формат)'
         }),
         ('Українська мова', {
             'fields': ('title_ua', 'description_ua'),
