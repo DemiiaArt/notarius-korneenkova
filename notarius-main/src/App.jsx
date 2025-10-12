@@ -5,6 +5,7 @@ import Footer from "@components/Footer/Footer";
 import ScrollToTop from "@components/ScrollToTop/ScrollToTop";
 import FreeConsult from "@components/ModalWindows/FreeConsult";
 import OrderConsult from "@components/ModalWindows/OrderConsult";
+import BreadcrumbSchema from "@components/SEO/BreadcrumbSchema";
 import AppRoutes from "./routes/AppRoutes";
 import { HybridNavProvider } from "./contexts/HybridNavContext";
 import { LanguageProvider } from "./hooks/useLanguage";
@@ -94,6 +95,7 @@ const AppContent = ({ navTree, loading, error }) => {
       <Footer />
       <FreeConsult />
       <OrderConsult />
+      <BreadcrumbSchema />
     </>
   );
 };
