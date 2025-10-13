@@ -13,6 +13,11 @@ backend/db.sqlite3
 backend/nixpacks.toml
 venv/
 
+# Virtual environments
+.venv/
+**/.venv/
+backend/.venv/
+
 # Cache directories
 backend/main_page/cache_page/
 
