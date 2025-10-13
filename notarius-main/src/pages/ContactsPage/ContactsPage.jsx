@@ -173,7 +173,7 @@ const ContactsPage = () => {
                   </li>
                   <li className="socials-item">
                     <a
-                      href={contacts.telegram || "#"}
+                      href={contacts.telegram_phone ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}` : contacts.telegram || "#"}
                       className="socials-item-link"
                       aria-label="telegram"
                       target="_blank"
@@ -221,7 +221,7 @@ const ContactsPage = () => {
                   </li>
                   <li className="socials-item">
                     <a
-                      href={contacts.whatsapp || "#"}
+                      href={contacts.whatsapp_phone ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}` : contacts.whatsapp || "#"}
                       className="socials-item-link"
                       aria-label="whatsapp"
                       target="_blank"

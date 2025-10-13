@@ -12,8 +12,11 @@ export const useContacts = (lang = 'ua') => {
     instagram_url: null,
     facebook_url: null,
     twitter_url: null,
-    x_url: null,
-    telegram_url: null,
+    tiktok_url: null,
+    whatsapp: null,
+    telegram: null,
+    whatsapp_phone: null,
+    telegram_phone: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,8 +48,11 @@ export const useContacts = (lang = 'ua') => {
         instagram_url: null,
         facebook_url: null,
         twitter_url: null,
-        x_url: null,
-        telegram_url: null,
+        tiktok_url: null,
+        whatsapp: null,
+        telegram: null,
+        whatsapp_phone: null,
+        telegram_phone: null,
       });
     } finally {
       setLoading(false);

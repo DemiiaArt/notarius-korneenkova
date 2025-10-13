@@ -366,7 +366,7 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.whatsapp || "#"}
+                    href={contacts.whatsapp_phone ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}` : contacts.whatsapp || "#"}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -386,7 +386,7 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.telegram || "#"}
+                    href={contacts.telegram_phone ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}` : contacts.telegram || "#"}
                     target="_blank"
                     rel="noreferrer"
                   >
