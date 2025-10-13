@@ -156,9 +156,9 @@ const Footer = () => {
               >
                 Пишіть нам
               </p>
-              {contacts.whatsapp_url && (
+              {contacts.whatsapp && (
                 <a
-                  href={contacts.whatsapp_url}
+                  href={contacts.whatsapp}
                   target="_blank"
                   rel="noreferrer"
                   className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -166,9 +166,9 @@ const Footer = () => {
                   WhatsApp
                 </a>
               )}
-              {contacts.telegram_url && (
+              {contacts.telegram && (
                 <a
-                  href={contacts.telegram_url}
+                  href={contacts.telegram}
                   target="_blank"
                   rel="noreferrer"
                   className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -329,10 +329,10 @@ const Footer = () => {
                 />
               </a>
             )}
-            {contacts.whatsapp_url && (
+            {contacts.whatsapp && (
               <a
                 className="footer-social-media-item bg2"
-                href={contacts.whatsapp_url}
+                href={contacts.whatsapp}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -343,10 +343,10 @@ const Footer = () => {
                 />
               </a>
             )}
-            {contacts.telegram_url && (
+            {contacts.telegram && (
               <a
                 className="footer-social-media-item bg2"
-                href={contacts.telegram_url}
+                href={contacts.telegram}
                 target="_blank"
                 rel="noreferrer"
               >

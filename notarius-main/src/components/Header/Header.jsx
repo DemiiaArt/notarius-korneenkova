@@ -366,7 +366,7 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.whatsapp_url || "#"}
+                    href={contacts.whatsapp || "#"}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -386,7 +386,7 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.telegram_url || "#"}
+                    href={contacts.telegram || "#"}
                     target="_blank"
                     rel="noreferrer"
                   >

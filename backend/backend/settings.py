@@ -77,6 +77,7 @@ INSTALLED_APPS = [
 
     'mptt',
     'django_ckeditor_5',
+    'phonenumber_field',
 
     'main_page',
     'blog',
@@ -362,3 +363,7 @@ LOGGING = {
         },
     },
 }
+
+# Phone number field settings
+PHONENUMBER_DEFAULT_REGION = os.getenv('PHONENUMBER_DEFAULT_REGION', 'UA')
+PHONENUMBER_DB_FORMAT = 'E164'

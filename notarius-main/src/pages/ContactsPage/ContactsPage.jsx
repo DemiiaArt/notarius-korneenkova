@@ -173,7 +173,7 @@ const ContactsPage = () => {
                   </li>
                   <li className="socials-item">
                     <a
-                      href={contacts.telegram_url || "#"}
+                      href={contacts.telegram || "#"}
                       className="socials-item-link"
                       aria-label="telegram"
                       target="_blank"
@@ -221,7 +221,7 @@ const ContactsPage = () => {
                   </li>
                   <li className="socials-item">
                     <a
-                      href={contacts.whatsapp_url || "#"}
+                      href={contacts.whatsapp || "#"}
                       className="socials-item-link"
                       aria-label="whatsapp"
                       target="_blank"

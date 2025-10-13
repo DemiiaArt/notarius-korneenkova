@@ -43,6 +43,8 @@ class HeaderSerializer(serializers.ModelSerializer):
 class ContactsSerializer(serializers.ModelSerializer):
     address = serializers.SerializerMethodField()
     working_hours = serializers.SerializerMethodField()
+    whatsapp = serializers.SerializerMethodField()
+    telegram = serializers.SerializerMethodField()
 
     class Meta:
         model = Header
@@ -50,7 +52,9 @@ class ContactsSerializer(serializers.ModelSerializer):
             'email', 'phone_number', 'phone_number_2',
             'address',
             'working_hours',
-            'instagram_url', 'facebook_url', 'twitter_url', 'tiktok_url', 'whatsapp_url', 'telegram_url'
+            'instagram_url', 'facebook_url', 'twitter_url', 'tiktok_url',
+            'whatsapp_phone', 'telegram_phone',
+            'whatsapp', 'telegram'
         ]
 
     def _get_lang(self):
@@ -76,6 +80,45 @@ class ContactsSerializer(serializers.ModelSerializer):
         value = getattr(obj, mapping[lang], None)
         # дефолт
         return value or 'Пн-Пт 9:00–18:00'
+
+    def _clean_phone(self, value):
+        if not value:
+            return None
+        try:
+            # value может быть PhoneNumber; берём E.164
+            if hasattr(value, 'as_e164') and value.as_e164:
+                return value.as_e164
+            # иначе строка — простая очистка
+            s = str(value)
+            s = s.strip().replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+            if s.startswith('+'):
+                prefix = '+'
+                digits = s[1:]
+            else:
+                prefix = ''
+                digits = s
+            digits = ''.join(ch for ch in digits if ch.isdigit())
+            if not digits:
+                return None
+            return f"{prefix}{digits}" if prefix else digits
+        except Exception:
+            return None
+
+    def get_whatsapp(self, obj):
+        phone = self._clean_phone(getattr(obj, 'whatsapp_phone', None))
+        if phone:
+            # wa.me требует номер без +
+            wa_number = phone.lstrip('+')
+            return f"https://wa.me/{wa_number}"
+        return None
+
+    def get_telegram(self, obj):
+        phone = self._clean_phone(getattr(obj, 'telegram_phone', None))
+        if phone:
+            # Формируем universal link по номеру: t.me/+<E164_without_plus>
+            tg_number = phone.lstrip('+')
+            return f"https://t.me/+{tg_number}"
+        return None
 
 class BackgroundVideoSerializer(serializers.ModelSerializer):
     media_url = serializers.SerializerMethodField()
