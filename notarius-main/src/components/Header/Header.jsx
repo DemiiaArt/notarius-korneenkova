@@ -853,7 +853,7 @@ export const Header = () => {
               <div className="accordion-header fw-medium">
                 <ul className="mobile-menu-social-block">
                   <li className="mobile-menu-social-block-item">
-                    <a href="#" className="mobile-menu-social-block-item-link">
+                    <a href={contacts.facebook_url || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="facebook">
                       <svg
                         width="9"
                         height="18"
@@ -870,7 +870,7 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href="#" className="mobile-menu-social-block-item-link">
+                    <a href={contacts.instagram_url || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="instagram">
                       <svg
                         width="18"
                         height="18"
@@ -887,7 +887,7 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href="#" className="mobile-menu-social-block-item-link">
+                    <a href={contacts.telegram_phone ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}` : contacts.telegram || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="telegram">
                       <svg
                         className="mobile-menu-social-block-item-img"
                         width="19"
@@ -904,7 +904,7 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href="#" className="mobile-menu-social-block-item-link">
+                    <a href={contacts.whatsapp_phone ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}` : contacts.whatsapp || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="whatsapp">
                       <svg
                         className="mobile-menu-social-block-item-img"
                         width="18"
@@ -915,23 +915,6 @@ export const Header = () => {
                       >
                         <path
                           d="M9 0C4.03 0 0 4.03 0 9C0 10.67 0.46001 12.24 1.26001 13.59L0 18L4.40997 16.74C5.75997 17.54 7.33 18 9 18C13.97 18 18 13.97 18 9C18 4.03 13.97 0 9 0ZM13.82 12.44C13.61 13.03 12.61 13.57 12.16 13.62C11.71 13.67 11.29 13.83 9.21002 13.01C6.71002 12.01 5.12 9.43 5 9.27C4.88 9.11 4 7.93001 4 6.71001C4 5.49001 4.62999 4.9 4.85999 4.64C5.08999 4.39 5.36002 4.33 5.52002 4.33C5.69002 4.33 5.85 4.33 6 4.34C6.17 4.34 6.36999 4.33999 6.54999 4.75999C6.76999 5.24999 7.23999 6.47 7.29999 6.58C7.35999 6.7 7.40001 6.84999 7.32001 7.00999C7.23001 7.16999 7.19001 7.28 7.07001 7.42C6.95001 7.56 6.81001 7.74001 6.70001 7.85001C6.57001 7.97001 6.45003 8.10001 6.59003 8.35001C6.74003 8.59001 7.23002 9.41 7.96002 10.06C8.90002 10.91 9.69 11.17 9.94 11.29C10.18 11.41 10.33 11.39 10.47 11.23C10.62 11.07 11.09 10.51 11.25 10.26C11.41 10.02 11.57 10.06 11.8 10.14C12.03 10.22 13.23 10.83 13.48 10.95C13.72 11.08 13.89 11.14 13.95 11.24C14.01 11.34 14.01 11.84 13.81 12.42L13.82 12.44Z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </a>
-                  </li>
-                  <li className="mobile-menu-social-block-item">
-                    <a href="#" className="mobile-menu-social-block-item-link">
-                      <svg
-                        className="mobile-menu-social-block-item-img"
-                        width="18"
-                        height="15"
-                        viewBox="0 0 18 15"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M1.23806 6.46001C6.06806 4.34001 9.28807 2.95 10.9081 2.27C15.5081 0.340004 16.4681 0.01 17.0881 0C17.2281 0 17.5281 0.0300024 17.7281 0.190002C17.8981 0.330002 17.9381 0.509999 17.9681 0.639999C17.9881 0.769999 18.0181 1.07 17.9981 1.3C17.7481 3.94 16.6681 10.33 16.1181 13.28C15.8881 14.53 15.4281 14.95 14.9881 14.99C14.0281 15.08 13.2981 14.35 12.3581 13.74C10.8981 12.78 10.0781 12.18 8.65807 11.24C7.01807 10.16 8.07806 9.56 9.01806 8.59C9.25806 8.34 13.5081 4.46001 13.5881 4.10001C13.5981 4.06001 13.6081 3.89 13.5081 3.81C13.4081 3.72 13.2681 3.75 13.1681 3.78C13.0181 3.81 10.6881 5.35999 6.17806 8.42999C5.51806 8.88999 4.91807 9.11001 4.37807 9.10001C3.78807 9.09001 2.64806 8.76001 1.79806 8.49001C0.758055 8.15001 -0.0619228 7.97 0.00807725 7.39C0.0480772 7.09 0.458058 6.78 1.23806 6.47V6.46001Z"
                           fill="currentColor"
                         />
                       </svg>
