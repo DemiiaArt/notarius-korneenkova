@@ -12,6 +12,7 @@ backend/staticfiles/
 backend/db.sqlite3
 backend/nixpacks.toml
 venv/
+backend/.venv
 
 # Virtual environments
 .venv/
