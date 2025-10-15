@@ -17,7 +17,7 @@ from django.http import FileResponse, HttpResponse
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
     ServicesFor, Application, Review, FreeConsultation, ContactUs,
-    FrequentlyAskedQuestion, AboutMeDetail, QualificationBlock, VideoBlock
+    AboutMeDetail, QualificationBlock, VideoBlock
 )
 from .serializer import (
     HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer,
@@ -25,7 +25,7 @@ from .serializer import (
     ServicesForSerializer, ApplicationSerializer, ApplicationCreateSerializer,
     ReviewSerializer, ReviewCreateSerializer,
     FreeConsultationSerializer, FreeConsultationCreateSerializer,
-    ContactUsSerializer, ContactUsCreateSerializer, FrequentlyAskedQuestionSerializer,
+    ContactUsSerializer, ContactUsCreateSerializer,
     ContactsSerializer, AboutMeDetailSerializer, QualificationBlockSerializer,
     VideoBlockSerializer
 )
@@ -672,22 +672,6 @@ class ContactUsDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = ContactUsSerializer
 
 
-class FrequentlyAskedQuestionListView(generics.ListAPIView):
-    """
-    Список опубликованных частых вопросов. Поддерживает параметр lang (ua/ru/en).
-    """
-    serializer_class = FrequentlyAskedQuestionSerializer
-
-    def get_queryset(self):
-        return FrequentlyAskedQuestion.objects.filter(is_published=True).order_by('order', 'created_at')
-
-    def list(self, request, *args, **kwargs):
-        lang = request.GET.get('lang', 'ua')
-        if lang not in ['ua', 'ru', 'en']:
-            lang = 'ua'
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
-        return Response(serializer.data)
 
 
 class LegalDocumentDetailView(APIView):
