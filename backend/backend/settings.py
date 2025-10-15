@@ -32,32 +32,34 @@ if not SECRET_KEY:
         print("WARNING: SECRET_KEY not set, using temporary key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+DEBUG = os.getenv('DEBUG','False').lower() == 'true'
 
-# Для Railway
-ALLOWED_HOSTS = [
-                 '127.0.0.1',
-                 'localhost',
-                 'notarius-korneenkova.com.ua',
-                 'www.notarius-korneenkova.com.ua'
-                ]
+# ALLOWED_HOSTS from environment variable
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') if os.getenv('ALLOWED_HOSTS') else []
 
-# CSRF настройки для Railway
-CSRF_TRUSTED_ORIGINS = [
-    'https://notarius-korneenkova.com.ua',
-    'https://www.notarius-korneenkova.com.ua',
-]
+# CSRF настройки из переменных окружения для Django 5
+csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if csrf_origins:
+    CSRF_TRUSTED_ORIGINS = [
+        origin.strip() for origin in csrf_origins.split(',') 
+        if origin.strip() and (origin.strip().startswith('http://') or origin.strip().startswith('https://'))
+    ]
+else:
+    CSRF_TRUSTED_ORIGINS = []
 
-# Дополнительные настройки для Railway
-CSRF_COOKIE_SECURE = True  
-SESSION_COOKIE_SECURE = True  
-CSRF_COOKIE_HTTPONLY = False
-SESSION_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
-#for proxy
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
+# Дополнительные настройки безопасности
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE','False').lower() == 'true'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE','False').lower() == 'true'
+CSRF_COOKIE_HTTPONLY = os.getenv('CSRF_COOKIE_HTTPONLY','False').lower() == 'true'
+SESSION_COOKIE_HTTPONLY = os.getenv('SESSION_COOKIE_HTTPONLY','False').lower() == 'true'
+CSRF_COOKIE_SAMESITE = os.getenv('CSRF_COOKIE_SAMESITE')
+SESSION_COOKIE_SAMESITE = os.getenv('SESSION_COOKIE_SAMESITE')
+_proxy_header = os.getenv('SECURE_PROXY_SSL_HEADER')
+if _proxy_header and ',' in _proxy_header:
+    key, value = [part.strip() for part in _proxy_header.split(',', 1)]
+    SECURE_PROXY_SSL_HEADER = (key, value)
+else:
+    SECURE_PROXY_SSL_HEADER = None
 # Настройки для статических файлов
 _static_dir = BASE_DIR / "static"
 if _static_dir.exists():
@@ -82,6 +84,7 @@ INSTALLED_APPS = [
 
     'mptt',
     'django_ckeditor_5',
+    'phonenumber_field',
 
     'main_page',
     'blog',
@@ -127,6 +130,8 @@ CACHES = {
         'LOCATION': os.path.join(BASE_DIR, 'main_page', 'cache_page'),
     }
 }
+# Настройка БД с поддержкой переменной DATABASE_URL (Railway) и PG* переменных
+import dj_database_url  # type: ignore
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -277,9 +282,10 @@ CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+# CORS settings from environment variables
+
+CORS_ALLOWED_ORIGINS = [o.strip() for o in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
+CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS','False').lower() == 'true'
 
 # WhiteNoise settings для статических файлов
 # Используем ManifestStaticFilesStorage только в продакшене
@@ -311,3 +317,7 @@ LOGGING = {
         },
     },
 }
+
+# Phone number field settings
+PHONENUMBER_DEFAULT_REGION = os.getenv('PHONENUMBER_DEFAULT_REGION')
+PHONENUMBER_DB_FORMAT = 'E164'

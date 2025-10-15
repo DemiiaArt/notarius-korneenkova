@@ -91,8 +91,10 @@ class ContactsView(APIView):
                 'facebook_url': None,
                 'twitter_url': None,
                 'tiktok_url': None,
-                'whatsapp_url': None,
-                'telegram_url': None,
+                'whatsapp': None,
+                'telegram': None,
+                'whatsapp_phone': None,
+                'telegram_phone': None,
             })
             return Response(data)
 
@@ -106,8 +108,10 @@ class ContactsView(APIView):
             'facebook_url': None,
             'twitter_url': None,
             'tiktok_url': None,
-            'whatsapp_url': None,
-            'telegram_url': None,
+            'whatsapp': None,
+            'telegram': None,
+            'whatsapp_phone': None,
+            'telegram_phone': None,
         })
 
     def post(self, request):
@@ -129,8 +133,8 @@ class ContactsView(APIView):
                 facebook_url=data.get('facebook_url'),
                 twitter_url=data.get('twitter_url'),
                 tiktok_url=data.get('tiktok_url'),
-                whatsapp_url=data.get('whatsapp_url'),
-                telegram_url=data.get('telegram_url'),
+                whatsapp_phone=data.get('whatsapp_phone'),
+                telegram_phone=data.get('telegram_phone'),
             )
         else:
             contacts.email = data.get('email', contacts.email)
@@ -150,8 +154,10 @@ class ContactsView(APIView):
             contacts.facebook_url = data.get('facebook_url', contacts.facebook_url)
             contacts.twitter_url = data.get('twitter_url', contacts.twitter_url)
             contacts.tiktok_url = data.get('tiktok_url', contacts.tiktok_url)
-            contacts.whatsapp_url = data.get('whatsapp_url', contacts.whatsapp_url)
-            contacts.telegram_url = data.get('telegram_url', contacts.telegram_url)
+            if 'whatsapp_phone' in data:
+                contacts.whatsapp_phone = data.get('whatsapp_phone')
+            if 'telegram_phone' in data:
+                contacts.telegram_phone = data.get('telegram_phone')
             contacts.save()
 
         serializer = ContactsSerializer(contacts, context={'lang': request.GET.get('lang', 'ua')})

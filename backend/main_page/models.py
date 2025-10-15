@@ -3,6 +3,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from mptt.models import MPTTModel, TreeForeignKey
 from django.core.exceptions import ValidationError
 from django_ckeditor_5.fields import CKEditor5Field
+from phonenumber_field.modelfields import PhoneNumberField
 import os
 
 
@@ -39,8 +40,10 @@ class Header(models.Model):
     facebook_url = models.URLField(max_length=500, blank=True, null=True)
     twitter_url = models.URLField(max_length=500, blank=True, null=True)
     tiktok_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="TikTok")
-    whatsapp_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="WhatsApp")
-    telegram_url = models.URLField(max_length=500, blank=True, null=True)
+    # Новые поля для хранения номеров телефонов, из которых будут формироваться ссылки
+    whatsapp_phone = PhoneNumberField(blank=True, null=True, verbose_name="WhatsApp телефон")
+    telegram_phone = PhoneNumberField(blank=True, null=True, verbose_name="Telegram телефон")
+    # URL-поля удалены, ссылки формируются на лету на основе номеров
     
 
     def __str__(self):

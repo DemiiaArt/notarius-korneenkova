@@ -156,9 +156,9 @@ const Footer = () => {
               >
                 Пишіть нам
               </p>
-              {contacts.whatsapp_url && (
+              {contacts.whatsapp_phone && (
                 <a
-                  href={contacts.whatsapp_url}
+                  href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}`}
                   target="_blank"
                   rel="noreferrer"
                   className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -166,9 +166,9 @@ const Footer = () => {
                   WhatsApp
                 </a>
               )}
-              {contacts.telegram_url && (
+              {contacts.telegram_phone && (
                 <a
-                  href={contacts.telegram_url}
+                  href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}`}
                   target="_blank"
                   rel="noreferrer"
                   className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -329,10 +329,10 @@ const Footer = () => {
                 />
               </a>
             )}
-            {contacts.whatsapp_url && (
+            {contacts.whatsapp_phone && (
               <a
                 className="footer-social-media-item bg2"
-                href={contacts.whatsapp_url}
+                href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -343,10 +343,10 @@ const Footer = () => {
                 />
               </a>
             )}
-            {contacts.telegram_url && (
+            {contacts.telegram_phone && (
               <a
                 className="footer-social-media-item bg2"
-                href={contacts.telegram_url}
+                href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}`}
                 target="_blank"
                 rel="noreferrer"
               >

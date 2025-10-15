@@ -12,6 +12,28 @@ backend/staticfiles/
 backend/db.sqlite3
 backend/nixpacks.toml
 venv/
+backend/.venv
+
+.md
+env.md
+railway.md
+cursorignore.md
+cursorignore.md
+railwayignore.md
+.cursorignore
+.railwayignore
+.gitignore
+.env.example
+.env.example
+
+env.md
+
+
+
+# Virtual environments
+.venv/
+**/.venv/
+backend/.venv/
 
 # Cache directories
 backend/main_page/cache_page/
