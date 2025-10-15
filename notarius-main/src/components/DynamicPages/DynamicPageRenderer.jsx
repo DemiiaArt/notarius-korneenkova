@@ -10,6 +10,7 @@ import ServiceGroupPage from "./ServiceGroupPage";
 import ServiceDetailPage from "./ServiceDetailPage";
 import DefaultThirdLevelPage from "@pagesSecondLevel/DefaultThirdLevelPage";
 import DefaultFourthLevelPage from "@pagesSecondLevel/DefaultFourthLevelPage";
+import NotFoundPage from "@pages/NotFoundPage/NotFoundPage";
 
 const DynamicPageRenderer = () => {
   const { navTree } = useHybridNav();
@@ -111,14 +112,7 @@ const DynamicPageRenderer = () => {
 
   if (!currentNode) {
     console.log("❌ currentNode is null - страница не найдена");
-    return (
-      <div className="dynamic-page-renderer">
-        <div className="container">
-          <h1>Страница не найдена</h1>
-          <p>Запрашиваемая страница не существует.</p>
-        </div>
-      </div>
-    );
+    return <NotFoundPage />;
   }
 
   // Проверяем, есть ли компонент в реестре для данного ID

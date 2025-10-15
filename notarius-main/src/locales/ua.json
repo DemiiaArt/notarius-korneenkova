@@ -361,6 +361,13 @@
         "browserNotSupported": "Ваш браузер не підтримує відображення PDF.",
         "downloadPdf": "Завантажити PDF",
         "downloadFile": "Завантажити файл"
+      },
+      "NotFoundPage": {
+        "error": "Помилка",
+        "notFound": "404",
+        "notAllLost": "Але не все втрачено!",
+        "returnTo": "Повернімося на",
+        "homePage": "головну"
       }
     }
   }

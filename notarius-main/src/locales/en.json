@@ -378,6 +378,13 @@
         "browserNotSupported": "Your browser does not support PDF display.",
         "downloadPdf": "Download PDF",
         "downloadFile": "Download file"
+      },
+      "NotFoundPage": {
+        "error": "Error",
+        "notFound": "404",
+        "notAllLost": "But not all is lost!",
+        "returnTo": "Let's go back to",
+        "homePage": "home"
       }
     }
   }

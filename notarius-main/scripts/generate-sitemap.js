@@ -9,8 +9,11 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Базовый URL сайта
-const SITE_URL = "https://notarius-nadiia.com";
+// Базовый URL сайта (можно переопределить через переменную окружения SITE_URL)
+// Пример: SITE_URL=https://notarius-korneenkova.com.ua npm run generate-sitemap
+const RAW_SITE_URL = process.env.SITE_URL || "https://notarius-korneenkova.com.ua";
+// Нормализуем без завершающего слэша
+const SITE_URL = RAW_SITE_URL.endsWith("/") ? RAW_SITE_URL.slice(0, -1) : RAW_SITE_URL;
 
 // Все маршруты сайта
 const routes = [
