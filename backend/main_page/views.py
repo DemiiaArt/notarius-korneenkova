@@ -339,25 +339,6 @@ class ServiceCategoryDetailView(APIView):
         return Response(serializer.data)
     
 
-# class ServiceCategoryDetailView(APIView):
-#     """
-#     API для получения конкретной категории по цепочке slug'ов (до 3 уровней)
-#     """
-
-#     def get(self, request, slug1=None, slug2=None, slug3=None):
-#         # формируем список slug'ов (убираем None)
-#         slugs = [s for s in [slug1, slug2, slug3] if s]
-
-#         # ищем категорию по цепочке
-#         category = None
-#         parent = None
-
-#         for slug in slugs:
-#             category = get_object_or_404(ServiceCategory, parent=parent, slug_ua=slug)
-#             parent = category
-
-#         serializer = ServiceCategorySerializer(category)
-#         return Response(serializer.data)
 class ServicesForListView(generics.ListAPIView):
     """
     Список категорий "Для кого услуги"
