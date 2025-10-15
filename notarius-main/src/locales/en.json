@@ -385,7 +385,8 @@
         "found": "Found",
         "article": "article",
         "articles": "articles",
-        "articlesMany": "articles",
+        "articlesMany": "articles"
+      },
       "NotFoundPage": {
         "error": "Error",
         "notFound": "404",
