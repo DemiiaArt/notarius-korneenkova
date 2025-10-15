@@ -366,6 +366,13 @@
         "downloadPdf": "Скачать PDF",
         "downloadFile": "Скачать файл"
       },
+      "NotFoundPage": {
+        "error": "Ошибка",
+        "notFound": "404",
+        "notAllLost": "Но не все потеряно!",
+        "returnTo": "Вернемся на",
+        "homePage": "главную"
+      },
       "BlogPage": {
         "allArticles": "Все статьи",
         "found": "Найдено",

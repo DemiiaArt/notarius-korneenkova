@@ -369,6 +369,13 @@
         "article": "статтю",
         "articles": "статті",
         "articlesMany": "статей"
+      },
+      "NotFoundPage": {
+        "error": "Помилка",
+        "notFound": "404",
+        "notAllLost": "Але не все втрачено!",
+        "returnTo": "Повернімося на",
+        "homePage": "головну"
       }
     }
   }

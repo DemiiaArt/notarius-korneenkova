@@ -532,6 +532,16 @@ class FrequentlyAskedQuestion(models.Model):
     Частые вопросы (FAQ) для блока на главной странице.
     Хранит вопрос/ответ на трех языках, порядок и флаг публикации.
     """
+    # Связь с категорией услуг
+    service_category = models.ForeignKey(
+        'ServiceCategory',
+        on_delete=models.CASCADE,
+        related_name='faqs',
+        verbose_name="Категория услуг",
+        null=True,
+        blank=True
+    )
+    
     # Вопросы на трех языках
     question_ua = models.CharField(max_length=255, verbose_name="Питання (UA)")
     question_ru = models.CharField(max_length=255, verbose_name="Вопрос (RU)")

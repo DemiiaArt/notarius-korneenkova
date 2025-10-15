@@ -385,7 +385,13 @@
         "found": "Found",
         "article": "article",
         "articles": "articles",
-        "articlesMany": "articles"
+        "articlesMany": "articles",
+      "NotFoundPage": {
+        "error": "Error",
+        "notFound": "404",
+        "notAllLost": "But not all is lost!",
+        "returnTo": "Let's go back to",
+        "homePage": "home"
       }
     }
   }
