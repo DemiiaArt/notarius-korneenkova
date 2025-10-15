@@ -31,7 +31,7 @@
     }
 
     &-info {
-      color: #1A1A1A;
+      color: #1a1a1a;
 
       h2 {
         margin: 0 0 20px 0;
@@ -135,12 +135,12 @@
     }
 
     &-info {
-      color: #1A1A1A;
-      
+      color: #1a1a1a;
+
       h2 {
         margin: 0 0 70px 0;
       }
-      
+
       > li {
         margin-top: 30px;
       }
@@ -160,4 +160,10 @@
       }
     }
   }
+}
+
+.socialsCircles-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

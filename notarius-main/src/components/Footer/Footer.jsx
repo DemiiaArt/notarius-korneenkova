@@ -48,7 +48,7 @@ const helpLinks = {
   ua: [
     { link: "notarialni-offer", label: "Договір оферти" },
     { link: "notarialni-policy", label: "Політика конфіденційності" },
-    { link: "notarialni-torgivelna-marka", label: "Торгівельна марка" },
+    { link: "notarialni-torgivelna-marka", label: "Торговельна марка" },
   ],
   ru: [
     { link: "notarialni-offer", label: "Договор оферты" },
@@ -58,7 +58,7 @@ const helpLinks = {
   en: [
     { link: "notary-offer", label: "Offer contract" },
     { link: "notary-policy", label: "Privacy Policy" },
-    { link: "notary-trade-mark", label: "Trade mark" },
+    { link: "notary-trade-mark", label: "Trademark" },
   ],
 };
 
@@ -158,7 +158,7 @@ const Footer = () => {
               </p>
               {contacts.whatsapp_phone && (
                 <a
-                  href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}`}
+                  href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
                   className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -168,7 +168,7 @@ const Footer = () => {
               )}
               {contacts.telegram_phone && (
                 <a
-                  href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}`}
+                  href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
                   className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -332,7 +332,7 @@ const Footer = () => {
             {contacts.whatsapp_phone && (
               <a
                 className="footer-social-media-item bg2"
-                href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}`}
+                href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, "")}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -346,7 +346,7 @@ const Footer = () => {
             {contacts.telegram_phone && (
               <a
                 className="footer-social-media-item bg2"
-                href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}`}
+                href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, "")}`}
                 target="_blank"
                 rel="noreferrer"
               >

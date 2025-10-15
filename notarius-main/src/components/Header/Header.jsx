@@ -366,7 +366,11 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.whatsapp_phone ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}` : contacts.whatsapp || "#"}
+                    href={
+                      contacts.whatsapp_phone
+                        ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, "")}`
+                        : contacts.whatsapp || "#"
+                    }
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -386,7 +390,11 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.telegram_phone ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}` : contacts.telegram || "#"}
+                    href={
+                      contacts.telegram_phone
+                        ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, "")}`
+                        : contacts.telegram || "#"
+                    }
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -853,7 +861,13 @@ export const Header = () => {
               <div className="accordion-header fw-medium">
                 <ul className="mobile-menu-social-block">
                   <li className="mobile-menu-social-block-item">
-                    <a href={contacts.facebook_url || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="facebook">
+                    <a
+                      href={contacts.facebook_url || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mobile-menu-social-block-item-link"
+                      aria-label="facebook"
+                    >
                       <svg
                         width="9"
                         height="18"
@@ -870,7 +884,13 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href={contacts.instagram_url || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="instagram">
+                    <a
+                      href={contacts.instagram_url || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mobile-menu-social-block-item-link"
+                      aria-label="instagram"
+                    >
                       <svg
                         width="18"
                         height="18"
@@ -887,7 +907,17 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href={contacts.telegram_phone ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}` : contacts.telegram || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="telegram">
+                    <a
+                      href={
+                        contacts.telegram_phone
+                          ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, "")}`
+                          : contacts.telegram || "#"
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mobile-menu-social-block-item-link"
+                      aria-label="telegram"
+                    >
                       <svg
                         className="mobile-menu-social-block-item-img"
                         width="19"
@@ -904,7 +934,17 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href={contacts.whatsapp_phone ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}` : contacts.whatsapp || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="whatsapp">
+                    <a
+                      href={
+                        contacts.whatsapp_phone
+                          ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, "")}`
+                          : contacts.whatsapp || "#"
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mobile-menu-social-block-item-link"
+                      aria-label="whatsapp"
+                    >
                       <svg
                         className="mobile-menu-social-block-item-img"
                         width="18"

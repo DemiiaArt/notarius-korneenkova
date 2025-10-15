@@ -262,7 +262,7 @@ export const useBlogHome = () => {
           lang: currentLang,
         });
 
-        const url = `/blog/notarialni-blog/home/?${params.toString()}`;
+        const url = `/blog/notarialni-blog/home?${params.toString()}`;
         console.log("✅ Загружаем blog home:", url);
 
         const data = await apiClient.get(url);
