@@ -31,28 +31,34 @@ if not SECRET_KEY:
         print("WARNING: SECRET_KEY not set, using temporary key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+DEBUG = os.getenv('DEBUG','False').lower() == 'true'
 
-# Для Railway
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS from environment variable
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') if os.getenv('ALLOWED_HOSTS') else []
 
-# CSRF настройки для Railway
-CSRF_TRUSTED_ORIGINS = [
-    'https://notarius-korneenkova-production.up.railway.app',
-    'https://*.railway.app',
-    'https://*.up.railway.app',
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
-]
+# CSRF настройки из переменных окружения для Django 5
+csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if csrf_origins:
+    CSRF_TRUSTED_ORIGINS = [
+        origin.strip() for origin in csrf_origins.split(',') 
+        if origin.strip() and (origin.strip().startswith('http://') or origin.strip().startswith('https://'))
+    ]
+else:
+    CSRF_TRUSTED_ORIGINS = []
 
-# Дополнительные настройки для Railway
-CSRF_COOKIE_SECURE = False  # Для Railway
-SESSION_COOKIE_SECURE = False  # Для Railway
-CSRF_COOKIE_HTTPONLY = False
-SESSION_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
-
+# Дополнительные настройки безопасности
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE','False').lower() == 'true'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE','False').lower() == 'true'
+CSRF_COOKIE_HTTPONLY = os.getenv('CSRF_COOKIE_HTTPONLY','False').lower() == 'true'
+SESSION_COOKIE_HTTPONLY = os.getenv('SESSION_COOKIE_HTTPONLY','False').lower() == 'true'
+CSRF_COOKIE_SAMESITE = os.getenv('CSRF_COOKIE_SAMESITE')
+SESSION_COOKIE_SAMESITE = os.getenv('SESSION_COOKIE_SAMESITE')
+_proxy_header = os.getenv('SECURE_PROXY_SSL_HEADER')
+if _proxy_header and ',' in _proxy_header:
+    key, value = [part.strip() for part in _proxy_header.split(',', 1)]
+    SECURE_PROXY_SSL_HEADER = (key, value)
+else:
+    SECURE_PROXY_SSL_HEADER = None
 # Настройки для статических файлов
 _static_dir = BASE_DIR / "static"
 if _static_dir.exists():
@@ -130,61 +136,11 @@ CACHES = {
 # Настройка БД с поддержкой переменной DATABASE_URL (Railway) и PG* переменных
 import dj_database_url  # type: ignore
 
-database_url = (
-    os.getenv('DATABASE_URL')
-    or os.getenv('POSTGRES_URL')
-    or os.getenv('POSTGRESQL_URL')
-    or os.getenv('NEON_DATABASE_URL')
-)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-if database_url:
-    parsed_db = dj_database_url.config(
-        default=database_url,
-        conn_max_age=600,
-        ssl_require=True,
-    )
-    # Если в URL отсутствует имя БД, подставим из env
-    if not parsed_db.get('NAME'):
-        # Жёсткий fallback имени БД, чтобы избежать ImproperlyConfigured
-        parsed_db['NAME'] = (
-            os.getenv('PGDATABASE')
-            or os.getenv('POSTGRES_DB')
-            or 'railway'
-        )
-    DATABASES = {
-        'default': parsed_db
-    }
-else:
-    # Если нет DATABASE_URL и PG*, используем SQLite по умолчанию для локальной разработки
-    use_sqlite = os.getenv('USE_SQLITE', 'true').lower() == 'true'
-    if use_sqlite:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-    else:
-        # Fallback к отдельным PG* переменным (локальная Postgres)
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.getenv('PGDATABASE') or os.getenv('POSTGRES_DB', 'notarius'),
-                'USER': os.getenv('PGUSER', 'postgres'),
-                'PASSWORD': os.getenv('PGPASSWORD', ''),
-                'HOST': os.getenv('PGHOST', 'localhost'),
-                'PORT': os.getenv('PGPORT', '5432'),
-            }
-        }
-
-# Добавляем отладочную информацию для Railway
-if DEBUG:
-    print("DATABASE_URL set:" , bool(database_url))
-    print(f"PGHOST: {os.getenv('PGHOST', 'NOT_SET')}")
-    print(f"PGUSER: {os.getenv('PGUSER', 'NOT_SET')}")
-    print(f"PGDATABASE: {os.getenv('PGDATABASE', 'NOT_SET')}")
-    print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
-    print(f"PGPASSWORD: {'SET' if os.getenv('PGPASSWORD') else 'NOT_SET'}")
+DATABASES = {
+    "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+}
 
 
 # Password validation
@@ -329,9 +285,10 @@ CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+# CORS settings from environment variables
+
+CORS_ALLOWED_ORIGINS = [o.strip() for o in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
+CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS','False').lower() == 'true'
 
 # WhiteNoise settings для статических файлов
 # Используем ManifestStaticFilesStorage только в продакшене
@@ -365,5 +322,5 @@ LOGGING = {
 }
 
 # Phone number field settings
-PHONENUMBER_DEFAULT_REGION = os.getenv('PHONENUMBER_DEFAULT_REGION', 'UA')
+PHONENUMBER_DEFAULT_REGION = os.getenv('PHONENUMBER_DEFAULT_REGION')
 PHONENUMBER_DB_FORMAT = 'E164'

@@ -52,7 +52,7 @@
 
 /* Базовые стили для контента CKEditor */
 .ck-content {
-  line-height: 1.6 !important;
+  line-height: 1.5 !important; // Увеличиваем межстрочное расстояние для лучшей читаемости
   
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600 !important;
@@ -129,6 +129,8 @@
 .service-card-description,
 .about-block-text,
 .accordion-description {
+  line-height: 1.5 !important; // Увеличиваем межстрочное расстояние для лучшей читаемости
+  
   ul {
     list-style: disc !important;
     padding-left: 1.2em !important;
