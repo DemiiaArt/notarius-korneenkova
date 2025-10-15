@@ -368,7 +368,8 @@
         "workingHoursTime": "Mon-Fri 9:00-18:00",
         "ourAddress": "Our address",
         "address": "Dnipro, Dmytro Yavornytskyi Ave, 2, 49100",
-        "followUs": "Follow us on social media"
+        "followUs": "We are on social media",
+        "writeUs": "Write to us"
       },
       "TradeMarkPage": {
         "title": "Trademark",
@@ -379,6 +380,12 @@
         "downloadPdf": "Download PDF",
         "downloadFile": "Download file"
       },
+      "BlogPage": {
+        "allArticles": "All Articles",
+        "found": "Found",
+        "article": "article",
+        "articles": "articles",
+        "articlesMany": "articles",
       "NotFoundPage": {
         "error": "Error",
         "notFound": "404",

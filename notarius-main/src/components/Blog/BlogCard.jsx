@@ -55,7 +55,7 @@ const BlogCard = ({
   // Обрабатываем изображение для карточки
   const displayImage = (() => {
     if (image) return image;
-    
+
     if (cover) {
       return buildMediaUrl(cover);
     }
@@ -109,21 +109,20 @@ const BlogCard = ({
       )}
       {displayTitle && (
         <h2
-          className={`blog-card-title ${isPC ? "fs-p--28px" : "fs-p--24px"} fw-bold uppercase c3`}
+          className={`blog-card-title ${isPC ? "fs-p--18px" : "fs-p--24px"} fw-bold uppercase c3`}
         >
           {displayTitle}
         </h2>
       )}
       {displayText && (
         <p
-          className={`blog-card-text ${isPC ? "fs-p--16px" : "fs-p--14px fw-regular"} lh-150 `}
-        >
-          {displayText}
-        </p>
+          className={`blog-card-text ${isPC ? "fs-p--14px" : "fs-p--14px fw-regular"} lh-150 `}
+          dangerouslySetInnerHTML={{ __html: displayText }}
+        />
       )}
       {displayDate && (
         <p
-          className={`blog-card-date ${isPC ? "fs-p--20px" : "fs-p--16px"} fw-regular lh-150 `}
+          className={`blog-card-date ${isPC ? "fs-p--12px" : "fs-p--16px"} fw-regular lh-150 `}
         >
           {formatDate(displayDate)}
         </p>

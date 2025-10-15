@@ -354,7 +354,8 @@
         "workingHoursTime": "Пн-Пт 9:00-18:00",
         "ourAddress": "Наш адрес",
         "address": "г. Днепр, пр. Дмитрия Яворницкого, 2, 49100",
-        "followUs": "Следите за нами в социальных сетях"
+        "followUs": "Мы в соцсетях",
+        "writeUs": "Пишите нам"
       },
       "TradeMarkPage": {
         "title": "Торговая марка",
@@ -371,6 +372,13 @@
         "notAllLost": "Но не все потеряно!",
         "returnTo": "Вернемся на",
         "homePage": "главную"
+      },
+      "BlogPage": {
+        "allArticles": "Все статьи",
+        "found": "Найдено",
+        "article": "статью",
+        "articles": "статьи",
+        "articlesMany": "статей"
       }
     }
   }

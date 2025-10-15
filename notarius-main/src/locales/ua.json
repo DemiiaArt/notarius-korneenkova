@@ -351,7 +351,8 @@
         "workingHoursTime": "Пн-Пт 9:00-18:00",
         "ourAddress": "Наша адреса",
         "address": "м. Дніпро, пр. Дмитра Яворницького, 2, 49100",
-        "followUs": "Слідкуйте за нами в соцмережах"
+        "followUs": "Ми в соцмережах",
+        "writeUs": "Пишіть нам"
       },
       "TradeMarkPage": {
         "title": "Торгова марка",
@@ -361,6 +362,13 @@
         "browserNotSupported": "Ваш браузер не підтримує відображення PDF.",
         "downloadPdf": "Завантажити PDF",
         "downloadFile": "Завантажити файл"
+      },
+      "BlogPage": {
+        "allArticles": "Всі статті",
+        "found": "Знайдено",
+        "article": "статтю",
+        "articles": "статті",
+        "articlesMany": "статей"
       },
       "NotFoundPage": {
         "error": "Помилка",
