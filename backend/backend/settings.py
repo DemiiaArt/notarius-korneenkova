@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -129,10 +130,6 @@ CACHES = {
         'LOCATION': os.path.join(BASE_DIR, 'main_page', 'cache_page'),
     }
 }
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 # Настройка БД с поддержкой переменной DATABASE_URL (Railway) и PG* переменных
 import dj_database_url  # type: ignore
 

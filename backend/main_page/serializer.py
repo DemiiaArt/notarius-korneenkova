@@ -293,17 +293,18 @@ class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
     """
     Детальный сериализатор для категории услуг.
     Поддерживает выбор языка через параметр lang в контексте.
-    Включает титул, описание, hero_image, особенности услуг и canonical_url.
+    Включает титул, описание, hero_image, особенности услуг, FAQ и canonical_url.
     """
     label = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
     hero_image = serializers.ImageField(read_only=True)
     features = serializers.SerializerMethodField()
+    faqs = serializers.SerializerMethodField()
     canonical_url = serializers.SerializerMethodField()
 
     class Meta:
         model = ServiceCategory
-        fields = ['label', 'description', 'hero_image', 'features', 'canonical_url']
+        fields = ['label', 'description', 'hero_image', 'features', 'faqs', 'canonical_url']
 
     def get_label(self, obj):
         # Получаем язык из контекста
@@ -354,6 +355,32 @@ class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
                 feature_texts.append(text)
         
         return feature_texts
+
+    def get_faqs(self, obj):
+        # Получаем FAQ для данной категории
+        faqs = obj.faqs.filter(is_published=True).order_by('order')
+        
+        # Получаем язык из контекста
+        lang = self.context.get('lang', 'ua')
+        
+        # Возвращаем массив объектов с title и text
+        faq_list = []
+        for faq in faqs:
+            if lang in ['ua', 'ru', 'en']:
+                title = getattr(faq, f'question_{lang}', '')
+                text = getattr(faq, f'answer_{lang}', '')
+            else:
+                title = faq.question_ua
+                text = faq.answer_ua
+            
+            if title and text:  # Добавляем только непустые FAQ
+                faq_list.append({
+                    'title': title,
+                    'text': text,
+                    'order': faq.order
+                })
+        
+        return faq_list
 
     def get_canonical_url(self, obj):
         """
@@ -633,47 +660,6 @@ class ContactUsCreateSerializer(serializers.ModelSerializer):
         return value.strip()
 
 
-class FrequentlyAskedQuestionSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для часто задаваемых вопросов с поддержкой выбора языка.
-    Возвращает { title, text, order } для фронтенда.
-    """
-    title = serializers.SerializerMethodField()
-    text = serializers.SerializerMethodField()
-
-    class Meta:
-        model = FrequentlyAskedQuestion
-        fields = ['title', 'text', 'order']
-
-    def _get_lang(self):
-        lang = self.context.get('lang', 'ua')
-        return lang if lang in ['ua', 'ru', 'en'] else 'ua'
-
-    def get_title(self, obj):
-        lang = self._get_lang()
-        return getattr(obj, f'question_{lang}', '')
-
-    def get_text(self, obj):
-        lang = self._get_lang()
-        return getattr(obj, f'answer_{lang}', '')
-    
-    def validate_phone_number(self, value):
-        """
-        Проверка номера телефона
-        """
-        if not value or not value.strip():
-            raise serializers.ValidationError("Номер телефона не может быть пустым")
-        
-        # Удаляем пробелы и спецсимволы для проверки
-        cleaned = value.strip().replace(' ', '').replace('-', '').replace('(', '').replace(')', '').replace('+', '')
-        
-        if len(cleaned) < 9:
-            raise serializers.ValidationError("Номер телефона слишком короткий")
-        
-        if len(value) > 20:
-            raise serializers.ValidationError("Номер телефона не должен превышать 20 символов")
-        
-        return value.strip()
 
 
 class LegalDocumentSerializer(serializers.ModelSerializer):

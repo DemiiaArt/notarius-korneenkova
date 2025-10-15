@@ -626,40 +626,6 @@ class VideoBlockAdmin(ContentAdmin):
         return super().get_queryset(request).order_by('video_type')
 
 
-class FrequentlyAskedQuestionAdmin(ContentAdmin):
-    list_display = ['question_ua', 'order', 'is_published', 'status_badge', 'created_at']
-    list_editable = ['order', 'is_published']
-    list_filter = ['is_published', 'created_at']
-    search_fields = ['question_ua', 'question_ru', 'question_en', 'answer_ua', 'answer_ru', 'answer_en']
-    readonly_fields = ['created_at', 'updated_at']
-    list_per_page = 20
-    
-    def status_badge(self, obj):
-        """Цветной индикатор статуса"""
-        if obj.is_published:
-            return format_html('<span style="color: green; font-weight: bold;">✓ Опубликовано</span>')
-        else:
-            return format_html('<span style="color: red; font-weight: bold;">⚠ Скрыто</span>')
-    status_badge.short_description = 'Статус'
-
-    fieldsets = (
-        ('Українська мова', {
-            'fields': ('question_ua', 'answer_ua'),
-            'description': 'Питання та відповідь українською мовою'
-        }),
-        ('Русский язык', {
-            'fields': ('question_ru', 'answer_ru'),
-            'description': 'Вопрос и ответ на русском языке'
-        }),
-        ('English', {
-            'fields': ('question_en', 'answer_en'),
-            'description': 'Question and answer in English'
-        }),
-        ('Параметры', {
-            'fields': ('order', 'is_published', 'created_at', 'updated_at'),
-            'description': 'Порядок и публикация'
-        }),
-    )
 
 class LegalDocumentAdmin(ContentAdmin):
     list_display = ['key', 'title_ua', 'updated_at']
@@ -700,6 +666,24 @@ class ServiceFeatureInline(admin.TabularInline):
         }
 
 
+class FrequentlyAskedQuestionInline(admin.StackedInline):
+    model = FrequentlyAskedQuestion
+    extra = 1
+    fields = (
+        ('order', 'is_published'),
+        ('question_ua', 'question_ru', 'question_en'),
+        ('answer_ua'),
+        ('answer_ru'),
+        ('answer_en')
+    )
+    ordering = ['order']
+    
+    class Media:
+        css = {
+            'all': ('admin/css/forms.css',)
+        }
+
+
 class ServiceCategoryForm(forms.ModelForm):
     """Кастомная форма для ServiceCategory с подсказкой для canonical_url"""
     
@@ -723,7 +707,7 @@ class ServiceCategoryAdmin(MPTTModelAdmin):
         "slug_en": ("label_en",),
     }
     exclude = ('component',)
-    inlines = [ServiceFeatureInline]
+    inlines = [ServiceFeatureInline, FrequentlyAskedQuestionInline]
     save_on_top = True
     
     fieldsets = (
@@ -970,7 +954,7 @@ class NotariusAdminSite(admin.AdminSite):
                 'priority': 4
             },
             'Контент и отзывы': {
-                'models': ['Review', 'FrequentlyAskedQuestion'],
+                'models': ['Review'],
                 'icon': 'fas fa-star',
                 'priority': 5
             },
@@ -1036,7 +1020,6 @@ admin_site.register(AboutMeDetail, AboutMeDetailAdmin)
 admin_site.register(ContactUs, ContactUsAdmin)
 admin_site.register(VideoBlock, VideoBlockAdmin)
 admin_site.register(Review, ReviewAdmin)
-admin_site.register(FrequentlyAskedQuestion, FrequentlyAskedQuestionAdmin)
 admin_site.register(ServiceCategory, ServiceCategoryAdmin)
 admin_site.register(LegalDocument, LegalDocumentAdmin)
 

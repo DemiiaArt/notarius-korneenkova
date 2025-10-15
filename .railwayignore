@@ -1,9 +1,0 @@
-backend/
-.git/
-.vscode/
-.idea/
-*.png
-*.jpg
-*.jpeg
-*.gif
-TZ.docx

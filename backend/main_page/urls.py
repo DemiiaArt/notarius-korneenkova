@@ -75,10 +75,6 @@ urlpatterns = [
     
     # Детальная страница услуги 3-го уровня
     path('services/<slug:slug1>/<slug:slug2>/<slug:slug3>/', views.ServiceCategoryDetailView.as_view(), name='category_level3'),
-
-    # Эндпоинты часто задаваемых вопросов
-    path('faqs/', views.FrequentlyAskedQuestionListView.as_view(), name='faq-list'),
-
     # Юридические документы
     # GET /api/legal/?lang=ua|ru|en -> список { key, title, file }
     # GET /api/legal/<key>/?lang=ua|ru|en -> один документ { key, title, content }
