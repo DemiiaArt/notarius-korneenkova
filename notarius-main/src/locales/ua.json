@@ -355,7 +355,7 @@
         "writeUs": "Пишіть нам"
       },
       "TradeMarkPage": {
-        "title": "Торгова марка",
+        "title": "Торговельна марка",
         "loading": "Завантаження PDF...",
         "loadError": "Не вдалося завантажити PDF.",
         "pdfNotFound": "PDF файл не знайдено",
