@@ -159,9 +159,9 @@ class ServicesFor(models.Model):
     subtitle_en = models.CharField(max_length=255)
     subtitle_ru = models.CharField(max_length=255)
 
-    description_uk = CKEditor5Field('Description', config_name='default', blank=True, null=True)
-    description_en = CKEditor5Field('Description', config_name='default', blank=True, null=True)
-    description_ru = CKEditor5Field('Description', config_name='default', blank=True, null=True)
+    description_uk = CKEditor5Field('Description', config_name='default')
+    description_en = CKEditor5Field('Description', config_name='default')
+    description_ru = CKEditor5Field('Description', config_name='default')
 
     def __str__(self):
         return self.title_uk
