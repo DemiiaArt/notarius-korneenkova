@@ -59,7 +59,7 @@ const GoalCard = ({ textData }) => {
   return (
     <div className="goal-card">
       <p
-        className={`goal-card-title ${isPC ? "fs-p--24px" : "fs-p--18px"} fw-semi-bold uppercase`}
+        className={`goal-card-title ${isPC ? "fs-p--24px" : "fs-p--16px"} fw-semi-bold uppercase`}
       >
         {title}
       </p>

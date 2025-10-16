@@ -80,6 +80,8 @@ button {
             line-height: 2;
 
             a {
+              color: map.get($colors, 1);
+              text-decoration: none;
               display: block;
             }
           }
@@ -90,6 +92,7 @@ button {
       background-color: transparent;
       border-right: 1px solid #ffffff33;
       cursor: pointer;
+      font-size: 18px;
       &-dropdown {
         margin-top: auto;
       }
@@ -119,6 +122,12 @@ button {
   .footer {
     &.accordion-open {
       padding: 40px 0 140px 0;
+    }
+    &-change-lang {
+      font-size: 16px;
+      &-list {
+        margin: auto 0 0 0;
+      }
     }
   }
 }

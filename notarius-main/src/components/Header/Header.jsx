@@ -543,6 +543,7 @@ export const Header = () => {
                     </p>
                   ) : (
                     <svg
+                      className="c3"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
