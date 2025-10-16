@@ -12,6 +12,7 @@ from .serializers import (
     BlogCategorySerializer,
     BlogHomeSerializer,
 )
+from .blog_seo import build_blog_list_json_ld, build_blog_detail_json_ld
 
 
 class BlogPagination(PageNumberPagination):
@@ -81,6 +82,23 @@ class BlogListView(APIView):
             'categories': categories_serializer.data
         }
         
+        # Добавляем JSON-LD для списка блога с учетом пагинации
+        try:
+            # Получаем номер страницы из query параметра
+            page_number = int(request.GET.get('page', 1))
+            if page_number < 1:
+                page_number = 1
+            json_ld = build_blog_list_json_ld(lang, category_slug, page_number)
+            if json_ld is not None:
+                response_data['json_ld'] = json_ld
+        except (ValueError, TypeError):
+            # Если page не число, используем страницу 1
+            json_ld = build_blog_list_json_ld(lang, category_slug, 1)
+            if json_ld is not None:
+                response_data['json_ld'] = json_ld
+        except Exception:
+            pass
+        
         # Добавляем информацию о пагинации
         return paginator.get_paginated_response(response_data)
 
@@ -113,7 +131,17 @@ class BlogDetailView(APIView):
         
         # Сериализуем данные с передачей языка в контекст
         serializer = BlogPostDetailSerializer(post, context={'lang': lang})
-        return Response(serializer.data)
+        data = serializer.data
+        
+        # Добавляем JSON-LD для статьи блога
+        try:
+            json_ld = build_blog_detail_json_ld(post, lang)
+            if json_ld is not None:
+                data['json_ld'] = json_ld
+        except Exception:
+            pass
+        
+        return Response(data)
 
 
 class BlogHomeView(APIView):

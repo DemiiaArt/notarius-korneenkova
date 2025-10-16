@@ -33,6 +33,7 @@ from .serializer import (
 
 from .utils import inject_services, root_data
 from blog.models import BlogPost, BlogHome
+from .seo import build_about_json_ld, build_contacts_json_ld, build_service_json_ld
 # Create your views here.
 
 class HeaderView(generics.ListAPIView):
@@ -172,7 +173,10 @@ class BackgroundVideoView(generics.ListAPIView):
     
     def list(self, request, *args, **kwargs):
         videos = BackgroundVideo.objects.all()
-        serializer = self.get_serializer(videos, many=True)
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        serializer = self.get_serializer(videos, many=True, context={'lang': lang, 'request': request})
         return Response(serializer.data)
 
 class AboutMeView(generics.ListAPIView):
@@ -222,7 +226,11 @@ class AboutMeDetailView(generics.RetrieveAPIView):
         if not obj:
             return Response({'title': '', 'text': ''})
         serializer = self.get_serializer(obj, context={'lang': lang})
-        return Response(serializer.data)
+        data = serializer.data
+        json_ld = build_about_json_ld(lang)
+        if json_ld is not None:
+            data['json_ld'] = json_ld
+        return Response(data)
 
 class CKEditorUploadView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -342,7 +350,15 @@ class ServiceCategoryDetailView(APIView):
 
         # Передаем язык в контекст сериализатора
         serializer = ServiceCategoryDetailSerializer(current, context={'lang': lang})
-        return Response(serializer.data)
+        data = serializer.data
+        # Добавим JSON-LD для услуги
+        try:
+            json_ld = build_service_json_ld(current, lang)
+            if json_ld is not None:
+                data['json_ld'] = json_ld
+        except Exception:
+            pass
+        return Response(data)
     
 
 class ServicesForListView(generics.ListAPIView):
@@ -747,7 +763,17 @@ class VideoBlockListView(generics.ListAPIView):
             queryset = queryset.filter(video_type=video_type)
         
         serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
-        return Response(serializer.data)
+        data = serializer.data
+        # Возвращаем JSON-LD только при type=contacts
+        if (video_type == 'contacts') and isinstance(data, list) and len(data) > 0:
+            json_ld = build_contacts_json_ld(lang)
+            if json_ld is not None:
+                # добавляем в первый элемент списка
+                try:
+                    data[0]['json_ld'] = json_ld
+                except Exception:
+                    pass
+        return Response(data)
 
 
 class VideoBlockDetailView(generics.RetrieveAPIView):
