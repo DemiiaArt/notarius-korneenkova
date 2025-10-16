@@ -159,7 +159,7 @@ const GroupServicesCarousel = ({
                 </div>
                 <div className="group-services-carousel-content">
                   <h3
-                    className={`group-services-carousel-label ${isPC ? "fs-p--24px" : "fs-p--14px"} fw-semi-bold c3 uppercase`}
+                    className={`group-services-carousel-label ${isPC ? "fs-p--24px" : "fs-p--14px"} lh-130 fw-semi-bold c3 uppercase`}
                   >
                     {getLabel(service, currentLang)}
                   </h3>

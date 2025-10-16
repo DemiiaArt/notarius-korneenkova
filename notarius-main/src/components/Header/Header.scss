@@ -30,7 +30,7 @@ li {
     &.mega-open {
     }
     &-wrap {
-      padding: 22px 0 5px 0;
+      padding: 16px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -41,11 +41,18 @@ li {
     &-btns {
       width: 35%;
       display: flex;
-      justify-content: space-around;
+      justify-content: flex-end;
+      & > .search-icon-wrap,
+      & > .phone-btn-wrap {
+        flex-grow: 0;
+        margin-right: 20px;
+      }
     }
     &-logo {
+      min-width: 140px;
+      min-height: 42px;
       &-wrap {
-        width: 30%;
+        width: inherit;
         position: sticky;
         display: flex;
         justify-content: center;
@@ -61,7 +68,7 @@ li {
     }
   }
   .navbar-burger-block {
-    width: 30%;
+    width: 35%;
     display: block;
   }
   .navbar-link-block {
@@ -132,10 +139,10 @@ li {
         display: block;
         margin-bottom: 10px;
         cursor: pointer;
-        border-bottom: 1px solid map.get($colors, 10);
+        box-shadow: 0 0.5px 0 0 map.get($colors, 17);
         padding: 15px 10px;
         &:last-child {
-          border-bottom: none;
+          box-shadow: none;
         }
         &.active .mobile-menu-item-icon {
           transform: rotate(0);
@@ -273,7 +280,7 @@ li {
     justify-content: center;
     gap: 6px;
     width: 24px;
-    height: 22px;
+    height: 24px;
     cursor: pointer;
     position: relative;
 
@@ -305,6 +312,9 @@ li {
   .header {
     position: relative;
     &.mega-open {
+    }
+    &-wrap {
+      padding: 22px 0 5px 0;
     }
     &-info {
       display: block;

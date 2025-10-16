@@ -410,7 +410,7 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
         <>
           {contacts.phone_number && (
             <a
-              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal с1`}
               href={`tel:${contacts.phone_number.replace(/\s|\+/g, "")}`}
             >
               {contacts.phone_number}
