@@ -1,6 +1,6 @@
 import arrow from "@media/icons/arrow-header-mobile.svg";
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import { useIsPC } from "@hooks/isPC";
 import { useModal } from "@components/ModalProvider/ModalProvider";
@@ -16,6 +16,7 @@ import { useHybridNav } from "@contexts/HybridNavContext";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
 import { useContacts } from "@hooks/useContacts";
+import { apiClient } from "@config/api";
 
 export const Header = () => {
   const { pathname } = useLocation();
@@ -23,6 +24,7 @@ export const Header = () => {
   const lang = currentLang;
   const { t } = useTranslation("components.Header");
   const { contacts } = useContacts(lang);
+  const navigate = useNavigate();
 
   // Отримуємо навігацію з гібридної системи
   let navTree, loading, error, mergeComplete;
@@ -41,6 +43,11 @@ export const Header = () => {
   // currentLang теперь получаем из useLanguage
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const searchAbortRef = useRef(null);
 
   const { open } = useModal();
 
@@ -148,6 +155,60 @@ export const Header = () => {
 
   const closeMenu = () => {
     setMenuOpen(false);
+  };
+
+  const openSearch = (prefill = "") => {
+    setIsSearchOpen(true);
+    setSearchQuery(prefill);
+    // Focus input on next tick
+    setTimeout(() => {
+      const input = document.getElementById("header-search-input");
+      if (input) input.focus();
+    }, 0);
+  };
+
+  const closeSearch = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+    setSuggestions([]);
+  };
+
+  // Debounced suggestions fetch handled below with fetchSuggestions
+
+  // Actual fetch using apiClient (separate to avoid string concat in useEffect above)
+  const fetchSuggestions = useCallback(async (q) => {
+    try {
+      const json = await apiClient.get(`/search/suggest/?q=${encodeURIComponent(q)}&lang=${lang}&type=all&limit=8`);
+      setSuggestions(Array.isArray(json?.suggestions) ? json.suggestions : []);
+    } catch (e) {
+      setSuggestions([]);
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!isSearchOpen || !q) return;
+    const t = setTimeout(() => fetchSuggestions(q), 300);
+    return () => clearTimeout(t);
+  }, [searchQuery, isSearchOpen, fetchSuggestions]);
+
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    try {
+      setSearchLoading(true);
+      const res = await apiClient.get(`/search/?q=${encodeURIComponent(q)}&lang=${lang}&type=all&limit=10`);
+      const first = Array.isArray(res?.results) ? res.results[0] : null;
+      if (first?.url) {
+        const to = new URL(first.url, window.location.origin);
+        navigate(to.pathname);
+      }
+    } catch (err) {
+      // noop
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   const switchLang = (langKey) => {
@@ -414,7 +475,14 @@ export const Header = () => {
                   </a>
                 </div>
               </div>
-              <Link to="/" className="header-logo-wrap">
+              <Link
+                to="/"
+                className="header-logo-wrap"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openSearch("");
+                }}
+              >
                 <svg
                   className="header-logo c3"
                   width="137"
@@ -502,7 +570,11 @@ export const Header = () => {
                 </svg>
               </Link>
               <div className="header-btns">
-                <button className="search-icon-wrap btn-z-style">
+                <button
+                  type="button"
+                  className="search-icon-wrap btn-z-style"
+                  onClick={() => openSearch("")}
+                >
                   <svg
                     className="search-icon c3"
                     width="24"
@@ -516,6 +588,45 @@ export const Header = () => {
                     />
                   </svg>
                 </button>
+                {isSearchOpen && (
+                  <div className="header-search-pop">
+                    <form className="header-search-pop__form" onSubmit={handleSearchSubmit}>
+                      <input
+                        id="header-search-input"
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={
+                          lang === 'ru' ? 'Поиск по заголовкам...' : lang === 'en' ? 'Search titles...' : 'Пошук за заголовками...'
+                        }
+                        className="header-search-pop__input"
+                      />
+                      <button type="submit" className="header-search-pop__submit btn-z-style">
+                        {searchLoading ? '...' : (lang === 'ru' ? 'Искать' : lang === 'en' ? 'Search' : 'Шукати')}
+                      </button>
+                      <button type="button" className="header-search-pop__close btn-z-style" onClick={closeSearch}>
+                        ✕
+                      </button>
+                    </form>
+                    {suggestions && suggestions.length > 0 && (
+                      <ul className="header-search-pop__suggestions">
+                        {suggestions.map((s, idx) => (
+                          <li key={`${s.type}-${idx}`} className="header-search-pop__item">
+                            {(() => {
+                              const to = new URL(s.url, window.location.origin).pathname;
+                              return (
+                                <Link to={to} onClick={closeSearch}>
+                                  <span className="badge">{s.type === 'service' ? (lang === 'ru' ? 'Услуга' : lang === 'en' ? 'Service' : 'Послуга') : 'Блог'}</span>
+                                  <span className="title">{s.title}</span>
+                                </Link>
+                              );
+                            })()}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
                 <div className="header-change-lang-dropdown">
                   <div className="header-change-lang-list">
                     {[
@@ -562,6 +673,46 @@ export const Header = () => {
           </div>
         </div>
       </header>
+      {/* Inline search box */}
+      {isSearchOpen && (
+        <div className="header-search-overlay">
+          <div className="container">
+            <form className="header-search" onSubmit={handleSearchSubmit}>
+              <input
+                id="header-search-input"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={
+                  lang === 'ru' ? 'Поиск по заголовкам...' : lang === 'en' ? 'Search titles...' : 'Пошук за заголовками...'
+                }
+                className="header-search-input"
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') closeSearch();
+                }}
+              />
+              <button type="submit" className="header-search-submit btn-z-style">
+                {searchLoading ? '...' : (lang === 'ru' ? 'Искать' : lang === 'en' ? 'Search' : 'Шукати')}
+              </button>
+              <button type="button" className="header-search-close btn-z-style" onClick={closeSearch}>
+                ✕
+              </button>
+            </form>
+            {suggestions && suggestions.length > 0 && (
+              <ul className="header-search-suggestions">
+                {suggestions.map((s, idx) => (
+                  <li key={`${s.type}-${idx}`} className="header-search-suggestion-item">
+                    <a href={s.url} onClick={closeSearch}>
+                      <span className="badge">{s.type === 'service' ? (lang === 'ru' ? 'Услуга' : lang === 'en' ? 'Service' : 'Послуга') : 'Блог'}</span>
+                      <span className="title">{s.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
       <div className="navbar-link-block-wrap">
         <nav className="navbar-link-block container fs-p--16px uppercase fw-semi-bold lh-150 c3">
           <Link

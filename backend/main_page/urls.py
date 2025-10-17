@@ -88,4 +88,5 @@ urlpatterns = [
     path('video-blocks/', views.VideoBlockListView.as_view(), name='video-block-list'),
     path('video-blocks/<int:pk>/', views.VideoBlockDetailView.as_view(), name='video-block-detail'),
     path('video-blocks/<int:pk>/stream/', views.VideoBlockStreamView.as_view(), name='video-block-stream'),
+
 ]
