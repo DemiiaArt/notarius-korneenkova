@@ -33,7 +33,7 @@ const AttorneyPage = () => {
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId="power-of-attorney" />
       </Suspense>
     </PageTemplate>
   );

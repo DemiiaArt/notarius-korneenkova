@@ -36,7 +36,7 @@ const ConsultationPage = () => {
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId="consult-copy-duplicate" />
       </Suspense>
     </PageTemplate>
   );

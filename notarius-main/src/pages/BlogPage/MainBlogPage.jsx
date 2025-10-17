@@ -35,6 +35,7 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
 
   // Загружаем hero_image для главной страницы блога
   const { blogHome, loading: homeLoading } = useBlogHome();
+  console.log(blogHome);
   console.log("🏠 BlogHome data:", blogHome);
   console.log("🏠 BlogHome title:", blogHome?.title);
   console.log("🏠 Current language:", currentLang);

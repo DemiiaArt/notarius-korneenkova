@@ -96,7 +96,7 @@ const Apostille = () => {
         </div>
       </div>
       <ServicesCarousel parentId="services" title="Інші послуги" kind="group" />
-      <OftenQuestions />
+      <OftenQuestions navId="apostille-affidavit" />
       <Form />
     </div>
   );
