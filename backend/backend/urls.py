@@ -53,6 +53,7 @@ urlpatterns = [
     path('admin/', admin_site.urls),  # Используем кастомный админ-сайт
     path('api/blog/', include('blog.urls')),
     path('api/', include('main_page.urls')),
+    path('api/search/', include('backend.search.urls')),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
     path('ckeditor/upload/', CKEditorUploadView.as_view(), name='ckeditor_upload'),
     path('healthz/', simple_health, name='simple_health_check'),

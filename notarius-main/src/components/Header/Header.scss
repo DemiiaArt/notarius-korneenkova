@@ -27,8 +27,7 @@ li {
       position: fixed;
     }
 
-    &.mega-open {
-    }
+    &.mega-open { outline: none; }
     &-wrap {
       padding: 16px 0;
       display: flex;
@@ -311,8 +310,7 @@ li {
 @media (min-width: 1024px) {
   .header {
     position: relative;
-    &.mega-open {
-    }
+    &.mega-open { outline: none; }
     &-wrap {
       padding: 22px 0 5px 0;
     }
@@ -466,6 +464,52 @@ li {
     height: 48px;
   }
 
+  /* Встроенное поле поиска под иконкой */
+  .header-search-pop {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+    width: 520px;
+    max-width: calc(100vw - 24px);
+    z-index: 5000;
+  }
+  .header-search-pop__form {
+    background: #ffffff;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .header-search-pop__input {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    font: inherit;
+  }
+  .header-search-pop__submit,
+  .header-search-pop__close {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #dcdcdc;
+    background: #fff;
+    border-radius: 6px;
+  }
+  .header-search-pop__suggestions {
+    background: #ffffff;
+    margin-top: 6px;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    padding: 8px 0;
+  }
+  .header-search-pop__item { padding: 8px 12px; }
+  .header-search-pop__item a { text-decoration: none; color: inherit; display: flex; gap: 10px; }
+  .header-search-pop__item .badge { min-width: 64px; text-align: center; background: #f0f0f0; border-radius: 10px; padding: 2px 8px; font-size: 12px; }
+
   .phone-btn-wrap {
     width: 100%;
     max-width: 165px;
@@ -554,4 +598,73 @@ li {
 .header,
 .header-content {
   overflow: visible;
+}
+
+/* === Inline Search Overlay === */
+.header-search-overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 5000; /* above header and mega panels */
+  display: flex;
+  align-items: flex-start;
+}
+
+.header-search {
+  width: 100%;
+  background: #fcfcfc;
+  padding: 16px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.header-search-input {
+  flex: 1;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.header-search-submit,
+.header-search-close {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #dcdcdc;
+  background: #fff;
+  border-radius: 6px;
+}
+
+.header-search-suggestions {
+  background: #ffffff;
+  width: 100%;
+  max-width: 980px;
+  margin: 8px auto 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  padding: 8px 0;
+}
+
+.header-search-suggestion-item {
+  padding: 10px 14px;
+}
+.header-search-suggestion-item a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  gap: 10px;
+}
+.header-search-suggestion-item .badge {
+  display: inline-block;
+  min-width: 64px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #f0f0f0;
+  font-size: 12px;
+  text-align: center;
 }
