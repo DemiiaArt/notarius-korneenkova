@@ -16,7 +16,7 @@ import { useHybridNav } from "@contexts/HybridNavContext";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
 import { useContacts } from "@hooks/useContacts";
-import { apiClient } from "@config/api";
+import { apiClient } from "@/config/api";
 
 export const Header = () => {
   const { pathname } = useLocation();
@@ -176,14 +176,21 @@ export const Header = () => {
   // Debounced suggestions fetch handled below with fetchSuggestions
 
   // Actual fetch using apiClient (separate to avoid string concat in useEffect above)
-  const fetchSuggestions = useCallback(async (q) => {
-    try {
-      const json = await apiClient.get(`/search/suggest/?q=${encodeURIComponent(q)}&lang=${lang}&type=all&limit=8`);
-      setSuggestions(Array.isArray(json?.suggestions) ? json.suggestions : []);
-    } catch (e) {
-      setSuggestions([]);
-    }
-  }, [lang]);
+  const fetchSuggestions = useCallback(
+    async (q) => {
+      try {
+        const json = await apiClient.get(
+          `/search/suggest/?q=${encodeURIComponent(q)}&lang=${lang}&type=all&limit=8`
+        );
+        setSuggestions(
+          Array.isArray(json?.suggestions) ? json.suggestions : []
+        );
+      } catch (e) {
+        setSuggestions([]);
+      }
+    },
+    [lang]
+  );
 
   useEffect(() => {
     const q = searchQuery.trim();
@@ -198,7 +205,9 @@ export const Header = () => {
     if (!q) return;
     try {
       setSearchLoading(true);
-      const res = await apiClient.get(`/search/?q=${encodeURIComponent(q)}&lang=${lang}&type=all&limit=10`);
+      const res = await apiClient.get(
+        `/search/?q=${encodeURIComponent(q)}&lang=${lang}&type=all&limit=10`
+      );
       const first = Array.isArray(res?.results) ? res.results[0] : null;
       if (first?.url) {
         const to = new URL(first.url, window.location.origin);
@@ -588,35 +597,67 @@ export const Header = () => {
                     />
                   </svg>
                 </button>
-                {isSearchOpen && (
+                {isSearchOpen && !isPC && (
                   <div className="header-search-pop">
-                    <form className="header-search-pop__form" onSubmit={handleSearchSubmit}>
+                    <form
+                      className="header-search-pop__form"
+                      onSubmit={handleSearchSubmit}
+                    >
                       <input
                         id="header-search-input"
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder={
-                          lang === 'ru' ? 'Поиск по заголовкам...' : lang === 'en' ? 'Search titles...' : 'Пошук за заголовками...'
+                          lang === "ru"
+                            ? "Поиск по заголовкам..."
+                            : lang === "en"
+                              ? "Search titles..."
+                              : "Пошук за заголовками..."
                         }
                         className="header-search-pop__input"
                       />
-                      <button type="submit" className="header-search-pop__submit btn-z-style">
-                        {searchLoading ? '...' : (lang === 'ru' ? 'Искать' : lang === 'en' ? 'Search' : 'Шукати')}
+                      <button
+                        type="submit"
+                        className="header-search-pop__submit btn-z-style"
+                      >
+                        {searchLoading
+                          ? "..."
+                          : lang === "ru"
+                            ? "Искать"
+                            : lang === "en"
+                              ? "Search"
+                              : "Шукати"}
                       </button>
-                      <button type="button" className="header-search-pop__close btn-z-style" onClick={closeSearch}>
+                      <button
+                        type="button"
+                        className="header-search-pop__close btn-z-style"
+                        onClick={closeSearch}
+                      >
                         ✕
                       </button>
                     </form>
                     {suggestions && suggestions.length > 0 && (
                       <ul className="header-search-pop__suggestions">
                         {suggestions.map((s, idx) => (
-                          <li key={`${s.type}-${idx}`} className="header-search-pop__item">
+                          <li
+                            key={`${s.type}-${idx}`}
+                            className="header-search-pop__item"
+                          >
                             {(() => {
-                              const to = new URL(s.url, window.location.origin).pathname;
+                              const to = new URL(s.url, window.location.origin)
+                                .pathname;
                               return (
                                 <Link to={to} onClick={closeSearch}>
-                                  <span className="badge">{s.type === 'service' ? (lang === 'ru' ? 'Услуга' : lang === 'en' ? 'Service' : 'Послуга') : 'Блог'}</span>
+                                  <span className="badge">
+                                    {s.type === "service"
+                                      ? lang === "ru"
+                                        ? "Услуга"
+                                        : lang === "en"
+                                          ? "Service"
+                                          : "Послуга"
+                                      : "Блог"}
+                                  </span>
                                   <span className="title">{s.title}</span>
                                 </Link>
                               );
@@ -674,7 +715,7 @@ export const Header = () => {
         </div>
       </header>
       {/* Inline search box */}
-      {isSearchOpen && (
+      {isSearchOpen && isPC && (
         <div className="header-search-overlay">
           <div className="container">
             <form className="header-search" onSubmit={handleSearchSubmit}>
@@ -684,26 +725,54 @@ export const Header = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={
-                  lang === 'ru' ? 'Поиск по заголовкам...' : lang === 'en' ? 'Search titles...' : 'Пошук за заголовками...'
+                  lang === "ru"
+                    ? "Поиск по заголовкам..."
+                    : lang === "en"
+                      ? "Search titles..."
+                      : "Пошук за заголовками..."
                 }
                 className="header-search-input"
                 onKeyDown={(e) => {
-                  if (e.key === 'Escape') closeSearch();
+                  if (e.key === "Escape") closeSearch();
                 }}
               />
-              <button type="submit" className="header-search-submit btn-z-style">
-                {searchLoading ? '...' : (lang === 'ru' ? 'Искать' : lang === 'en' ? 'Search' : 'Шукати')}
+              <button
+                type="submit"
+                className="header-search-submit btn-z-style"
+              >
+                {searchLoading
+                  ? "..."
+                  : lang === "ru"
+                    ? "Искать"
+                    : lang === "en"
+                      ? "Search"
+                      : "Шукати"}
               </button>
-              <button type="button" className="header-search-close btn-z-style" onClick={closeSearch}>
+              <button
+                type="button"
+                className="header-search-close btn-z-style"
+                onClick={closeSearch}
+              >
                 ✕
               </button>
             </form>
             {suggestions && suggestions.length > 0 && (
               <ul className="header-search-suggestions">
                 {suggestions.map((s, idx) => (
-                  <li key={`${s.type}-${idx}`} className="header-search-suggestion-item">
+                  <li
+                    key={`${s.type}-${idx}`}
+                    className="header-search-suggestion-item"
+                  >
                     <a href={s.url} onClick={closeSearch}>
-                      <span className="badge">{s.type === 'service' ? (lang === 'ru' ? 'Услуга' : lang === 'en' ? 'Service' : 'Послуга') : 'Блог'}</span>
+                      <span className="badge">
+                        {s.type === "service"
+                          ? lang === "ru"
+                            ? "Услуга"
+                            : lang === "en"
+                              ? "Service"
+                              : "Послуга"
+                          : "Блог"}
+                      </span>
                       <span className="title">{s.title}</span>
                     </a>
                   </li>
