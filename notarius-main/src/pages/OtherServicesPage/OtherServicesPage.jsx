@@ -36,7 +36,7 @@ const OtherServicesPage = () => {
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId="other-services" />
       </Suspense>
     </PageTemplate>
   );

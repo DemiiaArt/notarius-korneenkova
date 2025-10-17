@@ -20,8 +20,9 @@ import "./TemplatePage.scss";
  *      items?: string[]
  *    }]
  * @param {string} [props.heroImgClass] - CSS класс для фонового изображения в hero-блоке
+ * @param {string} [props.navId] - ID элемента из nav-tree для загрузки FAQs (опционально)
  */
-const TemplatePage = ({ title, content = [], heroImgClass }) => {
+const TemplatePage = ({ title, content = [], heroImgClass, navId }) => {
   const isPC = useIsPC();
 
   return (
@@ -101,7 +102,7 @@ const TemplatePage = ({ title, content = [], heroImgClass }) => {
       </div>
 
       <ServicesCarousel parentId="services" title="Інші послуги" kind="group" />
-      <OftenQuestions />
+      <OftenQuestions navId={navId} />
       <Form />
     </div>
   );

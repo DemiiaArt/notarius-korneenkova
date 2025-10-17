@@ -53,7 +53,7 @@ const DefaultFourthLevelPage = ({
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId={navId} />
       </Suspense>
     </PageTemplate>
   );

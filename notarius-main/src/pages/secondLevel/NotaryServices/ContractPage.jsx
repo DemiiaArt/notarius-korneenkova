@@ -31,7 +31,7 @@ const ContractPage = () => {
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId="contracts" />
       </Suspense>
     </PageTemplate>
   );

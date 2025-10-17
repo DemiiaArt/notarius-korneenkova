@@ -322,6 +322,59 @@ const Breadcrumbs = () => {
 
   currentId = findNodeByPath(navTree, currentPath);
 
+  // СПЕЦИАЛЬНАЯ ОБРАБОТКА ДЛЯ БЛОГА
+  // Если не нашли узел через обычный поиск, проверяем блог
+  if (!currentId) {
+    const blogPatterns = {
+      ua: /^\/notarialni-blog(\/[^\/]+)?$/,
+      ru: /^\/ru\/notarialni-blog(\/[^\/]+)?$/,
+      en: /^\/en\/notary-blog(\/[^\/]+)?$/,
+    };
+
+    const isBlogPage = Object.values(blogPatterns).some((pattern) =>
+      pattern.test(location.pathname)
+    );
+
+    if (isBlogPage) {
+      const pathParts = location.pathname.split("/").filter(Boolean);
+      // Убираем префикс языка если есть
+      const partsWithoutLang =
+        pathParts[0] === "ru" || pathParts[0] === "en"
+          ? pathParts.slice(1)
+          : pathParts;
+
+      // Если есть slug статьи после blog slug
+      if (partsWithoutLang.length > 1) {
+        const articleSlug = partsWithoutLang[1];
+        console.log("🔍 [Breadcrumbs] Ищем статью блога:", articleSlug);
+
+        // Пытаемся найти статью в children блога
+        const blogNode = findPathStackById(navTree, "blog")?.at(-1);
+        console.log("🔍 [Breadcrumbs] Узел блога:", blogNode);
+
+        if (blogNode && blogNode.children) {
+          console.log("🔍 [Breadcrumbs] Дети блога:", blogNode.children);
+          const article = blogNode.children.find(
+            (child) =>
+              child.slug?.ua === articleSlug ||
+              child.slug?.ru === articleSlug ||
+              child.slug?.en === articleSlug
+          );
+          if (article) {
+            console.log("✅ [Breadcrumbs] Нашли статью:", article);
+            currentId = article.id;
+          } else {
+            console.warn("⚠️ [Breadcrumbs] Статья не найдена в children блога");
+          }
+        }
+      } else {
+        // Это главная страница блога
+        console.log("✅ [Breadcrumbs] Это главная страница блога");
+        currentId = "blog";
+      }
+    }
+  }
+
   // Если не нашли текущую страницу (например, 404) — покажем только «Домой»
   if (!currentId) {
     return (

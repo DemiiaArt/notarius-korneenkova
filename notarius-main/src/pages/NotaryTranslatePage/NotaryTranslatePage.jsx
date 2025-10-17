@@ -38,7 +38,7 @@ const NotaryTranslatePage = () => {
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId="notary-translate" />
       </Suspense>
     </PageTemplate>
   );

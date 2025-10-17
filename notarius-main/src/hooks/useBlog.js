@@ -262,12 +262,11 @@ export const useBlogHome = () => {
           lang: currentLang,
         });
 
-        const url = `/blog/notarialni-blog/home?${params.toString()}`;
+        const url = `/blog/notarialni-blog/home/?${params.toString()}`;
         console.log("✅ Загружаем blog home:", url);
 
         const data = await apiClient.get(url);
 
-        console.log("✅ Blog home загружен:", data);
         setBlogHome(data);
       } catch (err) {
         // Если 404, возвращаем пустые данные без ошибки
