@@ -357,20 +357,6 @@ const Footer = () => {
                 />
               </a>
             )}
-            {contacts.twitter_url && (
-              <a
-                className="footer-social-media-item bg2"
-                href={contacts.twitter_url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img
-                  src={ticktock}
-                  alt="Twitter"
-                  className="footer-social-media-icon"
-                />
-              </a>
-            )}
           </div>
           <FooterAccordion openIndex={openIndex} setOpenIndex={setOpenIndex} />
         </div>

@@ -590,77 +590,6 @@ export const Header = () => {
                     />
                   </svg>
                 </button>
-                {isSearchOpen && !isPC && (
-                  <div className="header-search-pop">
-                    <form
-                      className="header-search-pop__form"
-                      onSubmit={handleSearchSubmit}
-                    >
-                      <input
-                        id="header-search-input"
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder={
-                          lang === "ru"
-                            ? "Поиск по заголовкам..."
-                            : lang === "en"
-                              ? "Search titles..."
-                              : "Пошук за заголовками..."
-                        }
-                        className="header-search-pop__input"
-                      />
-                      <button
-                        type="submit"
-                        className="header-search-pop__submit btn-z-style"
-                      >
-                        {searchLoading
-                          ? "..."
-                          : lang === "ru"
-                            ? "Искать"
-                            : lang === "en"
-                              ? "Search"
-                              : "Шукати"}
-                      </button>
-                      <button
-                        type="button"
-                        className="header-search-pop__close btn-z-style"
-                        onClick={closeSearch}
-                      >
-                        ✕
-                      </button>
-                    </form>
-                    {suggestions && suggestions.length > 0 && (
-                      <ul className="header-search-pop__suggestions">
-                        {suggestions.map((s, idx) => (
-                          <li
-                            key={`${s.type}-${idx}`}
-                            className="header-search-pop__item"
-                          >
-                            {(() => {
-                              const to = new URL(s.url, window.location.origin)
-                                .pathname;
-                              return (
-                                <Link to={to} onClick={closeSearch}>
-                                  <span className="badge">
-                                    {s.type === "service"
-                                      ? lang === "ru"
-                                        ? "Услуга"
-                                        : lang === "en"
-                                          ? "Service"
-                                          : "Послуга"
-                                      : "Блог"}
-                                  </span>
-                                  <span className="title">{s.title}</span>
-                                </Link>
-                              );
-                            })()}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
                 <div className="header-change-lang-dropdown">
                   <div className="header-change-lang-list">
                     {[
@@ -707,73 +636,129 @@ export const Header = () => {
           </div>
         </div>
       </header>
-      {/* Inline search box */}
-      {isSearchOpen && isPC && (
-        <div className="header-search-overlay">
-          <div className="container">
-            <form className="header-search" onSubmit={handleSearchSubmit}>
-              <input
-                id="header-search-input"
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={
-                  lang === "ru"
-                    ? "Поиск по заголовкам..."
-                    : lang === "en"
-                      ? "Search titles..."
-                      : "Пошук за заголовками..."
-                }
-                className="header-search-input"
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") closeSearch();
-                }}
-              />
-              <button
-                type="submit"
-                className="header-search-submit btn-z-style"
-              >
-                {searchLoading
-                  ? "..."
-                  : lang === "ru"
-                    ? "Искать"
-                    : lang === "en"
-                      ? "Search"
-                      : "Шукати"}
-              </button>
-              <button
-                type="button"
-                className="header-search-close btn-z-style"
-                onClick={closeSearch}
-              >
-                ✕
-              </button>
-            </form>
-            {suggestions && suggestions.length > 0 && (
-              <ul className="header-search-suggestions">
-                {suggestions.map((s, idx) => (
-                  <li
-                    key={`${s.type}-${idx}`}
-                    className="header-search-suggestion-item"
+
+      {/* Search Modal */}
+      {isSearchOpen && (
+        <>
+          <div
+            className={`search-modal-overlay ${isSearchOpen ? "active" : ""}`}
+          >
+            <div className="search-modal-header">
+              <div className="container">
+                <div className="search-modal-content">
+                  <form
+                    className="search-modal-form"
+                    onSubmit={handleSearchSubmit}
                   >
-                    <a href={s.url} onClick={closeSearch}>
-                      <span className="badge">
-                        {s.type === "service"
-                          ? lang === "ru"
-                            ? "Услуга"
+                    <div className="search-modal-input-wrapper">
+                      <input
+                        id="header-search-input"
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={
+                          lang === "ru"
+                            ? "Поиск по заголовкам..."
                             : lang === "en"
-                              ? "Service"
-                              : "Послуга"
-                          : "Блог"}
-                      </span>
-                      <span className="title">{s.title}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
+                              ? "Search titles..."
+                              : "Пошук за заголовками..."
+                        }
+                        className="search-modal-input"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Escape") closeSearch();
+                        }}
+                      />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          className="search-modal-clear-btn btn-z-style"
+                          onClick={() => setSearchQuery("")}
+                          title={
+                            lang === "ru"
+                              ? "Очистить"
+                              : lang === "en"
+                                ? "Clear"
+                                : "Очистити"
+                          }
+                        >
+                          ✕
+                        </button>
+                      )}
+                      <button
+                        type="submit"
+                        className="search-modal-submit-btn btn-z-style"
+                        disabled={searchLoading}
+                        title={
+                          lang === "ru"
+                            ? "Искать"
+                            : lang === "en"
+                              ? "Search"
+                              : "Шукати"
+                        }
+                      >
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 32 32"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                        >
+                          <path d="M29.71,28.29l-6.5-6.5-.07,0a12,12,0,1,0-1.39,1.39s0,.05,0,.07l6.5,6.5a1,1,0,0,0,1.42,0A1,1,0,0,0,29.71,28.29ZM14,24A10,10,0,1,1,24,14,10,10,0,0,1,14,24Z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      className="search-modal-close-btn btn-z-style"
+                      onClick={closeSearch}
+                      title={
+                        lang === "ru"
+                          ? "Закрыть"
+                          : lang === "en"
+                            ? "Close"
+                            : "Закрити"
+                      }
+                    >
+                      ✕
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+
+          {suggestions && suggestions.length > 0 && (
+            <div className="search-modal-suggestions-wrapper">
+              <div className="container">
+                <ul className="search-modal-suggestions">
+                  {suggestions.map((s, idx) => {
+                    const to = new URL(s.url, window.location.origin).pathname;
+                    return (
+                      <li
+                        key={`${s.type}-${idx}`}
+                        className="search-modal-suggestion-item"
+                      >
+                        <Link to={to} onClick={closeSearch}>
+                          <span className="badge">
+                            {s.type === "service"
+                              ? lang === "ru"
+                                ? "Услуга"
+                                : lang === "en"
+                                  ? "Service"
+                                  : "Послуга"
+                              : "Блог"}
+                          </span>
+                          <span className="title">{s.title}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          )}
+        </>
       )}
       <div className="navbar-link-block-wrap">
         <nav className="navbar-link-block container fs-p--16px uppercase fw-semi-bold lh-150 c3">
