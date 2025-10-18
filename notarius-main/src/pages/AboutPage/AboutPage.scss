@@ -78,7 +78,7 @@ h2 {
         }
       }
       &-text-content {
-        margin-top: 80px; /* отступ от breadcrumbs для экранов 1200+ */
+        margin-top: 200px; /* отступ от breadcrumbs для экранов 1200+ */
       }
     }
 
@@ -90,10 +90,6 @@ h2 {
   @media (min-width: 1204px) {
     .about-block {
       height: 110vh;
-
-      &-text-content {
-        margin-top: 100px; /* отступ от breadcrumbs для экранов 1200+ */
-      }
     }
   }
 }
