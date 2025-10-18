@@ -53,7 +53,7 @@ const SkillCard = ({ textData }) => {
       <p className={`${isPC ? "fs-p--24px" : "fs-p--14px"} fw-semi-bold c3`}>
         {title}
       </p>
-      <p className={`${isPC ? "fs-p--18px" : "fs-p--12px"} lh-130 c3`}>
+      <p className={`${isPC ? "fs-p--16px" : "fs-p--12px"} lh-130 c3`}>
         {text}
       </p>
     </div>

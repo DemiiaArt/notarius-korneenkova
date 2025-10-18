@@ -484,14 +484,7 @@ export const Header = () => {
                   </a>
                 </div>
               </div>
-              <Link
-                to="/"
-                className="header-logo-wrap"
-                onClick={(e) => {
-                  e.preventDefault();
-                  openSearch("");
-                }}
-              >
+              <Link to="/" className="header-logo-wrap">
                 <svg
                   className="header-logo c3"
                   width="137"
