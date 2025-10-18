@@ -695,7 +695,7 @@ li {
   top: 110px; // отступ под модалку поиска
   left: 0;
   right: 0;
-  z-index: 4999; // под модалкой
+  z-index: 5000; // под модалкой
   pointer-events: none; // чтобы клики проходили через wrapper
 }
 
@@ -798,7 +798,7 @@ li {
   }
 
   .search-modal-suggestions-wrapper {
-    top: 80px; // меньший отступ для мобильных
+    top: 50px; // меньший отступ для мобильных
   }
 
   .search-modal-suggestion-item {
