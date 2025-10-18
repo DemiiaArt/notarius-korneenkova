@@ -237,3 +237,9 @@ LOGGING = {
 # Phone number field settings
 PHONENUMBER_DEFAULT_REGION = os.getenv('PHONENUMBER_DEFAULT_REGION')
 PHONENUMBER_DB_FORMAT = 'E164'
+
+# Base URL for canonical URLs
+if DEBUG:
+    BASE_URL = 'http://localhost:5173'
+else:
+    BASE_URL = 'https://notarius-korneenkova.com.ua'
