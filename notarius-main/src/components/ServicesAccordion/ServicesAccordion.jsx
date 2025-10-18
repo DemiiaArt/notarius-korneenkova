@@ -31,6 +31,7 @@ const PlusIcon = () => (
 const AccordionItem = ({ service, isOpen, onToggle }) => {
   const isPC = useIsPC();
   const bodyRef = useRef(null);
+  console.log(service);
   return (
     <div
       className={`accordion-item bg1 ${isOpen ? "open" : ""}`}
@@ -62,12 +63,16 @@ const AccordionItem = ({ service, isOpen, onToggle }) => {
           {isOpen && (
             <div>
               {service.subtitle && (
-                <p className="accordion-subtitle fw-medium">{service.subtitle}</p>
+                <p className="accordion-subtitle fw-medium">
+                  {service.subtitle}
+                </p>
               )}
               {service.description && (
                 <div
                   className="accordion-description"
-                  dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(service.description) }}
+                  dangerouslySetInnerHTML={{
+                    __html: normalizeAndConvertHtml(service.description),
+                  }}
                 />
               )}
             </div>
@@ -117,7 +122,9 @@ export const ServicesAccordion = ({ title = "ДЛЯ КОГО ПОСЛУГИ" }) 
       try {
         setLoading(true);
         setError(null);
-        const resp = await fetch(`${API_BASE_URL}/services-for/?lang=${encodeURIComponent(currentLang || "ua")}`);
+        const resp = await fetch(
+          `${API_BASE_URL}/services-for/?lang=${encodeURIComponent(currentLang || "ua")}`
+        );
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         if (!isCancelled) setServices(Array.isArray(data) ? data : []);
