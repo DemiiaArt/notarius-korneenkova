@@ -276,7 +276,7 @@ li {
 
   /* Бургер */
   .navbar-burger-wrap {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     justify-content: center;
     gap: 6px;
@@ -287,41 +287,30 @@ li {
 
     span {
       display: block;
-      height: 1px;
+      height: 2px;
       border-radius: 1px;
       background-color: map.get(
         $colors,
         3
       ) !important; // Принудительный цвет для Safari на iOS
       background: map.get($colors, 3) !important; // Дополнительная защита
-      -webkit-background-color: map.get(
-        $colors,
-        3
-      ) !important; // WebKit специфичный
+      flex: 0 0 2px;
+      will-change: transform, opacity;
       transition:
         transform 0.3s ease,
         opacity 0.3s ease,
         top 0.3s ease;
     }
 
-    // Дополнительная защита для iOS Safari
-    @supports (-webkit-appearance: none) {
-      span {
-        background-color: map.get($colors, 3) !important;
-        background: map.get($colors, 3) !important;
-        -webkit-background-color: map.get($colors, 3) !important;
-      }
-    }
-
     &.active {
       span:nth-child(1) {
-        transform: rotate(45deg) translate(7px, 5px);
+        transform: rotate(45deg) translate(8px, 5px);
       }
       span:nth-child(2) {
         opacity: 0;
       }
       span:nth-child(3) {
-        transform: rotate(-45deg) translate(4px, -3px);
+        transform: rotate(-45deg) translate(6px, -3px);
       }
     }
   }
