@@ -68,12 +68,12 @@ const OftenQuestionsItem = ({ question, isOpen, onToggle }) => {
   );
 };
 
-export const OftenQuestions = ({ title = "Часті запитання" }) => {
+export const OftenQuestions = ({ title = "Часті запитання", navId }) => {
   const [activeItem, setActiveItem] = useState(null);
   const { t } = useTranslation("components.OftenQuestions");
 
   // Загружаем FAQ из API
-  const { faqs, loading, error } = useFAQs();
+  const { faqs, loading, error } = useFAQs(navId);
 
   const handleToggle = (title) => {
     setActiveItem((prev) => (prev === title ? null : title));

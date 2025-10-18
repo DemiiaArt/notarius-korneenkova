@@ -874,3 +874,4 @@ class VideoBlockStreamView(APIView):
         response['Content-Length'] = str(file_size)
         response['Accept-Ranges'] = 'bytes'
         return response
+

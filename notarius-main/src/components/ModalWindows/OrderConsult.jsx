@@ -247,7 +247,7 @@ export const OrderConsult = () => {
             <button
               type="submit"
               className={`btn-submit ${
-                isPC ? "fs-p--24px" : "fs-p--14px"
+                isPC ? "fs-p--16px" : "fs-p--14px"
               } bg4 c1 fw-normal uppercase`}
               disabled={isSubmitted || isLoading}
             >

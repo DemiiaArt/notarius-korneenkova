@@ -72,13 +72,13 @@ h2 {
         margin: 24px 0 32px 0;
       }
       &-content {
-        padding: 220px 0 0 0;
+        padding: 50px 0 0 0;
         .breadcrumbs {
           padding-bottom: 0;
         }
       }
       &-text-content {
-        margin-top: 80px; /* отступ от breadcrumbs для экранов 1200+ */
+        margin-top: 200px; /* отступ от breadcrumbs для экранов 1200+ */
       }
     }
 
@@ -90,10 +90,6 @@ h2 {
   @media (min-width: 1204px) {
     .about-block {
       height: 110vh;
-
-      &-text-content {
-        margin-top: 100px; /* отступ от breadcrumbs для экранов 1200+ */
-      }
     }
   }
 }

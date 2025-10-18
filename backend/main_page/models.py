@@ -159,9 +159,6 @@ class ServicesFor(models.Model):
     subtitle_en = models.CharField(max_length=255)
     subtitle_ru = models.CharField(max_length=255)
 
-    description_uk = CKEditor5Field('Description', config_name='default', blank=True, null=True)
-    description_en = CKEditor5Field('Description', config_name='default', blank=True, null=True)
-    description_ru = CKEditor5Field('Description', config_name='default', blank=True, null=True)
 
     def __str__(self):
         return self.title_uk
@@ -355,6 +352,8 @@ class ServiceCategory(MPTTModel):
         """
         Возвращает канонический URL для конкретного языка
         """
+        from django.conf import settings
+        
         if self.canonical_url:
             # Если canonical_url уже полный URL - возвращаем как есть
             if self.canonical_url.startswith(('http://', 'https://')):
@@ -366,10 +365,10 @@ class ServiceCategory(MPTTModel):
                 path = self.canonical_url if self.canonical_url.startswith('/') else f"/{self.canonical_url}"
                 # Убеждаемся, что путь заканчивается слешем
                 path = path if path.endswith('/') else f"{path}/"
-                return f"https://notarius-korneenkova.com.ua{path}"
+                return f"{settings.BASE_URL}{path}"
         
         # Автоматическая генерация на основе языка с учетом иерархии
-        base_url = "https://notarius-korneenkova.com.ua"
+        base_url = settings.BASE_URL
         full_path = self._get_full_path_for_canonical(language)
         return f"{base_url}{full_path}"
 

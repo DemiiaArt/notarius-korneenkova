@@ -33,7 +33,7 @@ const MilitaryPage = () => {
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId="military-help" />
       </Suspense>
     </PageTemplate>
   );

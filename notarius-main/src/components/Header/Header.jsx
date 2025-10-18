@@ -1,6 +1,6 @@
 import arrow from "@media/icons/arrow-header-mobile.svg";
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import { useIsPC } from "@hooks/isPC";
 import { useModal } from "@components/ModalProvider/ModalProvider";
@@ -16,6 +16,7 @@ import { useHybridNav } from "@contexts/HybridNavContext";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
 import { useContacts } from "@hooks/useContacts";
+import { apiClient } from "@/config/api";
 
 export const Header = () => {
   const { pathname } = useLocation();
@@ -23,6 +24,7 @@ export const Header = () => {
   const lang = currentLang;
   const { t } = useTranslation("components.Header");
   const { contacts } = useContacts(lang);
+  const navigate = useNavigate();
 
   // Отримуємо навігацію з гібридної системи
   let navTree, loading, error, mergeComplete;
@@ -41,6 +43,11 @@ export const Header = () => {
   // currentLang теперь получаем из useLanguage
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const searchAbortRef = useRef(null);
 
   const { open } = useModal();
 
@@ -148,6 +155,69 @@ export const Header = () => {
 
   const closeMenu = () => {
     setMenuOpen(false);
+  };
+
+  const openSearch = (prefill = "") => {
+    setIsSearchOpen(true);
+    setSearchQuery(prefill);
+    // Focus input on next tick
+    setTimeout(() => {
+      const input = document.getElementById("header-search-input");
+      if (input) input.focus();
+    }, 0);
+  };
+
+  const closeSearch = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+    setSuggestions([]);
+  };
+
+  // Debounced suggestions fetch handled below with fetchSuggestions
+
+  // Actual fetch using apiClient (separate to avoid string concat in useEffect above)
+  const fetchSuggestions = useCallback(
+    async (q) => {
+      try {
+        const json = await apiClient.get(
+          `/search/suggest/?q=${encodeURIComponent(q)}&lang=${lang}&type=all&limit=8`
+        );
+        setSuggestions(
+          Array.isArray(json?.suggestions) ? json.suggestions : []
+        );
+      } catch (e) {
+        setSuggestions([]);
+      }
+    },
+    [lang]
+  );
+
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!isSearchOpen || !q) return;
+    const t = setTimeout(() => fetchSuggestions(q), 300);
+    return () => clearTimeout(t);
+  }, [searchQuery, isSearchOpen, fetchSuggestions]);
+
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    try {
+      setSearchLoading(true);
+      const res = await apiClient.get(
+        `/search/?q=${encodeURIComponent(q)}&lang=${lang}&type=all&limit=10`
+      );
+      const first = Array.isArray(res?.results) ? res.results[0] : null;
+      if (first?.url) {
+        const to = new URL(first.url, window.location.origin);
+        navigate(to.pathname);
+      }
+    } catch (err) {
+      // noop
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   const switchLang = (langKey) => {
@@ -366,7 +436,11 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.whatsapp_phone ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}` : contacts.whatsapp || "#"}
+                    href={
+                      contacts.whatsapp_phone
+                        ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, "")}`
+                        : contacts.whatsapp || "#"
+                    }
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -386,7 +460,11 @@ export const Header = () => {
                   </a>
                   <a
                     className="navbar-social-link bg4"
-                    href={contacts.telegram_phone ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}` : contacts.telegram || "#"}
+                    href={
+                      contacts.telegram_phone
+                        ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, "")}`
+                        : contacts.telegram || "#"
+                    }
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -494,7 +572,11 @@ export const Header = () => {
                 </svg>
               </Link>
               <div className="header-btns">
-                <button className="search-icon-wrap btn-z-style">
+                <button
+                  type="button"
+                  className="search-icon-wrap btn-z-style"
+                  onClick={() => openSearch("")}
+                >
                   <svg
                     className="search-icon c3"
                     width="24"
@@ -535,6 +617,7 @@ export const Header = () => {
                     </p>
                   ) : (
                     <svg
+                      className="c3"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -553,6 +636,130 @@ export const Header = () => {
           </div>
         </div>
       </header>
+
+      {/* Search Modal */}
+      {isSearchOpen && (
+        <>
+          <div
+            className={`search-modal-overlay ${isSearchOpen ? "active" : ""}`}
+          >
+            <div className="search-modal-header">
+              <div className="container">
+                <div className="search-modal-content">
+                  <form
+                    className="search-modal-form"
+                    onSubmit={handleSearchSubmit}
+                  >
+                    <div className="search-modal-input-wrapper">
+                      <input
+                        id="header-search-input"
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={
+                          lang === "ru"
+                            ? "Поиск по заголовкам..."
+                            : lang === "en"
+                              ? "Search titles..."
+                              : "Пошук за заголовками..."
+                        }
+                        className="search-modal-input"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Escape") closeSearch();
+                        }}
+                      />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          className="search-modal-clear-btn btn-z-style"
+                          onClick={() => setSearchQuery("")}
+                          title={
+                            lang === "ru"
+                              ? "Очистить"
+                              : lang === "en"
+                                ? "Clear"
+                                : "Очистити"
+                          }
+                        >
+                          ✕
+                        </button>
+                      )}
+                      <button
+                        type="submit"
+                        className="search-modal-submit-btn btn-z-style"
+                        disabled={searchLoading}
+                        title={
+                          lang === "ru"
+                            ? "Искать"
+                            : lang === "en"
+                              ? "Search"
+                              : "Шукати"
+                        }
+                      >
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 32 32"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                        >
+                          <path d="M29.71,28.29l-6.5-6.5-.07,0a12,12,0,1,0-1.39,1.39s0,.05,0,.07l6.5,6.5a1,1,0,0,0,1.42,0A1,1,0,0,0,29.71,28.29ZM14,24A10,10,0,1,1,24,14,10,10,0,0,1,14,24Z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      className="search-modal-close-btn btn-z-style"
+                      onClick={closeSearch}
+                      title={
+                        lang === "ru"
+                          ? "Закрыть"
+                          : lang === "en"
+                            ? "Close"
+                            : "Закрити"
+                      }
+                    >
+                      ✕
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {suggestions && suggestions.length > 0 && (
+            <div className="search-modal-suggestions-wrapper">
+              <div className="container">
+                <ul className="search-modal-suggestions">
+                  {suggestions.map((s, idx) => {
+                    const to = new URL(s.url, window.location.origin).pathname;
+                    return (
+                      <li
+                        key={`${s.type}-${idx}`}
+                        className="search-modal-suggestion-item"
+                      >
+                        <Link to={to} onClick={closeSearch}>
+                          <span className="badge">
+                            {s.type === "service"
+                              ? lang === "ru"
+                                ? "Услуга"
+                                : lang === "en"
+                                  ? "Service"
+                                  : "Послуга"
+                              : "Блог"}
+                          </span>
+                          <span className="title">{s.title}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          )}
+        </>
+      )}
       <div className="navbar-link-block-wrap">
         <nav className="navbar-link-block container fs-p--16px uppercase fw-semi-bold lh-150 c3">
           <Link
@@ -853,7 +1060,13 @@ export const Header = () => {
               <div className="accordion-header fw-medium">
                 <ul className="mobile-menu-social-block">
                   <li className="mobile-menu-social-block-item">
-                    <a href={contacts.facebook_url || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="facebook">
+                    <a
+                      href={contacts.facebook_url || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mobile-menu-social-block-item-link"
+                      aria-label="facebook"
+                    >
                       <svg
                         width="9"
                         height="18"
@@ -870,7 +1083,13 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href={contacts.instagram_url || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="instagram">
+                    <a
+                      href={contacts.instagram_url || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mobile-menu-social-block-item-link"
+                      aria-label="instagram"
+                    >
                       <svg
                         width="18"
                         height="18"
@@ -887,7 +1106,17 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href={contacts.telegram_phone ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}` : contacts.telegram || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="telegram">
+                    <a
+                      href={
+                        contacts.telegram_phone
+                          ? `https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, "")}`
+                          : contacts.telegram || "#"
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mobile-menu-social-block-item-link"
+                      aria-label="telegram"
+                    >
                       <svg
                         className="mobile-menu-social-block-item-img"
                         width="19"
@@ -904,7 +1133,17 @@ export const Header = () => {
                     </a>
                   </li>
                   <li className="mobile-menu-social-block-item">
-                    <a href={contacts.whatsapp_phone ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}` : contacts.whatsapp || "#"} target="_blank" rel="noreferrer" className="mobile-menu-social-block-item-link" aria-label="whatsapp">
+                    <a
+                      href={
+                        contacts.whatsapp_phone
+                          ? `https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, "")}`
+                          : contacts.whatsapp || "#"
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mobile-menu-social-block-item-link"
+                      aria-label="whatsapp"
+                    >
                       <svg
                         className="mobile-menu-social-block-item-img"
                         width="18"

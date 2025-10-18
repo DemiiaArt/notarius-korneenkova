@@ -17,6 +17,9 @@ export default defineConfig({
       "@media": path.resolve(
         fileURLToPath(new URL("./src/assets/media", import.meta.url))
       ),
+      "@config": path.resolve(
+        fileURLToPath(new URL("./src/config", import.meta.url))
+      ),
       "@hooks": path.resolve(
         fileURLToPath(new URL("./src/hooks", import.meta.url))
       ),

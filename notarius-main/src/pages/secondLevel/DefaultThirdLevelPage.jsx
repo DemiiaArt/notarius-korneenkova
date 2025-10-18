@@ -35,7 +35,7 @@ const DefaultThirdLevelPage = ({
     >
       {/* На 3-му рівні показуємо дітей поточного розділу (або верхній рівень, якщо дітей немає) */}
       <AdaptiveCarousel parentId={navId} title="Інші послуги" />
-      <OftenQuestions />
+      <OftenQuestions navId={navId} />
       <Form />
     </PageTemplate>
   );

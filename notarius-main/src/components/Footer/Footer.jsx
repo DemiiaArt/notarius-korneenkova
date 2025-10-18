@@ -48,7 +48,7 @@ const helpLinks = {
   ua: [
     { link: "notarialni-offer", label: "Договір оферти" },
     { link: "notarialni-policy", label: "Політика конфіденційності" },
-    { link: "notarialni-torgivelna-marka", label: "Торгівельна марка" },
+    { link: "notarialni-torgivelna-marka", label: "Торговельна марка" },
   ],
   ru: [
     { link: "notarialni-offer", label: "Договор оферты" },
@@ -58,7 +58,7 @@ const helpLinks = {
   en: [
     { link: "notary-offer", label: "Offer contract" },
     { link: "notary-policy", label: "Privacy Policy" },
-    { link: "notary-trade-mark", label: "Trade mark" },
+    { link: "notary-trade-mark", label: "Trademark" },
   ],
 };
 
@@ -158,7 +158,7 @@ const Footer = () => {
               </p>
               {contacts.whatsapp_phone && (
                 <a
-                  href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}`}
+                  href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
                   className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -168,7 +168,7 @@ const Footer = () => {
               )}
               {contacts.telegram_phone && (
                 <a
-                  href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}`}
+                  href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
                   className={`footer-social-media-link c1 fw-normal ${isPC ? "fs-p--16px lh-150" : "fs-p--14px lh-100"}`}
@@ -332,7 +332,7 @@ const Footer = () => {
             {contacts.whatsapp_phone && (
               <a
                 className="footer-social-media-item bg2"
-                href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, '')}`}
+                href={`https://wa.me/${contacts.whatsapp_phone.replace(/[^\d]/g, "")}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -346,27 +346,13 @@ const Footer = () => {
             {contacts.telegram_phone && (
               <a
                 className="footer-social-media-item bg2"
-                href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, '')}`}
+                href={`https://t.me/${contacts.telegram_phone.replace(/[^\d]/g, "")}`}
                 target="_blank"
                 rel="noreferrer"
               >
                 <img
                   src={telegram}
                   alt="Telegram"
-                  className="footer-social-media-icon"
-                />
-              </a>
-            )}
-            {contacts.twitter_url && (
-              <a
-                className="footer-social-media-item bg2"
-                href={contacts.twitter_url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img
-                  src={ticktock}
-                  alt="Twitter"
                   className="footer-social-media-icon"
                 />
               </a>
@@ -398,6 +384,7 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
   const { t } = useTranslation("components.Footer");
   const { currentLang } = useLanguage();
   const { contacts } = useContacts(currentLang);
+  const LANG_UI_TO_ROUTE = { ukr: "ua", rus: "ru", eng: "en" };
 
   const toggleAccordion = (index) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -410,7 +397,7 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
         <>
           {contacts.phone_number && (
             <a
-              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal с1`}
               href={`tel:${contacts.phone_number.replace(/\s|\+/g, "")}`}
             >
               {contacts.phone_number}
@@ -445,16 +432,15 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
       title: t("navigation"),
       content: (
         <>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("home")}
-          </a>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("aboutUs")}
-          </a>
+          {navigationLinks[currentLang].map(({ link, label }) => (
+            <Link
+              key={link}
+              to={currentLang === "ua" ? `/${link}` : `/${currentLang}/${link}`}
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+            >
+              {label}
+            </Link>
+          ))}
         </>
       ),
     },
@@ -462,16 +448,15 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
       title: t("help"),
       content: (
         <>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("faq")}
-          </a>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("support")}
-          </a>
+          {helpLinks[currentLang].map(({ link, label }) => (
+            <Link
+              key={link}
+              to={currentLang === "ua" ? `/${link}` : `/${currentLang}/${link}`}
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+            >
+              {label}
+            </Link>
+          ))}
         </>
       ),
     },

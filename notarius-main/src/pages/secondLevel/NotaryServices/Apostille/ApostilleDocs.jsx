@@ -40,7 +40,7 @@ const ApostilleDocs = () => {
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId="apostille-documents" />
       </Suspense>
     </PageTemplate>
   );

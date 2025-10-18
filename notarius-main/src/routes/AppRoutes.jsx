@@ -10,6 +10,7 @@ import DynamicChildrenLoader from "../components/DynamicChildrenLoader/DynamicCh
 import BlogArticlePage from "../pages/BlogPage/BlogArticlePage";
 import BlogArticleDetailPage from "../pages/BlogPage/BlogArticleDetailPage";
 import DynamicPageRenderer from "../components/DynamicPages/DynamicPageRenderer";
+import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 
 // Loading component
 const LoadingSpinner = () => (
@@ -141,7 +142,7 @@ export default function AppRoutes({ pageProps = {} }) {
       <Route path="/en/:slug1/:slug2" element={<DynamicPageRenderer />} />
 
       {/* 404 */}
-      <Route path="*" element={<div>404</div>} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

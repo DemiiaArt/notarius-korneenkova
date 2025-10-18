@@ -180,20 +180,20 @@ const Certificates = () => {
         {/* Вкладки */}
         <div className="certificates-tabs">
           <button
-            onClick={() => setActiveTab("diplomas")}
-            className={`${isPC ? "fs-p--16px" : "fs-p--12px"} uppercase fw-semi-bold c3 certificates-tab ${
-              activeTab === "diplomas" ? "active" : ""
-            }`}
-          >
-            {t("tabs.certificates")}
-          </button>
-          <button
             onClick={() => setActiveTab("certificates")}
             className={` ${isPC ? "fs-p--16px" : "fs-p--12px"} uppercase fw-semi-bold c3 certificates-tab ${
               activeTab === "certificates" ? "active" : ""
             }`}
           >
             {t("tabs.diploma")}
+          </button>
+          <button
+            onClick={() => setActiveTab("diplomas")}
+            className={`${isPC ? "fs-p--16px" : "fs-p--12px"} uppercase fw-semi-bold c3 certificates-tab ${
+              activeTab === "diplomas" ? "active" : ""
+            }`}
+          >
+            {t("tabs.certificates")}
           </button>
         </div>
 

@@ -384,21 +384,21 @@ class AboutMeDetailAdmin(ContentAdmin):
 class ServicesForAdmin(admin.ModelAdmin):
     list_display = ['title_uk', 'subtitle_uk']
     list_filter = ['title_uk']
-    search_fields = ['title_uk', 'title_en', 'title_ru', 'subtitle_uk', 'subtitle_en', 'subtitle_ru', 'description_uk', 'description_en', 'description_ru']
+    search_fields = ['title_uk', 'title_en', 'title_ru', 'subtitle_uk', 'subtitle_en', 'subtitle_ru']
     save_on_top = True
     list_per_page = 20
     
     fieldsets = (
         ('Українська мова', {
-            'fields': ('title_uk', 'subtitle_uk', 'description_uk'),
+            'fields': ('title_uk', 'subtitle_uk'),
             'description': 'Контент українською мовою'
         }),
         ('English', {
-            'fields': ('title_en', 'subtitle_en', 'description_en'),
+            'fields': ('title_en', 'subtitle_en'),
             'description': 'Content in English'
         }),
         ('Русский язык', {
-            'fields': ('title_ru', 'subtitle_ru', 'description_ru'),
+            'fields': ('title_ru', 'subtitle_ru'),
             'description': 'Контент на русском языке'
         }),
     )

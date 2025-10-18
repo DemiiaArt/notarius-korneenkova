@@ -1,5 +1,5 @@
 import { useIsPC } from "@hooks/isPC";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import React from "react";
 import "./MainBlogPage.scss";
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
@@ -13,7 +13,15 @@ import { BACKEND_BASE_URL } from "@/config/api";
 
 const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
   const isPC = useIsPC();
-  const { t } = useTranslation("components.pages.BlogPage");
+  const { t, currentLang } = useTranslation();
+
+  // Debug translation
+  console.log("🌍 Current language:", currentLang);
+  console.log(
+    "🔤 Translation result:",
+    t("components.pages.BlogPage.allArticles")
+  );
+  console.log("🔍 Full BlogPage object:", t("components.pages.BlogPage"));
   const [activeFilter, setActiveFilter] = useState("all");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,17 +35,30 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
 
   // Загружаем hero_image для главной страницы блога
   const { blogHome, loading: homeLoading } = useBlogHome();
+  console.log(blogHome);
+  console.log("🏠 BlogHome data:", blogHome);
+  console.log("🏠 BlogHome title:", blogHome?.title);
+  console.log("🏠 Current language:", currentLang);
 
-  // Формируем категории фильтров
-  const filterCategories = [
-    { id: "all", label: t("all Articles") || "Всі статті" },
-    ...categories
-      .filter((cat) => cat.show_in_filters !== false)
-      .map((cat) => ({
-        id: cat.slug,
-        label: cat.name.toUpperCase(),
-      })),
-  ];
+  // Формируем категории фильтров с зависимостью от языка
+  const filterCategories = useMemo(
+    () => [
+      {
+        id: "all",
+        label: t("components.pages.BlogPage.allArticles") || "Всі статті",
+      },
+      ...categories
+        .filter((cat) => cat.show_in_filters !== false)
+        .map((cat) => ({
+          id: cat.slug,
+          label: cat.name.toUpperCase(),
+        })),
+    ],
+    [categories, t]
+  );
+
+  // Debug filter categories after creation
+  console.log("📋 Filter categories:", filterCategories);
 
   // Формируем список карточек из данных API
   const blogCardsList = articles.map((article, index) => (
@@ -101,16 +122,16 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
               <h1
                 className={`fw-bold uppercase ${isPC ? "fs-p--40px" : "fs-p--24px"} c1`}
               >
-                {blogHome?.title || t("title") || "Блог"}
+                {blogHome?.title}
               </h1>
               {!loading && totalCount > 0 && (
                 <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"} c2 mt-2`}>
-                  Знайдено {totalCount}{" "}
+                  {t("components.pages.BlogPage.found")} {totalCount}{" "}
                   {totalCount === 1
-                    ? "статтю"
+                    ? t("components.pages.BlogPage.article")
                     : totalCount < 5
-                      ? "статті"
-                      : "статей"}
+                      ? t("components.pages.BlogPage.articles")
+                      : t("components.pages.BlogPage.articlesMany")}
                 </p>
               )}
             </div>
@@ -144,7 +165,7 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
                 <div className="filterTag-desktop">
                   {filterCategories.map((category) => (
                     <button
-                      key={category.id}
+                      key={`${category.id}-${currentLang}`}
                       className={`filterTag-button ${activeFilter === category.id ? "active" : ""}`}
                       onClick={() => handleFilterChange(category.id)}
                     >
@@ -156,11 +177,14 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
                 {/* Mobile фильтр */}
                 <div className="filterTag-mobile">
                   <button
+                    key={`mobile-filter-${currentLang}`}
                     className="filterTag-mobile-trigger"
                     onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
                   >
-                    {filterCategories.find((cat) => cat.id === activeFilter)
-                      ?.label || "Всі статті"}
+                    {
+                      filterCategories.find((cat) => cat.id === activeFilter)
+                        ?.label
+                    }
                     <span
                       className={`filterTag-mobile-arrow ${isMobileFilterOpen ? "open" : ""}`}
                     ></span>

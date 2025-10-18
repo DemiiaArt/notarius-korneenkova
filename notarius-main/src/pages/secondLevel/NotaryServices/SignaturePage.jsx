@@ -37,7 +37,7 @@ const SignaturePage = () => {
         <Form />
       </Suspense>
       <Suspense fallback={<div>Завантаження...</div>}>
-        <OftenQuestions />
+        <OftenQuestions navId="signatures-statements" />
       </Suspense>
     </PageTemplate>
     // <AdaptiveCarousel

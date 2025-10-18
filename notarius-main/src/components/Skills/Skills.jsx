@@ -45,15 +45,17 @@ const SkillCard = ({ textData }) => {
   const { postCountText, preCountText, count, title, text } = textData;
   return (
     <div className="skills-card">
-      <p className={`${isPC ? "fs-p--30px" : "fs-p--16px"}`}>
+      <p className={`${isPC ? "fs-p--30px" : "fs-p--16px"} c3`}>
         {preCountText}
         <span className="fs-p--40px fs-italic fw-bold c4">{count}</span>
         {postCountText}
       </p>
-      <p className={`${isPC ? "fs-p--24px" : "fs-p--14px"} fw-semi-bold`}>
+      <p className={`${isPC ? "fs-p--24px" : "fs-p--14px"} fw-semi-bold c3`}>
         {title}
       </p>
-      <p className={`${isPC ? "fs-p--18px" : "fs-p--12px"} lh-130`}>{text}</p>
+      <p className={`${isPC ? "fs-p--16px" : "fs-p--12px"} lh-130 c3`}>
+        {text}
+      </p>
     </div>
   );
 };

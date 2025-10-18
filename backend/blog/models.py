@@ -111,6 +111,8 @@ class BlogPost(models.Model):
         """
         Возвращает канонический URL для конкретного языка
         """
+        from django.conf import settings
+        
         if self.canonical_url:
             # Если canonical_url уже полный URL - возвращаем как есть
             if self.canonical_url.startswith(('http://', 'https://')):
@@ -122,10 +124,10 @@ class BlogPost(models.Model):
                 path = self.canonical_url if self.canonical_url.startswith('/') else f"/{self.canonical_url}"
                 # Убеждаемся, что путь заканчивается слешем
                 path = path if path.endswith('/') else f"{path}/"
-                return f"https://notarius-korneenkova.com.ua{path}"
+                return f"{settings.BASE_URL}{path}"
         
         # Автоматическая генерация на основе языка с учетом структуры блога
-        base_url = "https://notarius-korneenkova.com.ua"
+        base_url = settings.BASE_URL
         if language == 'ua':
             return f"{base_url}/notarialni-blog/{self.slug_ua}/"
         elif language == 'ru':

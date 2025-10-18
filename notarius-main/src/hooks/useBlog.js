@@ -267,7 +267,6 @@ export const useBlogHome = () => {
 
         const data = await apiClient.get(url);
 
-        console.log("✅ Blog home загружен:", data);
         setBlogHome(data);
       } catch (err) {
         // Если 404, возвращаем пустые данные без ошибки
