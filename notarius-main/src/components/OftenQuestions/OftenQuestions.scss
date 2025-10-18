@@ -3,7 +3,7 @@
 @media (min-width: 375px) {
   .often-quetions {
     padding: 50px 0;
-    color: #1A1A1A;
+    color: #1a1a1a;
   }
 
   .often-quetions-content {
@@ -104,7 +104,7 @@
 @media (min-width: 768px) {
   .often-quetions {
     padding: 70px 0;
-    color: #1A1A1A;
+    color: #1a1a1a;
   }
   .often-quetions-title {
     margin: 20px 0 50px 0;
@@ -145,11 +145,13 @@
 @media (min-width: 1024px) {
   .often-quetions {
     padding: 60px 0;
-    color: #1A1A1A;
+    color: #1a1a1a;
   }
 
   .often-quetions-title {
-    margin: 40px 0 0 0 ;
+    max-width: 100px;
+    line-height: 1.2;
+    margin: 40px 0 0 0;
   }
 
   .often-quetions-list {
