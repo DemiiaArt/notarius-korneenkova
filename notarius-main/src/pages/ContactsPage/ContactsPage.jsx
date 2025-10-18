@@ -5,6 +5,7 @@ import { useTranslation } from "@hooks/useTranslation";
 import { useLanguage } from "@hooks/useLanguage";
 import { useContacts } from "@hooks/useContacts";
 import Loader from "@components/Loader/Loader";
+import { useState, useEffect } from "react";
 
 import "./ContactsPage.scss";
 import VideoBlock from "@components/VideoBock/VideoBlock";
@@ -14,6 +15,17 @@ const ContactsPage = () => {
   const { t } = useTranslation("components.pages.ContactsPage");
   const { currentLang } = useLanguage();
   const { contacts, loading, error } = useContacts(currentLang);
+  const [mapLoading, setMapLoading] = useState(true);
+
+  // Задержка для загрузки карты на iPhone Safari
+  useEffect(() => {
+    const minLoadTime = new Promise((resolve) => setTimeout(resolve, 3000));
+
+    minLoadTime.then(() => {
+      setMapLoading(false);
+    });
+  }, []);
+
   if (loading) {
     return (
       <div className="contacts-page bg1">
@@ -255,15 +267,26 @@ const ContactsPage = () => {
               </div>
             </div>
             <div className="map">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2646.241367943601!2d35.0671685787208!3d48.45189826576539!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40dbfd2b5c9f9861%3A0x75eacf0288361864!2z0L_RgC3Rgi4g0JTQvNC40YLRgNC40Y8g0K_QstC-0YDQvdC40YbQutC-0LPQviwgMiwg0JTQvdC10L_RgCwg0JTQvdC10L_RgNC-0L_QtdGC0YDQvtCy0YHQutCw0Y8g0L7QsdC70LDRgdGC0YwsIDQ5MDAw!5e0!3m2!1sru!2sua!4v1757944059432!5m2!1sru!2sua"
-                width={`100%`}
-                height={`${isPC ? "700" : "400"}`}
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+              {mapLoading ? (
+                <div className="map-loader">
+                  <div className="loader-spinner"></div>
+                  <p
+                    className={`${isPC ? "fs-p--16px" : "fs-p--14px"} loader-text`}
+                  >
+                    Завантаження карти...
+                  </p>
+                </div>
+              ) : (
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2646.241367943601!2d35.0671685787208!3d48.45189826576539!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40dbfd2b5c9f9861%3A0x75eacf0288361864!2z0L_RgC3Rgi4g0JTQvNC40YLRgNC40Y8g0K_QstC-0YDQvdC40YbQutC-0LPQviwgMiwg0JTQvdC10L_RgCwg0JTQvdC10L_RgNC-0L_QtdGC0YDQvtCy0YHQutCw0Y8g0L7QsdC70LDRgdGC0YwsIDQ5MDAw!5e0!3m2!1sru!2sua!4v1757944059432!5m2!1sru!2sua"
+                  width={`100%`}
+                  height={`${isPC ? "700" : "400"}`}
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              )}
             </div>
           </div>
         </div>
