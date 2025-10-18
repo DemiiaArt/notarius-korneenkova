@@ -124,16 +124,6 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
               >
                 {blogHome?.title}
               </h1>
-              {!loading && totalCount > 0 && (
-                <p className={`${isPC ? "fs-p--16px" : "fs-p--14px"} c2 mt-2`}>
-                  {t("components.pages.BlogPage.found")} {totalCount}{" "}
-                  {totalCount === 1
-                    ? t("components.pages.BlogPage.article")
-                    : totalCount < 5
-                      ? t("components.pages.BlogPage.articles")
-                      : t("components.pages.BlogPage.articlesMany")}
-                </p>
-              )}
             </div>
           </div>
           <div className="hero-img-shadow"></div>
