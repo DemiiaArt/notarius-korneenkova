@@ -289,11 +289,28 @@ li {
       display: block;
       height: 1px;
       border-radius: 1px;
-      background-color: map.get($colors, 3); // Явный цвет для Safari на iOS
+      background-color: map.get(
+        $colors,
+        3
+      ) !important; // Принудительный цвет для Safari на iOS
+      background: map.get($colors, 3) !important; // Дополнительная защита
+      -webkit-background-color: map.get(
+        $colors,
+        3
+      ) !important; // WebKit специфичный
       transition:
         transform 0.3s ease,
         opacity 0.3s ease,
         top 0.3s ease;
+    }
+
+    // Дополнительная защита для iOS Safari
+    @supports (-webkit-appearance: none) {
+      span {
+        background-color: map.get($colors, 3) !important;
+        background: map.get($colors, 3) !important;
+        -webkit-background-color: map.get($colors, 3) !important;
+      }
     }
 
     &.active {
@@ -307,6 +324,24 @@ li {
         transform: rotate(-45deg) translate(4px, -3px);
       }
     }
+  }
+}
+
+// Специфичные стили для iOS устройств
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .navbar-burger-wrap span {
+    background-color: map.get($colors, 3) !important;
+    background: map.get($colors, 3) !important;
+    -webkit-background-color: map.get($colors, 3) !important;
+  }
+}
+
+// Дополнительная защита для Safari на iOS
+@supports (-webkit-touch-callout: none) {
+  .navbar-burger-wrap span {
+    background-color: map.get($colors, 3) !important;
+    background: map.get($colors, 3) !important;
+    -webkit-background-color: map.get($colors, 3) !important;
   }
 }
 
