@@ -398,6 +398,7 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
   const { t } = useTranslation("components.Footer");
   const { currentLang } = useLanguage();
   const { contacts } = useContacts(currentLang);
+  const LANG_UI_TO_ROUTE = { ukr: "ua", rus: "ru", eng: "en" };
 
   const toggleAccordion = (index) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -445,16 +446,15 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
       title: t("navigation"),
       content: (
         <>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("home")}
-          </a>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("aboutUs")}
-          </a>
+          {navigationLinks[currentLang].map(({ link, label }) => (
+            <Link
+              key={link}
+              to={currentLang === "ua" ? `/${link}` : `/${currentLang}/${link}`}
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+            >
+              {label}
+            </Link>
+          ))}
         </>
       ),
     },
@@ -462,16 +462,15 @@ const FooterAccordion = ({ openIndex, setOpenIndex }) => {
       title: t("help"),
       content: (
         <>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("faq")}
-          </a>
-          <a
-            className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
-          >
-            {t("support")}
-          </a>
+          {helpLinks[currentLang].map(({ link, label }) => (
+            <Link
+              key={link}
+              to={currentLang === "ua" ? `/${link}` : `/${currentLang}/${link}`}
+              className={`${isPC ? "fs-p--16px lh-150" : "fs-p--14px"} fw-normal`}
+            >
+              {label}
+            </Link>
+          ))}
         </>
       ),
     },

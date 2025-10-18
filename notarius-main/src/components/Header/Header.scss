@@ -27,7 +27,9 @@ li {
       position: fixed;
     }
 
-    &.mega-open { outline: none; }
+    &.mega-open {
+      outline: none;
+    }
     &-wrap {
       padding: 16px 0;
       display: flex;
@@ -310,7 +312,9 @@ li {
 @media (min-width: 1024px) {
   .header {
     position: relative;
-    &.mega-open { outline: none; }
+    &.mega-open {
+      outline: none;
+    }
     &-wrap {
       padding: 22px 0 5px 0;
     }
@@ -355,6 +359,9 @@ li {
 
     &-btns {
       align-items: center;
+      & > .phone-btn-wrap {
+        margin-right: 0;
+      }
     }
   }
   .navbar-burger-block {
@@ -478,7 +485,7 @@ li {
     background: #ffffff;
     padding: 8px;
     border-radius: 8px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
     display: flex;
     gap: 8px;
     align-items: center;
@@ -503,12 +510,26 @@ li {
     background: #ffffff;
     margin-top: 6px;
     border-radius: 8px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
     padding: 8px 0;
   }
-  .header-search-pop__item { padding: 8px 12px; }
-  .header-search-pop__item a { text-decoration: none; color: inherit; display: flex; gap: 10px; }
-  .header-search-pop__item .badge { min-width: 64px; text-align: center; background: #f0f0f0; border-radius: 10px; padding: 2px 8px; font-size: 12px; }
+  .header-search-pop__item {
+    padding: 8px 12px;
+  }
+  .header-search-pop__item a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    gap: 10px;
+  }
+  .header-search-pop__item .badge {
+    min-width: 64px;
+    text-align: center;
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 12px;
+  }
 
   .phone-btn-wrap {
     width: 100%;
@@ -638,6 +659,7 @@ li {
   border: 1px solid #dcdcdc;
   background: #fff;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 .header-search-suggestions {
@@ -646,7 +668,7 @@ li {
   max-width: 980px;
   margin: 8px auto 0 auto;
   border-radius: 8px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
   padding: 8px 0;
 }
 
