@@ -38,8 +38,8 @@
       "error": "Loading error",
       "noImages": "No images",
       "tabs": {
-        "certificates": "Certificates",
-        "diploma": "Diploma"
+        "certificates": "Diploma",
+        "diploma": "Certificates"
       },
       "modal": {
         "close": "×",
