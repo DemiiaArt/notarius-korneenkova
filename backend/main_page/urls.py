@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.views.decorators.cache import cache_page
 
+
 urlpatterns = [
     # Контактные данные для шапки сайта (телефоны, email, адреса на 3 языках)
     path('header/', views.HeaderView.as_view(), name='header-data'),
@@ -88,5 +89,9 @@ urlpatterns = [
     path('video-blocks/', views.VideoBlockListView.as_view(), name='video-block-list'),
     path('video-blocks/<int:pk>/', views.VideoBlockDetailView.as_view(), name='video-block-detail'),
     path('video-blocks/<int:pk>/stream/', views.VideoBlockStreamView.as_view(), name='video-block-stream'),
+    
+    # Фоновое изображение формы обратной связи
+    # GET /api/contact-form-background/ -> фоновое изображение для формы обратной связи
+    path('contact-form-background/', views.ContactFormBackgroundView.as_view(), name='contact-form-background'),
 
 ]

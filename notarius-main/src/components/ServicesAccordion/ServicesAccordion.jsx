@@ -55,18 +55,18 @@ const AccordionItem = ({ service, isOpen, onToggle }) => {
         <div
           className={`accordion-content ${isPC ? "fs-p--16px" : "fs-p--14px"} fw-normal lh-150`}
         >
-          {/* Закрыто: показываем подзаголовок */}
-          {!isOpen && service.subtitle && (
-            <p className="accordion-subtitle">{service.subtitle}</p>
+          {/* Закрыто: показываем описание */}
+          {!isOpen && service.description && (
+            <div
+              className="accordion-description"
+              dangerouslySetInnerHTML={{
+                __html: normalizeAndConvertHtml(service.description),
+              }}
+            />
           )}
           {/* Открыто: показываем подзаголовок + описание */}
           {isOpen && (
             <div>
-              {service.subtitle && (
-                <p className="accordion-subtitle fw-medium">
-                  {service.subtitle}
-                </p>
-              )}
               {service.description && (
                 <div
                   className="accordion-description"

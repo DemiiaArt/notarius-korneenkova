@@ -3,6 +3,7 @@ import "./Form.scss";
 import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
 import { apiClient } from "@/config/api";
+import { useContactFormBackground } from "@/hooks/useContactFormBackground";
 
 export const Form = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,7 @@ export const Form = () => {
 
   const isPC = useIsPC();
   const { getTranslations } = useTranslation("components.Form");
+  const { backgroundImage, loading: backgroundLoading } = useContactFormBackground();
 
   // Получаем переводы для компонента
   const translations = getTranslations();
@@ -115,7 +117,15 @@ export const Form = () => {
   };
 
   return (
-    <div className="form-block">
+    <div 
+      className="form-block"
+      style={{
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <div className="container">
         <div className="form-container bg3 c1 uppercase">
           <div className="form-content">

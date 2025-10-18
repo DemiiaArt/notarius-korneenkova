@@ -70,12 +70,34 @@ input:-webkit-autofill {
   @media (min-width: 375px) {
     & {
       width: 100vw;
-      background-image: url("../../assets/media/formBg.jpeg");
+      // Фоновое изображение теперь устанавливается динамически через style
+      // background-image: url("../../assets/media/formBg.jpeg");
       background-repeat: no-repeat;
       background-size: cover;
-      background-position: 60% 30%;
+      background-position: center;
       padding: 50px 0;
       box-sizing: border-box;
+      position: relative;
+      // Добавляем fallback для случая, когда изображение не загружено
+      background-color: #f5f5f5;
+      
+      // Добавляем overlay для лучшей читаемости текста
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 1;
+      }
+      
+      // Поднимаем контент над overlay
+      .container {
+        position: relative;
+        z-index: 2;
+      }
     }
   }
 
