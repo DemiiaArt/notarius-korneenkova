@@ -164,6 +164,69 @@
 
 .socialsCircles-wrap {
   display: flex;
-  justify-content: space-between;
+}
+
+.socialsCircles {
+  &:first-child {
+    margin-right: 50px;
+  }
+}
+
+/* Стили для лоадера карты */
+.map-loader {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 60px 20px;
+
+  .loader-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #338d96; // Цвет как в дизайне
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+
+  .loader-text {
+    text-align: center;
+    color: #1a1a1a;
+    opacity: 0.8;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  .map-loader {
+    min-height: 500px;
+    padding: 100px 20px;
+
+    .loader-spinner {
+      width: 80px;
+      height: 80px;
+      border-width: 5px;
+    }
+  }
 }
