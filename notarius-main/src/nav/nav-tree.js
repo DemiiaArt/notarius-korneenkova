@@ -18,6 +18,11 @@ export const NAV_TREE = {
       slug: { ua: "", ru: "", en: "" },
       showInMenu: false,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/",
+        ru: "http://localhost:5173/ru/",
+        en: "http://localhost:5173/en/",
+      },
     },
 
     // ===================== ABOUT =====================
@@ -32,6 +37,11 @@ export const NAV_TREE = {
       },
       showInMenu: true,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-pro-mene/",
+        ru: "http://localhost:5173/ru/notarialni-pro-mene/",
+        en: "http://localhost:5173/en/notary-about/",
+      },
     },
 
     // ===================== SERVICES WRAPPER =====================
@@ -52,6 +62,11 @@ export const NAV_TREE = {
       showInMenu: true,
       component: null,
       showMegaPanel: true,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-poslugy/",
+        ru: "http://localhost:5173/ru/notarialni-poslugy/",
+        en: "http://localhost:5173/en/notary-services/",
+      },
       children: [],
     },
 
@@ -72,6 +87,11 @@ export const NAV_TREE = {
       showInMenu: true,
       showMegaPanel: true,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-pereklad/",
+        ru: "http://localhost:5173/ru/notarialni-pereklad/",
+        en: "http://localhost:5173/en/notary-translate/",
+      },
       children: [],
     },
 
@@ -92,6 +112,11 @@ export const NAV_TREE = {
       showInMenu: true,
       showMegaPanel: true,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-dopomoga-viyskovim/",
+        ru: "http://localhost:5173/ru/notarialni-pomosch-voennym/",
+        en: "http://localhost:5173/en/notary-military-help/",
+      },
       children: [],
     },
 
@@ -108,6 +133,11 @@ export const NAV_TREE = {
       showInMenu: true,
       showMegaPanel: true,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-inshi/",
+        ru: "http://localhost:5173/ru/notarialni-inshi/",
+        en: "http://localhost:5173/en/notary-other/",
+      },
       children: [],
     },
 
@@ -127,6 +157,11 @@ export const NAV_TREE = {
       },
       showInMenu: false,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-offer/",
+        ru: "http://localhost:5173/ru/notarialni-offer/",
+        en: "http://localhost:5173/en/notary-offer/",
+      },
     },
     {
       id: "policy",
@@ -143,6 +178,11 @@ export const NAV_TREE = {
       },
       showInMenu: false,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-policy/",
+        ru: "http://localhost:5173/ru/notarialni-policy/",
+        en: "http://localhost:5173/en/notary-policy/",
+      },
     },
     {
       id: "contacts",
@@ -155,6 +195,11 @@ export const NAV_TREE = {
       },
       showInMenu: true,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-contacty/",
+        ru: "http://localhost:5173/ru/notarialni-contacty/",
+        en: "http://localhost:5173/en/notary-contacts/",
+      },
     },
     {
       id: "trademark",
@@ -171,6 +216,11 @@ export const NAV_TREE = {
       },
       showInMenu: false,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-torgivelna-marka/",
+        ru: "http://localhost:5173/ru/notarialni-torgova-marka/",
+        en: "http://localhost:5173/en/notary-trade-mark/",
+      },
     },
     {
       id: "blog",
@@ -187,6 +237,11 @@ export const NAV_TREE = {
       },
       showInMenu: true,
       component: null,
+      canonical_url: {
+        ua: "http://localhost:5173/notarialni-blog/",
+        ru: "http://localhost:5173/ru/notarialni-blog/",
+        en: "http://localhost:5173/en/notary-blog/",
+      },
       children: [], // Статьи будут добавлены из backend
     },
     {

@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
-import { HelmetProvider } from "@vuer-ai/react-helmet-async";
+import { HelmetProvider } from "react-helmet-async";
 import ModalProvider from "@components/ModalProvider/ModalProvider";
 import App from "./App.jsx";
 import "./main.scss";

@@ -96,5 +96,5 @@ urlpatterns = [
     # Фоновое изображение формы обратной связи
     # GET /api/contact-form-background/ -> фоновое изображение для формы обратной связи
     path('contact-form-background/', views.ContactFormBackgroundView.as_view(), name='contact-form-background'),
-
+    path('contacts/json-ld/', views.ContactsJsonLdView.as_view(), name='contacts-json-ld'),
 ]

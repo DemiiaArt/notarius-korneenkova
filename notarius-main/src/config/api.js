@@ -24,7 +24,7 @@ const getMediaBaseUrl = () => {
   if (import.meta.env.DEV) {
     return "http://localhost:8000/media";
   }
-    if (import.meta.env.VITE_MEDIA_BASE_URL) {
+  if (import.meta.env.VITE_MEDIA_BASE_URL) {
     return import.meta.env.VITE_MEDIA_BASE_URL;
   }
 
@@ -44,9 +44,43 @@ const getBackendBaseUrl = () => {
   return `${window.location.origin}`;
 };
 
+const getSiteBaseUrl = () => {
+  console.log(`🌐 getSiteBaseUrl called with env:`, {
+    VITE_SITE_URL: import.meta.env.VITE_SITE_URL,
+    DEV: import.meta.env.DEV,
+    origin: window.location.origin,
+  });
+
+  // Сначала проверяем VITE_SITE_BASE_URL (новый стандарт)
+  if (import.meta.env.VITE_SITE_BASE_URL) {
+    console.log(
+      `✅ Using VITE_SITE_BASE_URL:`,
+      import.meta.env.VITE_SITE_BASE_URL
+    );
+    return import.meta.env.VITE_SITE_BASE_URL;
+  }
+
+  // Fallback на старый VITE_SITE_URL
+  if (import.meta.env.VITE_SITE_URL) {
+    console.log(`✅ Using VITE_SITE_URL:`, import.meta.env.VITE_SITE_URL);
+    return import.meta.env.VITE_SITE_URL;
+  }
+
+  // В dev режиме используем localhost
+  if (import.meta.env.DEV) {
+    console.log(`✅ Using DEV localhost: http://localhost:5173`);
+    return "http://localhost:5173";
+  }
+
+  // По умолчанию используем текущий origin
+  console.log(`✅ Using window.origin:`, window.location.origin);
+  return `${window.location.origin}`;
+};
+
 export const API_BASE_URL = getApiBaseUrl();
 export const MEDIA_BASE_URL = getMediaBaseUrl();
 export const BACKEND_BASE_URL = getBackendBaseUrl();
+export const SITE_BASE_URL = getSiteBaseUrl();
 
 // Вспомогательные функции для API запросов
 // Безопасный билдер медиа-URL, чтобы избежать двойного /media

@@ -4,6 +4,7 @@ import React from "react";
 import "./MainBlogPage.scss";
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import BlogCard from "@components/Blog/BlogCard";
+import JsonLdSchema from "@components/Seo/JsonLdSchema";
 import Loader from "@components/Loader/Loader";
 import ArrowLeft from "../../assets/media/icons/arrov-blog-pagination-left.svg";
 import ArrowRight from "../../assets/media/icons/arrov-blog-pagination-right.svg";
@@ -109,6 +110,7 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
 
   return (
     <>
+      <JsonLdSchema apiUrl="/api/blog/notarialni-blog/" />
       <div className="hero">
         <div className="hero-img-shadow-target">
           <div

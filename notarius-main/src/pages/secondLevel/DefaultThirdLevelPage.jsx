@@ -32,6 +32,7 @@ const DefaultThirdLevelPage = ({
       loading={loading}
       error={error}
       wrapperClassName={wrapperClassName}
+      navId={navId}
     >
       {/* На 3-му рівні показуємо дітей поточного розділу (або верхній рівень, якщо дітей немає) */}
       <AdaptiveCarousel parentId={navId} title="Інші послуги" />
