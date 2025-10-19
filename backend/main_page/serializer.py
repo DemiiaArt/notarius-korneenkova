@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .seo import build_home_json_ld
 from .models import Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature
 from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, Review
 from .models import (
@@ -122,10 +123,11 @@ class ContactsSerializer(serializers.ModelSerializer):
 
 class BackgroundVideoSerializer(serializers.ModelSerializer):
     media_url = serializers.SerializerMethodField()
+    json_ld = serializers.SerializerMethodField()
     
     class Meta:
         model = BackgroundVideo
-        fields = ['id', 'name', 'media_type', 'media_url', 'is_active']
+        fields = ['id', 'name', 'media_type', 'media_url', 'is_active', 'json_ld']
     
     def get_media_url(self, obj):
         """Возвращает URL медиа файла (видео или изображения)"""
@@ -140,6 +142,11 @@ class BackgroundVideoSerializer(serializers.ModelSerializer):
         except Exception:
             return None
         return None
+
+    def get_json_ld(self, obj):
+        """Возвращает строку JSON-LD для главной страницы (внешний модуль)."""
+        lang = self.context.get('lang', 'ua')
+        return build_home_json_ld(lang)
 
 class AboutMeSerializer(serializers.ModelSerializer):
     # Агрегированные поля с выбором языка через контекст

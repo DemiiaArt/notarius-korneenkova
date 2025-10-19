@@ -12,6 +12,7 @@ from .serializers import (
     BlogCategorySerializer,
     BlogHomeSerializer,
 )
+from .blog_seo import build_blog_list_json_ld, build_blog_detail_json_ld
 
 
 class BlogPagination(PageNumberPagination):
@@ -36,7 +37,6 @@ class BlogListView(APIView):
         
         # Получаем параметр фильтрации по категории
         category_slug = request.GET.get('category', None)
-        print(category_slug)
         
         # Получаем статьи с пагинацией и оптимизируем запросы
         posts_queryset = BlogPost.objects.published().select_related().prefetch_related('categories').order_by('-published_at', '-created_at')
@@ -81,6 +81,23 @@ class BlogListView(APIView):
             'categories': categories_serializer.data
         }
         
+        # Добавляем JSON-LD для списка блога с учетом пагинации
+        try:
+            # Получаем номер страницы из query параметра
+            page_number = int(request.GET.get('page', 1))
+            if page_number < 1:
+                page_number = 1
+            json_ld = build_blog_list_json_ld(lang, category_slug, page_number)
+            if json_ld is not None:
+                response_data['json_ld'] = json_ld
+        except (ValueError, TypeError):
+            # Если page не число, используем страницу 1
+            json_ld = build_blog_list_json_ld(lang, category_slug, 1)
+            if json_ld is not None:
+                response_data['json_ld'] = json_ld
+        except Exception:
+            pass
+        
         # Добавляем информацию о пагинации
         return paginator.get_paginated_response(response_data)
 
@@ -113,7 +130,17 @@ class BlogDetailView(APIView):
         
         # Сериализуем данные с передачей языка в контекст
         serializer = BlogPostDetailSerializer(post, context={'lang': lang})
-        return Response(serializer.data)
+        data = serializer.data
+        
+        # Добавляем JSON-LD для статьи блога
+        try:
+            json_ld = build_blog_detail_json_ld(post, lang)
+            if json_ld is not None:
+                data['json_ld'] = json_ld
+        except Exception:
+            pass
+        
+        return Response(data)
 
 
 class BlogHomeView(APIView):
@@ -126,26 +153,22 @@ class BlogHomeView(APIView):
         lang = request.GET.get('lang', 'ua')
         if lang not in ['ua', 'ru', 'en']:
           lang = 'ua'
-        print('---1-', lang)
         # Кэшируем данные главной страницы блога
         cache_key = f'blog_home_{lang}'
-        print('---2/5-', cache_key)
-        # cached_data = cache.get(cache_key)
-        # if cached_data:
-        #   return Response(cached_data)
-        # print('---2-', cached_data)
+        cached_data = cache.get(cache_key)
+        if cached_data:
+          return Response(cached_data)
         obj = BlogHome.objects.order_by('-id').first()
-        # if not obj:
-        #     response_data = {
-        #         'title': '',
-        #         'description': '',
-        #         'hero_image': None,
-        #     }
-            # cache.set(cache_key, response_data, 3600)  # Кэшируем на 1 час
-            # return Response(response_data)
+        if not obj:
+            response_data = {
+                'title': '',
+                'description': '',
+                'hero_image': None,
+            }
+            cache.set(cache_key, response_data, 3600)  # Кэшируем на 1 час
+            return Response(response_data)
 
         serializer = BlogHomeSerializer(obj, context={'lang': lang})
         response_data = serializer.data
-        print('---3-', response_data)
         cache.set(cache_key, response_data, 3600)  # Кэшируем на 1 час
         return Response(response_data)

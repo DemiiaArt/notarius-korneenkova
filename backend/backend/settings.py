@@ -243,3 +243,6 @@ if DEBUG:
     BASE_URL = 'http://localhost:5173'
 else:
     BASE_URL = 'https://notarius-korneenkova.com.ua'
+
+# Frontend path for sitemap generation
+FRONTEND_PATH = os.getenv('FRONTEND_PATH')
