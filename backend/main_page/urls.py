@@ -90,6 +90,9 @@ urlpatterns = [
     path('video-blocks/<int:pk>/', views.VideoBlockDetailView.as_view(), name='video-block-detail'),
     path('video-blocks/<int:pk>/stream/', views.VideoBlockStreamView.as_view(), name='video-block-stream'),
     
+    # JSON-LD для контактов
+    path('contacts/json-ld/', views.ContactsJsonLdView.as_view(), name='contacts-json-ld'),
+    
     # Фоновое изображение формы обратной связи
     # GET /api/contact-form-background/ -> фоновое изображение для формы обратной связи
     path('contact-form-background/', views.ContactFormBackgroundView.as_view(), name='contact-form-background'),

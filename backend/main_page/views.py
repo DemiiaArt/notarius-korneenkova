@@ -883,6 +883,25 @@ class VideoBlockStreamView(APIView):
         return response
 
 
+class ContactsJsonLdView(APIView):
+    """
+    Возвращает JSON-LD для страницы контактов.
+    GET /api/contacts/json-ld/?lang=ua|ru|en
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        
+        json_ld = build_contacts_json_ld(lang)
+        if json_ld is not None:
+            return Response({'json_ld': json_ld})
+        else:
+            return Response({'json_ld': None})
+
+
 class ContactFormBackgroundView(generics.ListAPIView):
     """
     API endpoint для получения фонового изображения формы обратной связи

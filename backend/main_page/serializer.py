@@ -221,11 +221,12 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
     slug = serializers.SerializerMethodField()
     # Рекурсивно включаем дочерние элементы
     children = serializers.SerializerMethodField()
+    canonical_url = serializers.SerializerMethodField()
     
     class Meta:
         model = ServiceCategory
         fields = [
-            'id', 'kind', 'label', 'slug', 'card_image', 'show_in_menu', 'show_mega_panel', 'component', 'children'
+            'id', 'kind', 'label', 'slug', 'card_image', 'show_in_menu', 'show_mega_panel', 'component', 'canonical_url', 'children'
         ]
     
     def get_label(self, obj):
@@ -250,6 +251,14 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
         if children.exists():
             return ServiceCategorySerializer(children, many=True, context=self.context).data
         return []
+
+    def get_canonical_url(self, obj):
+        """Возвращает канонические URL на всех языках"""
+        return {
+            'ua': obj.get_canonical_url('ua'),
+            'ru': obj.get_canonical_url('ru'),
+            'en': obj.get_canonical_url('en'),
+        }
     
     def to_representation(self, instance):
         """Переопределяем представление для соответствия структуре nav-tree.js"""
@@ -307,11 +316,10 @@ class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
     hero_image = serializers.ImageField(read_only=True)
     features = serializers.SerializerMethodField()
     faqs = serializers.SerializerMethodField()
-    canonical_url = serializers.SerializerMethodField()
 
     class Meta:
         model = ServiceCategory
-        fields = ['label', 'description', 'hero_image', 'features', 'faqs', 'canonical_url']
+        fields = ['label', 'description', 'hero_image', 'features', 'faqs']
 
     def get_label(self, obj):
         # Получаем язык из контекста
@@ -389,15 +397,7 @@ class ServiceCategoryDetailSerializer(serializers.ModelSerializer):
         
         return faq_list
 
-    def get_canonical_url(self, obj):
-        """
-        Возвращает канонический URL для текущего языка
-        """
-        # Получаем язык из контекста
-        lang = self.context.get('lang', 'ua')
-        
-        # Используем метод модели для получения canonical URL
-        return obj.get_canonical_url(lang)
+    
         
 class ServicesForSerializer(serializers.ModelSerializer):
     # Агрегированные поля с выбором языка через контекст
