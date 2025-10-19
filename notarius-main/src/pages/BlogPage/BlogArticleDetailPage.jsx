@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useBlogArticle } from "@hooks/useBlog";
 import Seo from "@components/Seo/Seo";
+import JsonLdSchema from "@components/Seo/JsonLdSchema";
 import TemplateBlogPage from "./TemplateBlogPage";
 import Loader from "@components/Loader/Loader";
 import { API_BASE_URL, apiClient } from "@/config/api";
@@ -98,6 +99,10 @@ const BlogArticleDetailPage = () => {
         ogImage={articleImage}
         ogType="article"
         noSuffix={true}
+      />
+      <JsonLdSchema
+        apiUrl={`/api/blog/notarialni-blog/${slug}/`}
+        dependencies={[slug]}
       />
       <TemplateBlogPage
         title={articleTitle}

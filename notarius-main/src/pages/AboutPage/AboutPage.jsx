@@ -1,4 +1,5 @@
 import Seo from "@components/Seo/Seo";
+import JsonLdSchema from "@components/Seo/JsonLdSchema";
 import LeadsButton from "@components/LeadsButton/LeadsButton";
 import About from "@components/About/About";
 import AboutTextBlock from "@components/AboutTextBlock/AboutTextBlock";
@@ -17,6 +18,7 @@ const AboutPage = () => {
         title="Про мене — Приватний нотаріус Надія Корнієнкова"
         description="Досвідчений нотаріус з багаторічною практикою в Дніпрі. Професійний підхід, індивідуальні консультації, швидке оформлення документів."
       />
+      <JsonLdSchema apiUrl="/api/about-me/detail/" />
       <div className="about-page">
         <About showBreadcrumbs />
       </div>

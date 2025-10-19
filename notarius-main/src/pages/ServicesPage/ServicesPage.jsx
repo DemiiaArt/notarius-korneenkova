@@ -16,7 +16,12 @@ const ServicesPage = () => {
   const { data, loading, error } = usePageData("services");
 
   return (
-    <PageTemplate pageData={data} loading={loading} error={error}>
+    <PageTemplate
+      pageData={data}
+      loading={loading}
+      error={error}
+      navId="services"
+    >
       <AdaptiveCarousel parentId="services" title="ВИДИ НОТАРІАЛЬНИХ ПОСЛУГ" />
       <Suspense fallback={<div>Завантаження...</div>}>
         <HowIWork />

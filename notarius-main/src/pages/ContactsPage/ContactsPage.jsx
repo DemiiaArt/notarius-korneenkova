@@ -1,4 +1,5 @@
 import Seo from "@components/Seo/Seo";
+import JsonLdSchema from "@components/Seo/JsonLdSchema";
 import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
@@ -42,6 +43,7 @@ const ContactsPage = () => {
         title="Контакти нотаріуса у Дніпрі — адреса, телефон, графік"
         description="Прийом: Пн–Чт 10:00–18:00, Пт 10:00–17:00. Адреса: просп. Дмитра Яворницького, 2. Телефон: +380 67 544 07 00."
       />
+      <JsonLdSchema apiUrl="/api/contacts/json-ld/" />
       <div className="contacts-page bg1">
         <div className="container">
           <Breadcrumbs />
