@@ -38,8 +38,8 @@
       "error": "Ошибка загрузки",
       "noImages": "Нет изображений",
       "tabs": {
-        "certificates": "Сертификаты",
-        "diploma": "Свидетельство"
+        "certificates": "Свидетельство",
+        "diploma": "Сертификаты"
       },
       "modal": {
         "close": "×",

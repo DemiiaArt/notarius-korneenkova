@@ -155,9 +155,14 @@ class ServicesFor(models.Model):
     title_ru = models.CharField(max_length=255)
 
     image = models.ImageField(upload_to='services/', blank=True, null=True)
-    subtitle_uk = models.CharField(max_length=255)
-    subtitle_en = models.CharField(max_length=255)
-    subtitle_ru = models.CharField(max_length=255)
+    subtitle_uk = models.CharField(max_length=255, blank=True, null=True)
+    subtitle_en = models.CharField(max_length=255, blank=True, null=True)
+    subtitle_ru = models.CharField(max_length=255, blank=True, null=True)
+    
+    # Описание на трех языках с CKEditor
+    description_uk = CKEditor5Field(blank=True, null=True, verbose_name="Описание (UA)")
+    description_en = CKEditor5Field(blank=True, null=True, verbose_name="Описание (EN)")
+    description_ru = CKEditor5Field(blank=True, null=True, verbose_name="Описание (RU)")
 
 
     def __str__(self):
@@ -708,3 +713,23 @@ class VideoBlock(models.Model):
     
     def __str__(self):
         return f"{self.get_video_type_display()} - {self.title_ua}"
+
+
+class ContactFormBackground(models.Model):
+    """
+    Модель для фонового изображения в нижней части главной страницы,
+    где находится форма обратной связи.
+    """
+    
+    # Фоновое изображение
+    background_image = models.ImageField(
+        upload_to='contact_form_background/',
+        verbose_name="Фоновое изображение"
+    )
+    
+    class Meta:
+        verbose_name = "Фон формы обратной связи"
+        verbose_name_plural = "Фоны форм обратной связи"
+    
+    def __str__(self):
+        return f"Фон формы обратной связи #{self.id}"

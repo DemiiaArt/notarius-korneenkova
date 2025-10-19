@@ -5,7 +5,7 @@ from .models import Header, BackgroundVideo, AboutMe, ServicesFor, Application, 
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory,
     ServicesFor, Application, Review, FreeConsultation, ContactUs,
-    FrequentlyAskedQuestion, AboutMeDetail, VideoBlock
+    FrequentlyAskedQuestion, AboutMeDetail, VideoBlock, ContactFormBackground
 )
 from .models import Header
 from .models import LegalDocument
@@ -863,4 +863,23 @@ class VideoBlockSerializer(serializers.ModelSerializer):
         """Возвращает URL видео файла"""
         if obj.video:
             return obj.video.url
+        return None
+
+
+class ContactFormBackgroundSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для фонового изображения формы обратной связи
+    """
+    background_image_url = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = ContactFormBackground
+        fields = ['id', 'background_image', 'background_image_url']
+    
+    def get_background_image_url(self, obj):
+        """Возвращает абсолютный URL изображения"""
+        request = self.context.get('request')
+        if obj.background_image:
+            url = obj.background_image.url
+            return request.build_absolute_uri(url) if request else url
         return None

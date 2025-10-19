@@ -68,6 +68,13 @@ export default defineConfig({
       "i18next",
       "framer-motion",
       "swiper",
+      "react-pdf",
+      "pdfjs-dist",
     ],
+  },
+  server: {
+    fs: {
+      allow: [".."],
+    },
   },
 });

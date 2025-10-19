@@ -59,7 +59,9 @@ const PolicyPage = () => {
         ) : (
           <div
             className="content"
-            dangerouslySetInnerHTML={{ __html: normalizeAndConvertHtml(content) }}
+            dangerouslySetInnerHTML={{
+              __html: normalizeAndConvertHtml(content),
+            }}
           />
         )}
       </div>

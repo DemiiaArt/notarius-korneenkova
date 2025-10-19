@@ -12,7 +12,8 @@ from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, ServiceFeature,
     ServicesFor, Application, Review, FreeConsultation, 
     ContactUs, FrequentlyAskedQuestion, AboutMeDetail,
-    QualificationBlock, QualificationCertificate, QualificationDiploma, VideoBlock
+    QualificationBlock, QualificationCertificate, QualificationDiploma, VideoBlock,
+    ContactFormBackground
 )
 from blog.models import BlogCategory, BlogPost, BlogHome
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -384,22 +385,26 @@ class AboutMeDetailAdmin(ContentAdmin):
 class ServicesForAdmin(admin.ModelAdmin):
     list_display = ['title_uk', 'subtitle_uk']
     list_filter = ['title_uk']
-    search_fields = ['title_uk', 'title_en', 'title_ru', 'subtitle_uk', 'subtitle_en', 'subtitle_ru']
+    search_fields = ['title_uk', 'title_en', 'title_ru', 'subtitle_uk', 'subtitle_en', 'subtitle_ru', 'description_uk', 'description_en', 'description_ru']
     save_on_top = True
     list_per_page = 20
     
     fieldsets = (
         ('Українська мова', {
-            'fields': ('title_uk', 'subtitle_uk'),
+            'fields': ('title_uk', 'subtitle_uk', 'description_uk'),
             'description': 'Контент українською мовою'
         }),
         ('English', {
-            'fields': ('title_en', 'subtitle_en'),
+            'fields': ('title_en', 'subtitle_en', 'description_en'),
             'description': 'Content in English'
         }),
         ('Русский язык', {
-            'fields': ('title_ru', 'subtitle_ru'),
+            'fields': ('title_ru', 'subtitle_ru', 'description_ru'),
             'description': 'Контент на русском языке'
+        }),
+        ('Медіа', {
+            'fields': ('image',),
+            'description': 'Зображення (загальне для всіх мов)'
         }),
     )
 
@@ -932,7 +937,7 @@ class NotariusAdminSite(admin.AdminSite):
         # Создаем кастомные группы
         custom_groups = {
             '📞 ФОРМЫ ОБРАТНОЙ СВЯЗИ': {
-                'models': ['Application', 'FreeConsultation', 'ContactUs'],
+                'models': ['Application', 'FreeConsultation', 'ContactUs', 'ContactFormBackground'],
                 'icon': 'fas fa-comments',
                 'description': 'Заявки, консультации и обращения клиентов',
                 'priority': 1  # Высокий приоритет - будет отображаться первым
@@ -1201,6 +1206,25 @@ def get_admin_urls():
         path('forms-dashboard/', forms_dashboard_view, name='admin_forms_dashboard'),
         path('forms-management/', forms_management_view, name='admin_forms_management'),
     ]
+
+# Админ-класс для фона формы обратной связи
+class ContactFormBackgroundAdmin(BaseAdmin):
+    """Админ-класс для управления фоновыми изображениями форм обратной связи"""
+    
+    list_display = ['__str__', 'background_image_preview']
+    
+    def background_image_preview(self, obj):
+        """Показывает превью изображения в списке"""
+        if obj.background_image:
+            return format_html(
+                '<img src="{}" style="max-height: 50px; max-width: 100px;" />',
+                obj.background_image.url
+            )
+        return "Нет изображения"
+    background_image_preview.short_description = "Превью"
+
+# Регистрируем модель фона формы обратной связи
+admin_site.register(ContactFormBackground, ContactFormBackgroundAdmin)
 
 # Кастомизация брендинга админки
 admin.site.site_header = 'Панель администратора — Notarius'

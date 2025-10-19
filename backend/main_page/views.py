@@ -17,7 +17,7 @@ from django.http import FileResponse, HttpResponse
 from .models import (
     Header, BackgroundVideo, AboutMe, ServiceCategory, 
     ServicesFor, Application, Review, FreeConsultation, ContactUs,
-    AboutMeDetail, QualificationBlock, VideoBlock
+    AboutMeDetail, QualificationBlock, VideoBlock, ContactFormBackground
 )
 from .serializer import (
     HeaderSerializer, BackgroundVideoSerializer, AboutMeSerializer,
@@ -27,7 +27,7 @@ from .serializer import (
     FreeConsultationSerializer, FreeConsultationCreateSerializer,
     ContactUsSerializer, ContactUsCreateSerializer,
     ContactsSerializer, AboutMeDetailSerializer, QualificationBlockSerializer,
-    VideoBlockSerializer
+    VideoBlockSerializer, ContactFormBackgroundSerializer
 )
 
 
@@ -875,3 +875,20 @@ class VideoBlockStreamView(APIView):
         response['Accept-Ranges'] = 'bytes'
         return response
 
+
+class ContactFormBackgroundView(generics.ListAPIView):
+    """
+    API endpoint для получения фонового изображения формы обратной связи
+    Возвращает последнее добавленное фоновое изображение
+    """
+    queryset = ContactFormBackground.objects.all()
+    serializer_class = ContactFormBackgroundSerializer
+    permission_classes = [AllowAny]
+    
+    def list(self, request, *args, **kwargs):
+        # Возвращаем последнее добавленное изображение
+        background = ContactFormBackground.objects.last()
+        if background:
+            serializer = self.get_serializer(background, context={'request': request})
+            return Response(serializer.data)
+        return Response({'background_image': None, 'background_image_url': None})

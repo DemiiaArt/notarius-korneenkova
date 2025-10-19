@@ -2,7 +2,7 @@
   .text-container {
     padding-top: 74px;
     padding-bottom: 100px;
-    color: #1A1A1A;
+    color: #1a1a1a;
 
     .breadcrumbs {
       margin-top: 37px;
@@ -22,7 +22,6 @@
     .content-block-text {
       margin: 20px 0;
     }
-
   }
 }
 
@@ -30,7 +29,7 @@
   .text-container {
     padding-top: 0;
     padding-bottom: 200px;
-    color: #1A1A1A;
+    color: #1a1a1a;
 
     .breadcrumbs {
       margin-top: 50px;
@@ -53,69 +52,77 @@
 /* Базовые стили для контента CKEditor */
 .ck-content {
   line-height: 1.5 !important; // Увеличиваем межстрочное расстояние для лучшей читаемости
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-weight: 600 !important;
     margin: 1.2em 0 0.6em !important;
   }
-  
-  p { 
-    margin: 0.8em 0 !important; 
+
+  p {
+    margin: 0.8em 0 !important;
   }
-  
-  ul, ol { 
-    margin: 0.8em 0 0.8em 1.4em !important; 
+
+  ul,
+  ol {
+    margin: 0.8em 0 0.8em 1.4em !important;
   }
-  
-  ul { 
-    list-style: disc !important; 
+
+  ul {
+    list-style: disc !important;
     padding-left: 1.2em !important;
   }
-  
-  ol { 
-    list-style: decimal !important; 
+
+  ol {
+    list-style: decimal !important;
     padding-left: 1.2em !important;
   }
-  
-  li { 
+
+  li {
     margin: 0.3em 0 !important;
     list-style: inherit !important;
   }
-  
+
   blockquote {
     margin: 1em 0 !important;
     padding-left: 1em !important;
-    border-left: 3px solid rgba(0,0,0,0.1) !important;
+    border-left: 3px solid rgba(0, 0, 0, 0.1) !important;
   }
-  
-  hr { 
-    margin: 1.5em 0 !important; 
+
+  hr {
+    margin: 1.5em 0 !important;
   }
-  
-  pre, code {
-    background: rgba(0,0,0,0.04) !important;
+
+  pre,
+  code {
+    background: rgba(0, 0, 0, 0.04) !important;
     padding: 0.2em 0.4em !important;
     border-radius: 4px !important;
   }
-  
-  pre { 
-    padding: 0.8em !important; 
-    overflow: auto !important; 
+
+  pre {
+    padding: 0.8em !important;
+    overflow: auto !important;
   }
-  
-  table { 
-    border-collapse: collapse !important; 
-    margin: 1em 0 !important; 
-    width: 100% !important; 
+
+  table {
+    border-collapse: collapse !important;
+    margin: 1em 0 !important;
+    width: 100% !important;
   }
-  
-  table th, table td {
-    border: 1px solid rgba(0,0,0,0.1) !important;
+
+  table th,
+  table td {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
     padding: 8px 10px !important;
   }
-  
-  img { 
-    max-width: 100% !important; 
+
+  img {
+    max-width: 100% !important;
     height: auto !important;
     width: auto !important;
     display: block !important;
@@ -130,7 +137,7 @@
 .about-block-text,
 .accordion-description {
   line-height: 1.5 !important; // Увеличиваем межстрочное расстояние для лучшей читаемости
-  
+
   ul {
     list-style: disc !important;
     padding-left: 1.2em !important;

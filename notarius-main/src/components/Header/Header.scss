@@ -276,7 +276,7 @@ li {
 
   /* Бургер */
   .navbar-burger-wrap {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     justify-content: center;
     gap: 6px;
@@ -287,8 +287,15 @@ li {
 
     span {
       display: block;
-      height: 1px;
+      height: 2px;
       border-radius: 1px;
+      background-color: map.get(
+        $colors,
+        3
+      ) !important; // Принудительный цвет для Safari на iOS
+      background: map.get($colors, 3) !important; // Дополнительная защита
+      flex: 0 0 2px;
+      will-change: transform, opacity;
       transition:
         transform 0.3s ease,
         opacity 0.3s ease,
@@ -297,15 +304,57 @@ li {
 
     &.active {
       span:nth-child(1) {
-        transform: rotate(45deg) translate(7px, 5px);
+        transform: rotate(45deg) translate(8px, 5px);
       }
       span:nth-child(2) {
         opacity: 0;
       }
       span:nth-child(3) {
-        transform: rotate(-45deg) translate(4px, -3px);
+        transform: rotate(-45deg) translate(6px, -3px);
       }
     }
+  }
+}
+
+// Специфичные стили для iOS устройств
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .navbar-burger-wrap span {
+    background-color: map.get($colors, 3) !important;
+    background: map.get($colors, 3) !important;
+    -webkit-background-color: map.get($colors, 3) !important;
+  }
+}
+
+// Дополнительная защита для Safari на iOS
+@supports (-webkit-touch-callout: none) {
+  .navbar-burger-wrap span {
+    background-color: map.get($colors, 3) !important;
+    background: map.get($colors, 3) !important;
+    -webkit-background-color: map.get($colors, 3) !important;
+  }
+}
+
+// Специфичные стили для span с классом bg3 в бургере
+.navbar-burger-wrap span.bg3 {
+  background-color: map.get($colors, 3) !important;
+  background: map.get($colors, 3) !important;
+  -webkit-background-color: map.get($colors, 3) !important;
+}
+
+// Дополнительная защита для iOS Safari с классом bg3
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .navbar-burger-wrap span.bg3 {
+    background-color: map.get($colors, 3) !important;
+    background: map.get($colors, 3) !important;
+    -webkit-background-color: map.get($colors, 3) !important;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .navbar-burger-wrap span.bg3 {
+    background-color: map.get($colors, 3) !important;
+    background: map.get($colors, 3) !important;
+    -webkit-background-color: map.get($colors, 3) !important;
   }
 }
 
@@ -616,6 +665,10 @@ li {
   font-size: 18px;
   font-family: inherit;
   transition: border-color 0.3s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-border-radius: 0;
+  border-radius: 0;
   &:focus {
     outline: none;
   }
