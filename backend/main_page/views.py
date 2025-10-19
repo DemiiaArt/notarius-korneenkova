@@ -763,17 +763,7 @@ class VideoBlockListView(generics.ListAPIView):
             queryset = queryset.filter(video_type=video_type)
         
         serializer = self.get_serializer(queryset, many=True, context={'lang': lang})
-        data = serializer.data
-        # Возвращаем JSON-LD только при type=contacts
-        if (video_type == 'contacts') and isinstance(data, list) and len(data) > 0:
-            json_ld = build_contacts_json_ld(lang)
-            if json_ld is not None:
-                # добавляем в первый элемент списка
-                try:
-                    data[0]['json_ld'] = json_ld
-                except Exception:
-                    pass
-        return Response(data)
+        return Response(serializer.data)
 
 
 class VideoBlockDetailView(generics.RetrieveAPIView):
@@ -874,6 +864,25 @@ class VideoBlockStreamView(APIView):
         response['Content-Length'] = str(file_size)
         response['Accept-Ranges'] = 'bytes'
         return response
+
+
+class ContactsJsonLdView(APIView):
+    """
+    Возвращает JSON-LD для страницы контактов.
+    GET /api/contacts/json-ld/?lang=ua|ru|en
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        lang = request.GET.get('lang', 'ua')
+        if lang not in ['ua', 'ru', 'en']:
+            lang = 'ua'
+        
+        json_ld = build_contacts_json_ld(lang)
+        if json_ld is not None:
+            return Response({'json_ld': json_ld})
+        else:
+            return Response({'json_ld': None})
 
 
 class ContactFormBackgroundView(generics.ListAPIView):
