@@ -1,5 +1,6 @@
 import Seo from "@components/Seo/Seo";
 import JsonLdSchema from "@components/Seo/JsonLdSchema";
+import { useSeo } from "@hooks/useSeo";
 import LeadsButton from "@components/LeadsButton/LeadsButton";
 import About from "@components/About/About";
 import AboutTextBlock from "@components/AboutTextBlock/AboutTextBlock";
@@ -12,12 +13,17 @@ import Certificates from "@components/Certificates/Certificates";
 import "./AboutPage.scss";
 
 const AboutPage = () => {
+  // SEO параметры для страницы "Про мене"
+  const seoProps = useSeo({
+    navId: "about",
+    title: "Про мене — Приватний нотаріус Надія Корнієнкова",
+    description:
+      "Досвідчений нотаріус з багаторічною практикою в Дніпрі. Професійний підхід, індивідуальні консультації, швидке оформлення документів.",
+  });
+
   return (
     <>
-      <Seo
-        title="Про мене — Приватний нотаріус Надія Корнієнкова"
-        description="Досвідчений нотаріус з багаторічною практикою в Дніпрі. Професійний підхід, індивідуальні консультації, швидке оформлення документів."
-      />
+      <Seo {...seoProps} />
       <JsonLdSchema apiUrl="/api/about-me/detail/" />
       <div className="about-page">
         <About showBreadcrumbs />

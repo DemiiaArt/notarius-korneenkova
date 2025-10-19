@@ -1,5 +1,6 @@
 import Seo from "@components/Seo/Seo";
 import JsonLdSchema from "@components/Seo/JsonLdSchema";
+import { useSeo } from "@hooks/useSeo";
 import MainVideo from "@components/MainVideo/MainVideo";
 import About from "@components/About/About";
 import Skills from "@components/Skills/Skills";
@@ -12,13 +13,17 @@ import Form from "@components/Form/Form";
 
 import "./MainPage.scss";
 const MainPage = ({ lang }) => {
+  // SEO параметры для главной страницы
+  const seoProps = useSeo({
+    navId: "home",
+    title: "Приватний нотаріус у Дніпрі — Надія Корнієнкова",
+    description:
+      "Нотаріальні послуги у Дніпрі: довіреності, договори, спадщина, апостиль, афідевіт. Пн–Чт 10:00–18:00, Пт 10:00–17:00. Дзвінок: +380 67 544 07 00.",
+  });
+
   return (
     <>
-      <Seo
-        title="Приватний нотаріус у Дніпрі — Надія Корнієнкова"
-        description="Нотаріальні послуги у Дніпрі: довіреності, договори, спадщина, апостиль, афідевіт. Пн–Чт 10:00–18:00, Пт 10:00–17:00. Дзвінок: +380 67 544 07 00."
-        noSuffix={true}
-      />
+      <Seo {...seoProps} />
       <JsonLdSchema apiUrl="/api/background-videos/" />
       <MainVideo lang={lang} />
       <About />

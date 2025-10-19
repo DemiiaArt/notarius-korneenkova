@@ -2,8 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { NAV_TREE } from "../nav/nav-tree";
 import { attachComponentsToTree } from "../nav/component-registry";
 import { updateIndices } from "../nav/indices";
+import { buildFullPathForId } from "../nav/nav-utils";
+import { buildCanonicalUrlsForNode } from "../nav/canonical-utils";
+import { addCanonicalToStaticNodes } from "../nav/add-canonical-to-static";
 
-import { API_BASE_URL } from "../config/api";
+import { API_BASE_URL, SITE_BASE_URL } from "../config/api";
 // Кеширование отключено
 // const CHILDREN_CACHE_KEY = "nav_children_cache";
 // const CACHE_DURATION = 5 * 60 * 1000; // 5 минут
@@ -111,6 +114,15 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
     if (Array.isArray(nodes)) {
       nodes.forEach((node) => {
         backendMap[node.id] = node;
+
+        // Логируем canonical_url из backend, если есть
+        if (node.canonical_url) {
+          console.log(
+            `🔗 Backend canonical_url for "${node.id}":`,
+            node.canonical_url
+          );
+        }
+
         if (node.children) {
           buildBackendMap(node.children);
         }
@@ -121,7 +133,7 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
   buildBackendMap(backendData);
   console.log("🗺️ Backend map created:", backendMap);
 
-  const mergeNode = (node) => {
+  const mergeNode = (node, root = staticTree) => {
     const mergedNode = { ...node };
 
     // Если есть backend данные для этого ID, объединяем все свойства
@@ -143,6 +155,14 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
               `✅ Merging node "${node.id}": cardImage =`,
               backendNode[key]
             );
+          }
+          // Специальная обработка для canonical_url из backend
+          else if (key === "canonical_url") {
+            mergedNode.canonical_url = backendNode[key];
+            console.log(
+              `✅ Merging node "${node.id}": canonical_url from backend =`,
+              backendNode[key]
+            );
           } else {
             mergedNode[key] = backendNode[key];
           }
@@ -151,17 +171,45 @@ const mergeStaticWithBackendData = (staticTree, backendData) => {
 
       // Обрабатываем children отдельно
       if (backendNode.children) {
-        mergedNode.children = [...backendNode.children];
+        mergedNode.children = backendNode.children.map((child) =>
+          mergeNode(child, root)
+        );
       }
     } else if (node.children) {
       // Иначе рекурсивно обрабатываем статических детей
-      mergedNode.children = node.children.map(mergeNode);
+      mergedNode.children = node.children.map((child) =>
+        mergeNode(child, root)
+      );
+    }
+
+    // Генерируем canonical_url для узла, если его нет
+    if (
+      !mergedNode.canonical_url ||
+      Object.keys(mergedNode.canonical_url).length === 0
+    ) {
+      const canonicalUrls = buildCanonicalUrlsForNode(root, mergedNode.id);
+      if (canonicalUrls) {
+        mergedNode.canonical_url = canonicalUrls;
+        console.log(
+          `✅ Generated canonical_url for "${mergedNode.id}":`,
+          canonicalUrls
+        );
+      } else {
+        console.warn(
+          `⚠️ Could not generate canonical_url for "${mergedNode.id}"`
+        );
+      }
+    } else {
+      console.log(
+        `✅ Node "${mergedNode.id}" already has canonical_url:`,
+        mergedNode.canonical_url
+      );
     }
 
     return mergedNode;
   };
 
-  const result = mergeNode(staticTree);
+  const result = mergeNode(staticTree, staticTree);
   console.log("✨ Merge complete! Final result:", result);
   return result;
 };
@@ -185,12 +233,17 @@ export const useHybridNavTree = () => {
       setLoading(true);
       setError(null);
 
+      // Добавляем canonical_url к статическим узлам
+      const staticTreeWithCanonical = addCanonicalToStaticNodes(NAV_TREE);
+
       // Прикрепляем компоненты к статическому дереву
       let staticTreeWithComponents;
       try {
-        staticTreeWithComponents = attachComponentsToTree(NAV_TREE);
+        staticTreeWithComponents = attachComponentsToTree(
+          staticTreeWithCanonical
+        );
       } catch (componentError) {
-        staticTreeWithComponents = NAV_TREE; // Используем без компонентов
+        staticTreeWithComponents = staticTreeWithCanonical; // Используем без компонентов
       }
 
       // Обновляем индексы на основе статического дерева
@@ -201,9 +254,11 @@ export const useHybridNavTree = () => {
       }
 
       setNavTree(staticTreeWithComponents);
+      setMergeComplete(true); // Статическое дерево готово
     } catch (err) {
       setError(err.message);
       setNavTree(NAV_TREE); // Используем без компонентов
+      setMergeComplete(true); // Даже при ошибке считаем готовым
     } finally {
       setLoading(false);
     }

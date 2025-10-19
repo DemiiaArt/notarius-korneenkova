@@ -1,5 +1,7 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
 import JsonLdSchema from "@components/Seo/JsonLdSchema";
+import Seo from "@components/Seo/Seo";
+import { useSeo } from "@hooks/useSeo";
 import Loader from "@components/Loader/Loader";
 import { normalizeAndConvertHtml } from "@/utils/html";
 import { BACKEND_BASE_URL } from "@/config/api";
@@ -26,8 +28,21 @@ const PageTemplate = ({
   // Получаем API URL для JSON-LD, если передан navId
   const jsonLdApiUrl = useServiceJsonLd(navId);
   const heroImageUrl = `${BACKEND_BASE_URL}${pageData?.hero_image}`;
+
+  // SEO параметры
+  const seoProps = useSeo({
+    navId,
+    title: pageData?.title,
+    description: pageData?.description
+      ? pageData.description.replace(/<[^>]*>/g, "").substring(0, 160)
+      : "Нотаріальні послуги у Дніпрі",
+  });
+
   return (
     <>
+      {/* SEO мета-теги */}
+      <Seo {...seoProps} />
+
       {/* JSON-LD Schema для страниц услуг */}
       {jsonLdApiUrl && <JsonLdSchema apiUrl={jsonLdApiUrl} />}
 

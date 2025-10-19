@@ -1,181 +1,116 @@
-import { Helmet } from "@vuer-ai/react-helmet-async";
-import { useLocation } from "react-router-dom";
-import { useLang } from "@nav/use-lang";
+import { Helmet } from "react-helmet-async";
+import { SITE_BASE_URL } from "@/config/api";
+
+// Допоміжна: будуємо абсолютний URL акуратно
+function joinUrl(base, path) {
+  if (!base) return path || "";
+  const b = base.endsWith("/") ? base.slice(0, -1) : base;
+  if (!path) return b;
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${b}${p}`;
+}
 
 /**
- * SEO компонент для управления метатегами, title, lang и hreflang
- * Работает с данными из backend (title и description приходят с сервера)
- *
- * @param {Object} props
- * @param {string} props.title - Заголовок страницы (БЕЗ добавления "| Нотаріус Надія")
- * @param {string} props.description - Описание страницы
- * @param {string} [props.ogImage] - Open Graph изображение (опционально)
- * @param {string} [props.ogType="website"] - Open Graph тип (website/article)
- * @param {boolean} [props.noSuffix=false] - Не добавлять суффикс к title
- * @param {Object} [props.customMeta] - Дополнительные метатеги
- *
- * @example
- * // Простое использование
- * <Seo
- *   title="Приватний нотаріус у Дніпрі — Надія Корнієнкова"
- *   description="Нотаріальні послуги у Дніпрі..."
- * />
- *
- * @example
- * // Для статей блога
- * <Seo
- *   title={article.seo_title}
- *   description={article.seo_description}
- *   ogImage={article.hero_image}
- *   ogType="article"
- *   noSuffix={true}
- * />
+ * buildCanonical:
+ * - Для рівнів 3–4: беремо з navTree.canonical_url[lang], якщо є
+ * - Для фронтових 1–2: будуємо з поточного маршруту (routePath) на базі SITE_BASE_URL
+ * - Якщо у canonical з navTree протокол/хост "локальні" — замінюємо хост на VITE_SITE_BASE_URL
  */
-const Seo = ({
+function buildCanonical({ lang, routePath, nodeFromNavTree, SITE_BASE_URL }) {
+  // 1) Якщо є канонікал у вузлі дерева (3–4 рівні)
+  const fromTree = nodeFromNavTree?.canonical_url?.[lang]; // напр. "http://localhost:5173/page/"
+  if (fromTree) {
+    // Логируем сырое значение для узлов 3-4 уровня
+    console.log(`🔍 Raw canonical_url[${lang}] from navTree:`, fromTree);
+
+    try {
+      const base = new URL(SITE_BASE_URL);
+      const url = new URL(fromTree, SITE_BASE_URL);
+      // Нормалізуємо хост/протокол до продовського BASE_URL
+      url.protocol = base.protocol;
+      url.hostname = base.hostname;
+      url.port = base.port;
+      // Прибрати зайвий слеш в кінці
+      let href = url.toString();
+      if (href.endsWith("/")) href = href.slice(0, -1);
+
+      // Логируем финальный canonical
+      console.log(`✅ Final canonical after normalization:`, href);
+
+      return href;
+    } catch (e) {
+      console.warn(`⚠️ Failed to normalize canonical URL:`, e);
+      // Якщо чомусь невдалий URL — fallback нижче
+    }
+  }
+
+  // 2) Інакше (1–2 рівні, чистий фронт): з routePath
+  // Очікуємо, що routePath — це поточний шлях без домену (напр. "ua/notarialni-poslugy" або "notarialni-poslugy")
+  // Якщо мовні префікси у шляхах, просто передай коректний routePath зверху.
+  const href = joinUrl(SITE_BASE_URL, routePath);
+  const finalHref = href.endsWith("/") ? href.slice(0, -1) : href;
+
+  console.log(`📝 Generated canonical from routePath:`, finalHref);
+  console.log(`📝 RoutePath details:`, { routePath, lang, SITE_BASE_URL });
+
+  return finalHref;
+}
+
+/**
+ * Seo component
+ * - title, description — як було
+ * - lang — поточна мова ("ua" | "ru" | "en")
+ * - routePath — поточний шлях (без домену), напр. "ua/notarialni-poslugy"
+ * - navTreeLoaded — коли дерево готове (true) — тільки тоді вставляємо canonical
+ * - nodeFromNavTree — вузол для поточної сторінки (для 3–4 рівнів)
+ * - ld (optional) — об'єкт JSON-LD, який вольється в <script type="application/ld+json">
+ * - canonicalOverride (optional) — якщо дуже треба примусово задати canonical
+ */
+export default function Seo({
   title,
   description,
-  ogImage,
-  ogType = "website",
-  noSuffix = false,
-  customMeta = {},
-}) => {
-  const location = useLocation();
-  const { currentLang } = useLang();
+  lang,
+  routePath,
+  navTreeLoaded,
+  nodeFromNavTree,
+  ld,
+  canonicalOverride,
+}) {
+  // Используем SITE_BASE_URL из конфига
+  const baseUrl = SITE_BASE_URL;
 
-  // Базовый URL сайта
-  const SITE_URL =
-    import.meta.env.VITE_SITE_URL || "https://notarius-korneenkova.com.ua/";
+  // Не вставляємо canonical, доки не завантажено navTree (важливо!)
+  console.log(`🔧 Seo component called with:`, {
+    navTreeLoaded,
+    lang,
+    routePath,
+    nodeFromNavTree: nodeFromNavTree ? "exists" : "null",
+    canonicalOverride: canonicalOverride || "none",
+  });
 
-  // Текущий полный URL
-  const currentUrl = `${SITE_URL}${location.pathname}`;
+  const canonical = canonicalOverride
+    ? canonicalOverride
+    : navTreeLoaded
+      ? buildCanonical({
+          lang,
+          routePath,
+          nodeFromNavTree,
+          SITE_BASE_URL: baseUrl,
+        })
+      : null;
 
-  // Определяем язык для HTML тега (ua -> uk для корректности)
-  const htmlLang = currentLang === "ua" ? "uk" : currentLang;
-
-  // Генерация альтернативных URL для всех языков
-  const getAlternateUrl = (lang) => {
-    const pathname = location.pathname;
-
-    // Убираем языковой префикс из пути
-    let basePath = pathname;
-    if (pathname.startsWith("/ru/")) {
-      basePath = pathname.replace("/ru/", "/");
-    } else if (pathname.startsWith("/en/")) {
-      basePath = pathname.replace("/en/", "/");
-    }
-
-    // Добавляем новый языковой префикс
-    if (lang === "ua") {
-      return `${SITE_URL}${basePath}`;
-    } else if (lang === "ru") {
-      return `${SITE_URL}/ru${basePath}`;
-    } else if (lang === "en") {
-      return `${SITE_URL}/en${basePath}`;
-    }
-    return `${SITE_URL}${basePath}`;
-  };
-
-  // Title: либо как есть (если noSuffix=true), либо с суффиксом
-  const fullTitle = noSuffix
-    ? title
-    : title || "Приватний нотаріус у Дніпрі — Надія Корнієнкова";
-
-  // Изображение для Open Graph
-  const getOgImageUrl = () => {
-    if (!ogImage) {
-      // Изображение по умолчанию
-      return `${SITE_URL}/og-default.jpg`;
-    }
-    // Если изображение уже с полным URL
-    if (ogImage.startsWith("http")) {
-      return ogImage;
-    }
-    // Если относительный путь
-    return ogImage.startsWith("/")
-      ? `${SITE_URL}${ogImage}`
-      : `${SITE_URL}/${ogImage}`;
-  };
-
-  const ogImageUrl = getOgImageUrl();
-
-  // Локаль для Open Graph
-  const getOgLocale = () => {
-    switch (htmlLang) {
-      case "uk":
-        return "uk_UA";
-      case "ru":
-        return "ru_RU";
-      case "en":
-        return "en_US";
-      default:
-        return "uk_UA";
-    }
-  };
+  console.log(`🎯 Final canonical:`, canonical);
 
   return (
     <Helmet>
-      {/* Устанавливаем язык HTML документа */}
-      <html lang={htmlLang} />
+      {title && <title>{title}</title>}
+      {description && <meta name="description" content={description} />}
 
-      {/* Основные метатеги */}
-      <title>{fullTitle}</title>
-      <meta name="description" content={description} />
+      {/* Canonical додаємо тільки коли дерево готове */}
+      {canonical && <link rel="canonical" href={canonical} data-rh="true" />}
 
-      {/* Canonical URL */}
-      <link rel="canonical" href={currentUrl} />
-
-      {/* Hreflang теги для мультиязычности */}
-      <link rel="alternate" hrefLang="uk" href={getAlternateUrl("ua")} />
-      <link rel="alternate" hrefLang="ru" href={getAlternateUrl("ru")} />
-      <link rel="alternate" hrefLang="en" href={getAlternateUrl("en")} />
-      <link rel="alternate" hrefLang="x-default" href={getAlternateUrl("ua")} />
-
-      {/* Open Graph теги */}
-      <meta property="og:type" content={ogType} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:url" content={currentUrl} />
-      <meta property="og:image" content={ogImageUrl} />
-      <meta property="og:locale" content={getOgLocale()} />
-      <meta property="og:site_name" content="Нотаріус Надія Корнієнкова" />
-
-      {/* Open Graph альтернативные локали */}
-      {htmlLang === "uk" && (
-        <meta property="og:locale:alternate" content="ru_RU" />
-      )}
-      {htmlLang === "uk" && (
-        <meta property="og:locale:alternate" content="en_US" />
-      )}
-      {htmlLang === "ru" && (
-        <meta property="og:locale:alternate" content="uk_UA" />
-      )}
-      {htmlLang === "ru" && (
-        <meta property="og:locale:alternate" content="en_US" />
-      )}
-      {htmlLang === "en" && (
-        <meta property="og:locale:alternate" content="uk_UA" />
-      )}
-      {htmlLang === "en" && (
-        <meta property="og:locale:alternate" content="ru_RU" />
-      )}
-
-      {/* Twitter Card теги */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={ogImageUrl} />
-
-      {/* Дополнительные метатеги */}
-      {Object.entries(customMeta).map(([name, content]) => (
-        <meta key={name} name={name} content={content} />
-      ))}
-
-      {/* Мобильные метатеги */}
-      <meta name="theme-color" content="#ffffff" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      {/* Опційно JSON-LD */}
+      {ld && <script type="application/ld+json">{JSON.stringify(ld)}</script>}
     </Helmet>
   );
-};
-
-export default Seo;
+}

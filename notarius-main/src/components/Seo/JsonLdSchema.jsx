@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Helmet } from "@vuer-ai/react-helmet-async";
+import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@hooks/useLanguage";
 import { BACKEND_BASE_URL } from "@/config/api";
 
