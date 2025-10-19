@@ -245,4 +245,4 @@ else:
     BASE_URL = 'https://notarius-korneenkova.com.ua'
 
 # Frontend path for sitemap generation
-FRONTEND_PATH = os.getenv('FRONTEND_PATH')
+FRONTEND_PATH = os.path.join(BASE_DIR, '..', os.getenv('FRONTEND_PATH'))
