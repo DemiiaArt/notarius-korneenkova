@@ -1,7 +1,12 @@
 import NotaryServices from "@components/NotaryServices/NotaryServices";
+import JsonLdSchema from "@components/Seo/JsonLdSchema";
+import Seo from "@components/Seo/Seo";
+import { useSeo } from "@hooks/useSeo";
 import Loader from "@components/Loader/Loader";
 import { normalizeAndConvertHtml } from "@/utils/html";
 import { BACKEND_BASE_URL } from "@/config/api";
+import { useServiceJsonLd } from "@hooks/useServiceJsonLd";
+
 /**
  * Универсальный шаблон страницы с NotaryServices и контентом
  * @param {Object} props
@@ -9,6 +14,7 @@ import { BACKEND_BASE_URL } from "@/config/api";
  * @param {boolean} props.loading - Состояние загрузки
  * @param {string} props.error - Ошибка загрузки
  * @param {string} props.wrapperClassName - CSS класс для обертки (опционально)
+ * @param {string} props.navId - ID элемента навигации для JSON-LD (опционально)
  * @param {React.ReactNode} props.children - Дополнительный контент после текста
  */
 const PageTemplate = ({
@@ -16,11 +22,30 @@ const PageTemplate = ({
   loading,
   error,
   wrapperClassName = "",
+  navId,
   children,
 }) => {
+  // Получаем API URL для JSON-LD, если передан navId
+  const jsonLdApiUrl = useServiceJsonLd(navId);
   const heroImageUrl = `${BACKEND_BASE_URL}${pageData?.hero_image}`;
+
+  // SEO параметры
+  const seoProps = useSeo({
+    navId,
+    title: pageData?.title,
+    description: pageData?.description
+      ? pageData.description.replace(/<[^>]*>/g, "").substring(0, 160)
+      : "Нотаріальні послуги у Дніпрі",
+  });
+
   return (
     <>
+      {/* SEO мета-теги */}
+      <Seo {...seoProps} />
+
+      {/* JSON-LD Schema для страниц услуг */}
+      {jsonLdApiUrl && <JsonLdSchema apiUrl={jsonLdApiUrl} />}
+
       <div className={wrapperClassName}>
         <NotaryServices
           title={pageData?.title}
