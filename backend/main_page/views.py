@@ -289,6 +289,11 @@ class ServicesCategoryView(APIView):
                     },
                     'component': 'null',
                     'showInMenu': post.status,
+                    'canonical_url': {
+                        'ua': post.get_canonical_url('ua'),
+                        'ru': post.get_canonical_url('ru'),
+                        'en': post.get_canonical_url('en'),
+                    },
                 })
 
             blog_home = BlogHome.objects.order_by('-id').first()
@@ -306,6 +311,11 @@ class ServicesCategoryView(APIView):
                 'children': blog_children,
                 'showInMenu': True,
                 'showMegaPanel': True,
+                'canonical_url': {
+                    'ua': f"{settings.BASE_URL}/notarialni-blog/",
+                    'ru': f"{settings.BASE_URL}/ru/notarialni-blog/",
+                    'en': f"{settings.BASE_URL}/en/notary-blog/",
+                },
             }
 
             response_data.append(blog_section)
