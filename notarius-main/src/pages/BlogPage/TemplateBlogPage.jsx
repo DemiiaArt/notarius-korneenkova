@@ -22,6 +22,7 @@ import { BACKEND_BASE_URL } from "@/config/api";
  * @param {string} [props.heroImage] - Путь к изображению для hero-блока
  * @param {Array} [props.tags] - Массив тегов статьи
  * @param {string} [props.publishDate] - Дата публикации статьи
+ * @param {Array} [props.similarPosts] - Массив похожих статей
  */
 const TemplateBlogPage = ({
   title,
@@ -30,6 +31,7 @@ const TemplateBlogPage = ({
   heroImage,
   tags = [],
   publishDate,
+  similarPosts = [],
 }) => {
   const isPC = useIsPC();
 console.log(content)
@@ -96,7 +98,7 @@ console.log(content)
       </div>
 
       {/* Свайпер с похожими статьями */}
-      <SimilarArticles />
+      <SimilarArticles similarPosts={similarPosts} />
     </div>
   );
 };

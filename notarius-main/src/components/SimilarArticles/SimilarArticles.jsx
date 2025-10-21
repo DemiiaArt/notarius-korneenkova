@@ -2,24 +2,20 @@ import { useIsPC } from "@hooks/isPC";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import BlogCard from "@components/Blog/BlogCard";
-import { useBlog } from "@hooks/useBlog";
 import arrowRight from "@media/services-carousel/icons/arrow-right.svg";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "./SimilarArticles.scss";
 
-const SimilarArticles = () => {
+const SimilarArticles = ({ similarPosts = [] }) => {
   const isPC = useIsPC();
 
-  // Загружаем последние статьи из API (первая страница, без фильтрации)
-  const { articles, loading } = useBlog({ page: 1 });
+  // Используем похожие статьи, переданные из API
+  const similarArticles = similarPosts.slice(0, 4);
 
-  // Берем первые 4 статьи для отображения
-  const similarArticles = articles.slice(0, 4);
-
-  // Не показываем секцию, если нет статей или идет загрузка
-  if (loading || similarArticles.length === 0) {
+  // Не показываем секцию, если нет похожих статей
+  if (similarArticles.length === 0) {
     return null;
   }
 

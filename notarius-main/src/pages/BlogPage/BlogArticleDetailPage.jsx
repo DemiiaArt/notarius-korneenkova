@@ -110,6 +110,7 @@ const BlogArticleDetailPage = () => {
         heroImage={articleImage}
         tags={tags}
         publishDate={formatDate(article.published_at)}
+        similarPosts={article.similar_posts || []}
       />
     </>
   );
