@@ -69,14 +69,14 @@
 
 @media (min-width: 1024px) {
   .services-page {
-    max-height: none;
+    max-height: 776px;
     &-shadow {
       background: linear-gradient(
         270deg,
         rgba(0, 0, 0, 0) 0%,
         rgba(0, 0, 0, 0.85) 100%
       );
-      max-height: none;
+      max-height: 776px;
     }
     &-title {
       width: 100%;

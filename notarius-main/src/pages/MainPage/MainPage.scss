@@ -1,4 +1,4 @@
-@use 'sass:map';
+@use "sass:map";
 
 .main {
   height: fit-content;
@@ -25,9 +25,8 @@
     }
 
     &:disabled {
-      color: #8D8D8D;
-      background: #C6C6C6;
-
+      color: #8d8d8d;
+      background: #c6c6c6;
     }
   }
 
@@ -50,9 +49,4 @@
       background-color: map.get($colors, 3);
     }
   }
-}
-
-.about-block-btn {
-  display: none;
-  padding: 14px 30px;
 }

@@ -6,16 +6,25 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@hooks/useLanguage";
 import { useTranslation } from "@hooks/useTranslation";
 import { useNavigateWithLang } from "@hooks/useNavigateWithLang";
-import { API_BASE_URL } from "../../config/api";
+import { API_BASE_URL } from "@/config/api";
 import { normalizeAndConvertHtml } from "@/utils/html";
+import { useLocation } from "react-router-dom";
 
-export const About = ({ showBreadcrumbs = false }) => {
+export const About = () => {
   const isPC = useIsPC();
   const { open } = useModal();
   const { navigateToPage } = useNavigateWithLang();
   const { currentLang } = useLanguage();
   const { t } = useTranslation("components.NotaryServices");
 
+  const location = useLocation();
+
+  const isAboutPage =
+    location.pathname === "/notarialni-pro-mene" ||
+    location.pathname === "/ru/notarialni-pro-mene" ||
+    location.pathname === "/en/notary-about";
+
+  console.log(isAboutPage);
   const [about, setAbout] = useState({
     subtitle: "",
     title: "",
@@ -59,7 +68,7 @@ export const About = ({ showBreadcrumbs = false }) => {
       >
         <div className="container">
           <div className="about-block-content">
-            {showBreadcrumbs && <Breadcrumbs />}
+            {isAboutPage && <Breadcrumbs />}
             <div className="about-block-text-content">
               <p
                 className={`about-block-greetings fs-italic ${isPC ? "fs-p--20px" : "fs-p--12px"} c1`}
@@ -67,14 +76,14 @@ export const About = ({ showBreadcrumbs = false }) => {
                 {about.subtitle || "Привіт! Мене звати Надія Корнєєнкова."}
               </p>
               <h1
-                className={`about-block-title fw-light uppercase ${isPC ? "fs-h1--40px" : "fs-h2--20px"} c1`}
+                className={`about-block-title fw-light uppercase ${isPC ? "fs-h1--40px" : "fs-h2--20px"} lh-130 c1`}
               >
                 {about.title ||
                   "Ваш надійний нотаріус, медіатор та перекладач."}
               </h1>
               {about.text ? (
                 <div
-                  className={`about-block-text fw-light lh-150 ${isPC ? "fs-p--18px" : "fs-p--14px"} c1`}
+                  className={`about-block-text fw-normal lh-150 ${isPC ? "fs-p--18px" : "fs-p--14px"} c1`}
                   dangerouslySetInnerHTML={{
                     __html: normalizeAndConvertHtml(about.text),
                   }}
@@ -87,18 +96,21 @@ export const About = ({ showBreadcrumbs = false }) => {
                   перекладами та важливими правовими рішеннями.
                 </p>
               )}
-              <button
-                onClick={() => navigateToPage("about")}
-                className="btn-secondary btn-z-style uppercase c1 fs-p--16px "
-              >
-                {t("moreDetails")}
-              </button>
-              <button
-                onClick={() => open("freeOrder")}
-                className="about-block-btn btn-z-style uppercase c1 "
-              >
-                {t("orderConsultation")}
-              </button>
+              {isAboutPage ? (
+                <button
+                  onClick={() => open("freeOrder")}
+                  className="about-block-btn btn-z-style uppercase c1 "
+                >
+                  {t("orderConsultation")}
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigateToPage("about")}
+                  className="btn-secondary btn-z-style uppercase c1 fs-p--16px "
+                >
+                  {t("moreDetails")}
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ import Goals from "@components/Goals/Goals";
 import VideoBlock from "@components/VideoBock/VideoBlock";
 import Form from "@components/Form/Form";
 import Certificates from "@components/Certificates/Certificates";
-
+import Breadcrumbs from "@components/BreadCrumbs/BreadCrumbs";
 import "./AboutPage.scss";
 
 const AboutPage = () => {
@@ -25,9 +25,7 @@ const AboutPage = () => {
     <>
       <Seo {...seoProps} />
       <JsonLdSchema apiUrl="/api/about-me/detail/" />
-      <div className="about-page">
-        <About showBreadcrumbs />
-      </div>
+      <About />
       <AboutTextBlock />
       <VideoBlock pageType="aboutPage" />
       <Skills />
