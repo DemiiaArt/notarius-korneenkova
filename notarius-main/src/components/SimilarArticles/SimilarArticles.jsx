@@ -1,4 +1,5 @@
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import BlogCard from "@components/Blog/BlogCard";
@@ -10,6 +11,7 @@ import "./SimilarArticles.scss";
 
 const SimilarArticles = ({ similarPosts = [] }) => {
   const isPC = useIsPC();
+  const { t } = useTranslation();
 
   // Используем похожие статьи, переданные из API
   const similarArticles = similarPosts.slice(0, 4);
@@ -25,7 +27,7 @@ const SimilarArticles = ({ similarPosts = [] }) => {
         <h2
           className={`similar-articles-title ${isPC ? "fs-h2--32px" : "fs-p--18px"} fw-bold c3`}
         >
-          Схожі статті
+          {t("components.pages.BlogPage.similarArticles")}
         </h2>
 
         {/* Мобильная версия - 3 карточки в колонку без свайпера */}

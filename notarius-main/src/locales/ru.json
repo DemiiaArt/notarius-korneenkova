@@ -380,7 +380,8 @@
         "found": "Найдено",
         "article": "статью",
         "articles": "статьи",
-        "articlesMany": "статей"
+        "articlesMany": "статей",
+        "similarArticles": "Похожие статьи"
       }
     }
   }

@@ -34,44 +34,52 @@ const TemplateBlogPage = ({
   similarPosts = [],
 }) => {
   const isPC = useIsPC();
-console.log(content)
+  console.log(content);
   return (
-    <div className="hero">
-      <div className="hero-img-shadow-target">
-        <div
-          className={`hero-img ${heroImgClass || ""}`}
-          style={heroImage ? { backgroundImage: `url(${BACKEND_BASE_URL}${heroImage})` } : {}}
-        >
-          <div className="container hero-container">
-            <Breadcrumbs />
-            <h1
-              className={`fw-bold uppercase ${isPC ? "fs-p--40px" : "fs-p--24px"} c1 blog-title-h1`}
-            >
-              {title.split("\n").map((line, idx) => (
-                <span key={idx}>
-                  {line}
-                  {idx !== title.split("\n").length - 1 &&
-                    (isPC ? " " : <br />)}
-                </span>
-              ))}
-            </h1>
+    <>
+      <div className="hero">
+        <div className="hero-img-shadow-target">
+          <div
+            className={`hero-img ${heroImgClass || ""}`}
+            style={
+              heroImage
+                ? { backgroundImage: `url(${BACKEND_BASE_URL}${heroImage})` }
+                : {}
+            }
+          >
+            <div className="container">
+              <div className="hero-breadcrums">
+                <Breadcrumbs />
+              </div>
+              <h1
+                className={`fw-bold uppercase ${isPC ? "fs-p--40px" : "fs-p--24px"} c1 blog-title-h1`}
+              >
+                {title.split("\n").map((line, idx) => (
+                  <span key={idx}>
+                    {line}
+                    {idx !== title.split("\n").length - 1 &&
+                      (isPC ? " " : <br />)}
+                  </span>
+                ))}
+              </h1>
+            </div>
           </div>
+          <div className="hero-img-shadow"></div>
         </div>
-        <div className="hero-img-shadow"></div>
       </div>
 
       <div className="template-text-content">
         <div className="container">
           <div className="article-wrapper">
             <article className="text-content">
-            {content && (
-              <div
-                className="text-content-html"
-                dangerouslySetInnerHTML={{
-                  __html: normalizeAndConvertHtml(content),
-                }}
-              />
-            )}
+              {content && (
+                <div
+                  className="text-content-html"
+                  dangerouslySetInnerHTML={{
+                    __html: normalizeAndConvertHtml(content),
+                  }}
+                />
+              )}
 
               {/* Дата публикации */}
               {publishDate && (
@@ -99,7 +107,7 @@ console.log(content)
 
       {/* Свайпер с похожими статьями */}
       <SimilarArticles similarPosts={similarPosts} />
-    </div>
+    </>
   );
 };
 

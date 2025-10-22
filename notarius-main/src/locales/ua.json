@@ -370,7 +370,8 @@
         "found": "Знайдено",
         "article": "статтю",
         "articles": "статті",
-        "articlesMany": "статей"
+        "articlesMany": "статей",
+        "similarArticles": "Схожі статті"
       },
       "NotFoundPage": {
         "error": "Помилка",
