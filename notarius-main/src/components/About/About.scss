@@ -5,7 +5,7 @@
     .about-block {
       position: relative;
       width: 100vw;
-      min-height: 400px;
+      height: 47vh;
       background-image: url("../../assets/media/NadiiaHeroImgMain-min.webp");
       background-repeat: no-repeat;
       background-size: cover;
@@ -22,7 +22,7 @@
   .about-block {
     position: relative;
     width: 100vw;
-    min-height: 482px;
+    height: 56.5vh;
     background-image: url("../../assets/media/NadiiaHeroImgMain-min.webp");
     background-repeat: no-repeat;
     background-size: 300%;
@@ -106,11 +106,11 @@
     .about-block {
       position: relative;
       width: 100vw;
-      min-height: 776px;
+      min-height: 88.75vh;
       background-image: url("../../assets/media/NadiiaHeroImgMain-min.webp");
       background-repeat: no-repeat;
       background-size: cover;
-      background-position: 0 0;
+      background-position: 50% 0;
     }
     .about-block-content {
       margin: 0;
@@ -121,7 +121,7 @@
     }
   }
   .about-block {
-    min-height: 578px;
+    height: 67.8vh;
     background-image: url("../../assets/media/NadiiaHeroImgAbout-min.png");
     background-size: cover;
     background-position: 60% 5%;
@@ -134,7 +134,7 @@
 
 @media (min-width: 1024px) {
   .about-block {
-    min-height: 757px;
+    height: 88.75vh;
     background-position: 40% 5%;
     &-content {
       margin: 0;
