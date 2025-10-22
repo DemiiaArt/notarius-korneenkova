@@ -1,7 +1,7 @@
 import { useIsPC } from "@hooks/isPC";
 import { useTranslation } from "@hooks/useTranslation";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import BlogCard from "@components/Blog/BlogCard";
 import arrowRight from "@media/services-carousel/icons/arrow-right.svg";
 
@@ -45,7 +45,7 @@ const SimilarArticles = ({ similarPosts = [] }) => {
         {/* Десктопная версия - свайпер */}
         <div className="similar-articles-carousel-wrapper">
           <Swiper
-            modules={[Navigation, Pagination]}
+            modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={32}
             slidesPerView={2}
             observer={true}
@@ -58,6 +58,11 @@ const SimilarArticles = ({ similarPosts = [] }) => {
               nextEl: ".similar-articles-carousel-next",
               prevEl: ".similar-articles-carousel-prev",
             }}
+            // autoplay={{
+            //   delay: 7000, // задержка между сменой слайдов (в мс)
+            //   disableOnInteraction: false, // продолжать после взаимодействия
+            // }}
+            loop={true}
             // pagination={{
             //   clickable: true,
             // }}

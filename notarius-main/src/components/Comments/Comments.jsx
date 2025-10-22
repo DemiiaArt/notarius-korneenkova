@@ -191,7 +191,7 @@ const CommentsCarousel = ({ comments }) => {
           768: { slidesPerView: 2 },
           1200: { slidesPerView: 3 },
         }}
-        loop={false}
+        loop={true}
       >
         {comments.map(
           ({

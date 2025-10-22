@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { Link } from "react-router-dom";
 import { useLang } from "@nav/use-lang";
 import {
@@ -131,7 +131,7 @@ const GroupServicesCarousel = ({
       </div>
       <div className="group-services-carousel-wrapper">
         <Swiper
-          modules={[Navigation, Pagination]}
+          modules={[Navigation, Pagination, Autoplay]}
           spaceBetween={10}
           slidesPerView={isPC ? 4 : 2}
           navigation={{
@@ -142,6 +142,11 @@ const GroupServicesCarousel = ({
             clickable: true,
             el: ".group-services-carousel-pagination",
           }}
+          // autoplay={{
+          //   delay: 6000, // задержка между сменой слайдов (в мс)
+          //   disableOnInteraction: false, // продолжать после взаимодействия
+          // }}
+          loop={true}
           className="group-services-carousel-swiper"
         >
           {visibleChildren.map((service) => (
