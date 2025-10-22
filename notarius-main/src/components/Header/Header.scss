@@ -353,7 +353,6 @@ li {
         justify-content: space-between;
         align-items: center;
         gap: 15px;
-        margin-left: 5%;
       }
       &-email,
       &-phones,
@@ -367,6 +366,21 @@ li {
         &:hover {
           color: map.get($colors, 1); /* белый цвет c1 */
         }
+      }
+
+      &-email,
+      &-address {
+        display: block;
+        width: 30%;
+      }
+      &-phones {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+      }
+      &-address {
+        text-align: end;
       }
     }
     &-content {
@@ -419,7 +433,7 @@ li {
     &::after {
       content: "";
       position: absolute;
-      bottom: -22px;
+      bottom: -20px;
       left: 0;
       width: 0;
       height: 2px;
@@ -528,7 +542,7 @@ li {
     &::after {
       content: "";
       position: absolute;
-      bottom: -22px;
+      bottom: -20px;
       left: 0;
       width: 0;
       height: 2px;

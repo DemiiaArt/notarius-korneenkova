@@ -25,7 +25,7 @@ const SimilarArticles = ({ similarPosts = [] }) => {
     <div className="similar-articles">
       <div className="container">
         <h2
-          className={`similar-articles-title ${isPC ? "fs-h2--32px" : "fs-p--18px"} fw-bold c3`}
+          className={`similar-articles-title ${isPC ? "fs-h2--32px" : "fs-p--18px"} fw-semi-bold c3`}
         >
           {t("components.pages.BlogPage.similarArticles")}
         </h2>
