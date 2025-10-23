@@ -497,7 +497,17 @@ li {
     }
 
     &:hover {
-      opacity: 0.9;
+      background-color: $btn-hover;
+    }
+    &:active {
+      background-color: $btn-active;
+    }
+    &:focus {
+      background-color: $btn-focus;
+    }
+    &:disabled {
+      background-color: $btn-disabled;
+      color: map.get($colors, 3);
     }
   }
 

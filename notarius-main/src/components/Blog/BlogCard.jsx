@@ -108,14 +108,14 @@ const BlogCard = ({
       )}
       {displayTitle && (
         <h2
-          className={`blog-card-title ${isPC ? "fs-p--18px" : "fs-p--24px"} fw-bold uppercase c3`}
+          className={`blog-card-title ${isPC ? "fs-p--16px" : "fs-p--24px"} fw-bold uppercase c3`}
         >
           {displayTitle}
         </h2>
       )}
       {displayText && (
         <p
-          className={`blog-card-text ${isPC ? "fs-p--14px" : "fs-p--14px fw-regular"} lh-150 `}
+          className={`blog-card-text ${isPC ? "fs-p--12px" : "fs-p--14px fw-regular"} lh-150 `}
           dangerouslySetInnerHTML={{ __html: displayText }}
         />
       )}

@@ -186,7 +186,7 @@ export const ServicesAccordion = ({ title = "ДЛЯ КОГО ПОСЛУГИ" }) 
 
         {isMobile && (
           <div
-            className="accordion-toggle fs-p--16px"
+            className="accordion-toggle fs-p--14px"
             onClick={() => setShowCollapsed((prev) => !prev)}
           >
             {showCollapsed ? "ПРИХОВАТИ" : "ДИВИТИСЯ БІЛЬШЕ"}

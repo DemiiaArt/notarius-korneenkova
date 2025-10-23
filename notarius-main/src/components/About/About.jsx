@@ -89,7 +89,7 @@ export const About = ({ showBreadcrumbs = false }) => {
               )}
               <button
                 onClick={() => navigateToPage("about")}
-                className="btn-secondary btn-z-style uppercase c1 fs-p--16px "
+                className="btn-secondary btn-z-style uppercase c1 fs-p--14px "
               >
                 {t("moreDetails")}
               </button>
