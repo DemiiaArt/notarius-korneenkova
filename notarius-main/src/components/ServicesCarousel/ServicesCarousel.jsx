@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { Link, useLocation } from "react-router-dom";
 import { useLang } from "@nav/use-lang";
 import { buildFullPathForId, getLabel, findNodeById } from "@nav/nav-utils";
@@ -208,6 +208,11 @@ const ServicesCarousel = ({
             nextEl: ".services-carousel-next",
             prevEl: ".services-carousel-prev",
           }}
+          // autoplay={{
+          //   delay: 5000, // задержка между сменой слайдов (в мс)
+          //   disableOnInteraction: false, // продолжать после взаимодействия
+          // }}
+          loop={true}
           className="services-carousel-swiper"
         >
           {visibleChildren.map((service, index) => (

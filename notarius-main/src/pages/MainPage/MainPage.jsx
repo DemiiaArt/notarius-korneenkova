@@ -26,7 +26,9 @@ const MainPage = ({ lang }) => {
       <Seo {...seoProps} />
       <JsonLdSchema apiUrl="/api/background-videos/" />
       <MainVideo lang={lang} />
-      <About />
+      <div className="main-page-about-block" id="about-block">
+        <About />
+      </div>
       <Skills />
       <ServicesCarousel parentId="services" title="Послуги" kind="group" />
       <Comments />

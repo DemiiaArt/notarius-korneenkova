@@ -1,6 +1,5 @@
 @use "sass:map";
 
-
 .blog-card {
   position: relative;
   display: flex;
@@ -10,17 +9,17 @@
   overflow: hidden;
   background: transparent;
   height: 100%;
-  
+
   // &:hover {
   //   transform: translateY(-4px);
   //   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   // }
-  
+
   &:focus {
     outline: 1px solid map.get($colors, 4);
     outline-offset: 2px;
   }
-  
+
   &:active {
     transform: translateY(-2px);
   }
@@ -33,12 +32,12 @@
   color: inherit;
   width: 100%;
   height: 100%;
-  
+
   &:hover {
     text-decoration: none;
     color: inherit;
   }
-  
+
   &:focus {
     outline: none;
   }
@@ -79,18 +78,17 @@
 
 // Container styles for blog cards
 
-
 .blog-cards-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
   margin-bottom: 30px;
-  
+
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
   }
-  
+
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
@@ -104,11 +102,9 @@
   //     transform: translateY(-2px);
   //   }
   // }
-  
+
   .blog-card img,
   .optimized-image-container {
     height: 150px;
   }
-  
-  
 }

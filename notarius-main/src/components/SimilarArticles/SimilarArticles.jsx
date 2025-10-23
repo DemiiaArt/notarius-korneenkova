@@ -1,6 +1,7 @@
 import { useIsPC } from "@hooks/isPC";
+import { useTranslation } from "@hooks/useTranslation";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import BlogCard from "@components/Blog/BlogCard";
 import arrowRight from "@media/services-carousel/icons/arrow-right.svg";
 
@@ -10,6 +11,7 @@ import "./SimilarArticles.scss";
 
 const SimilarArticles = ({ similarPosts = [] }) => {
   const isPC = useIsPC();
+  const { t } = useTranslation();
 
   // Используем похожие статьи, переданные из API
   const similarArticles = similarPosts.slice(0, 4);
@@ -23,9 +25,9 @@ const SimilarArticles = ({ similarPosts = [] }) => {
     <div className="similar-articles">
       <div className="container">
         <h2
-          className={`similar-articles-title ${isPC ? "fs-h2--32px" : "fs-p--18px"} fw-bold c3`}
+          className={`similar-articles-title ${isPC ? "fs-h2--32px" : "fs-p--18px"} fw-semi-bold c3`}
         >
-          Схожі статті
+          {t("components.pages.BlogPage.similarArticles")}
         </h2>
 
         {/* Мобильная версия - 3 карточки в колонку без свайпера */}
@@ -43,7 +45,7 @@ const SimilarArticles = ({ similarPosts = [] }) => {
         {/* Десктопная версия - свайпер */}
         <div className="similar-articles-carousel-wrapper">
           <Swiper
-            modules={[Navigation, Pagination]}
+            modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={32}
             slidesPerView={2}
             observer={true}
@@ -56,6 +58,11 @@ const SimilarArticles = ({ similarPosts = [] }) => {
               nextEl: ".similar-articles-carousel-next",
               prevEl: ".similar-articles-carousel-prev",
             }}
+            // autoplay={{
+            //   delay: 7000, // задержка между сменой слайдов (в мс)
+            //   disableOnInteraction: false, // продолжать после взаимодействия
+            // }}
+            loop={true}
             // pagination={{
             //   clickable: true,
             // }}
