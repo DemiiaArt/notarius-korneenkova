@@ -1,0 +1,221 @@
+.scroll-down-button {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  outline: none;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 4px;
+  }
+
+  // Поддержка белого цвета для темного фона
+  .main-video[data-color-white] & {
+    .scroll-down-button__text {
+      color: #fff;
+    }
+
+    .scroll-down-button__dot {
+      background-color: #fff;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 16px;
+  }
+
+  &__text {
+    color: #000;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  &__dots {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__dot {
+    width: 4px;
+    height: 4px;
+    background-color: #000;
+    border-radius: 50%;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+
+    &--1 {
+      animation-name: bullet-vertical-1-slide;
+    }
+
+    &--2 {
+      animation-name: bullet-vertical-2-slide;
+    }
+
+    &--3 {
+      animation-name: bullet-vertical-3-slide;
+    }
+  }
+}
+
+// Анимации для точек
+@keyframes bullet-vertical-1-slide {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  30%,
+  45% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  60% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bullet-vertical-2-slide {
+  0% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  45% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  60% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  75% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bullet-vertical-3-slide {
+  0% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  45% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  60% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  75% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  90% {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+}
+
+// Адаптивность
+@media (min-width: 768px) {
+  .scroll-down-button {
+    bottom: 24px;
+
+    &__content {
+      gap: 12px;
+      padding: 24px 20px;
+    }
+
+    &__text {
+      font-size: 16px;
+    }
+
+    &__dot {
+      width: 5px;
+      height: 5px;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .scroll-down-button {
+    bottom: 32px;
+
+    &__content {
+      gap: 16px;
+      padding: 28px 24px;
+    }
+
+    &__text {
+      font-size: 18px;
+    }
+
+    &__dot {
+      width: 6px;
+      height: 6px;
+    }
+  }
+}

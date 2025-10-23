@@ -26,7 +26,7 @@ const MainPage = ({ lang }) => {
       <Seo {...seoProps} />
       <JsonLdSchema apiUrl="/api/background-videos/" />
       <MainVideo lang={lang} />
-      <div className="main-page-about-block">
+      <div className="main-page-about-block" id="about-block">
         <About />
       </div>
       <Skills />

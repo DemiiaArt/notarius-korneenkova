@@ -348,6 +348,10 @@
     "LeadsButton": {
       "freeConsultation": "Free Consultation"
     },
+    "ScrollDownButton": {
+      "text": "let's get acquainted",
+      "ariaLabel": "Go to 'About Us' section"
+    },
     "Footer": {
       "socials": "Our social media",
       "writeUs": "Write to us",
