@@ -1,69 +1,65 @@
-@use 'sass:map';
+@use "sass:map";
 
 .toggle-btn {
-    display: none;
-    margin: 20px auto 0;
-    text-align: center;
+  display: none;
+  margin: 20px auto 0;
+  text-align: center;
 }
 
 .accordion-toggle.toggle-btn.fs-p--16px {
-    background: none;
-    border: none;
+  background: none;
+  border: none;
 }
 
 @media (max-width: 1024px) {
-    .toggle-btn {
-        display: block; 
-    }
+  .toggle-btn {
+    display: block;
+  }
 }
 @media (min-width: 1025px) {
-    .toggle-btn {
-        display: block; 
-    }
+  .toggle-btn {
+    display: block;
+  }
 }
 
 .about-container {
-    margin: 0 auto;
-    padding: 50px 0;
-    background: map.get($colors, 5);
+  margin: 0 auto;
+  padding: 50px 0;
+  background: map.get($colors, 5);
 
-    h2 {
-        text-align: center;
+  h2 {
+    text-align: left;
+  }
+
+  .about-content {
+    max-height: 356px;
+    overflow: hidden;
+    margin: 20px 0;
+    transition: max-height 0.4s ease;
+
+    &.expanded {
+      max-height: 2000px;
+      max-width: 1200px;
     }
 
-    .about-content {
-        max-height: 356px;
-        overflow: hidden;
-        margin: 20px 0;
-        transition: max-height 0.4s ease;
-
-        &.expanded {
-            max-height: 2000px;
-            max-width: 1200px;
-        }
-
-        p {
-            margin-bottom: 12px;
-        }
+    p {
+      margin-bottom: 12px;
     }
+  }
 }
 
 @media (min-width: 1024px) {
+  .about-container {
+    padding: 100px 0;
 
-    .about-container {
-        h2 {
-        text-align: left;
+    & .about-content {
+      margin: 60px 0 0 0;
+      max-height: none;
+      overflow: visible;
+
+      p {
+        margin-bottom: 20px;
+      }
     }
-        padding: 100px 0;
-
-        & .about-content {
-            margin: 60px 0 0 0;
-            max-height: none;
-            overflow: visible;
-
-            p {
-                margin-bottom: 20px;
-            }
-        }
-    }
+  }
 }

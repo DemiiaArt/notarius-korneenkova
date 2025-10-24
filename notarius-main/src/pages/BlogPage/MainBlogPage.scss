@@ -3,50 +3,42 @@
 @media (min-width: 375px) {
   .hero-img.heroBlogImgClass {
     background-repeat: no-repeat;
-    background-position: 80% top;
+    background-position: 0 0;
     background-size: cover;
-    height: 100vh;
+    height: inherit;
     background-image: url("../../assets/media/BlogHeroImg.png");
-  }
-}
-
-@media (min-width: 768px) {
-  .hero-img.heroBlogImgClass {
-    background-position: 50% 20%;
-    background-size: cover;
-    height: 110vh;
-    max-height: 600px;
   }
 }
 
 @media (min-width: 375px) {
   .hero {
+    margin-top: 74px;
+    height: 56.3vh;
     &-img-shadow-target {
       position: relative;
       top: 0;
       left: 0;
       z-index: 1;
+      height: inherit;
     }
 
     &-img {
       width: 100vw;
-      height: 100vh;
-      max-height: 600px;
+      height: inherit;
       background-repeat: no-repeat;
-      background-position: 37% 20%;
-      background-size: 400%;
+      background-position: 0 0;
+      background-size: cover;
     }
 
-    .hero-container {
-      position: relative;
-      z-index: 3;
-      padding-top: 100px;
+    &-breadcrums {
+      padding-top: 37px;
     }
 
     h1 {
       display: block;
       position: relative;
-      padding: 30vh 0 0 0;
+      padding: 23vh 0 0 0;
+      margin: 0;
       z-index: 3;
     }
   }
@@ -322,36 +314,6 @@
 }
 
 @media (min-width: 768px) {
-  .hero {
-    .heroBlogImgClass ~ .hero-img-shadow {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      max-height: 600px;
-      background: linear-gradient(270deg, rgba(0, 0, 0, 0) 0%, #000000 120%);
-      z-index: 1;
-    }
-  }
-
-  .hero-img {
-    max-height: 600px;
-    background-position: 50% 20%;
-    background-size: 100%;
-  }
-
-  .hero-img-shadow {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    max-height: 600px;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
-    z-index: 1;
-  }
-
   .main-blog-page {
     padding-bottom: 42px;
   }
@@ -362,12 +324,14 @@
 }
 
 @media (min-width: 1024px) {
-  .hero .hero-container {
-    padding-top: 50px;
-  }
-  .hero-img-shadow {
-    height: 100vh;
-    max-height: 600px;
+  .hero {
+    margin-top: 0;
+    height: 88.75vh;
+    h1 {
+      display: block;
+      position: relative;
+      padding: 56vh 0 0 0;
+    }
   }
 
   .filterTag {

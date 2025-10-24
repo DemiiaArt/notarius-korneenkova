@@ -1,8 +1,7 @@
 @media (min-width: 375px) {
   .services-page {
     width: 100vw;
-    height: 100vh;
-    max-height: 550px;
+    height: 65vh;
     background-image: url("../../assets/media/services-page-bg.webp");
     background-repeat: no-repeat;
     background-position: 80% top;
@@ -12,8 +11,7 @@
       left: 0;
       top: 0;
       width: 100vw;
-      height: 100vh;
-      max-height: 550px;
+      height: 65vh;
       background: linear-gradient(
         180deg,
         rgba(31, 31, 31, 30%) 0%,
@@ -29,11 +27,13 @@
     }
     &-title {
       width: 60%;
+      margin: 0;
       margin-top: 100px;
     }
     &-content {
       position: relative;
-      padding: 94px 0 0 0;
+      padding-top: 20px;
+      margin-top: 74px;
       z-index: 3;
     }
     &-list {
@@ -69,14 +69,14 @@
 
 @media (min-width: 1024px) {
   .services-page {
-    max-height: none;
+    height: 88.75vh;
     &-shadow {
       background: linear-gradient(
         270deg,
         rgba(0, 0, 0, 0) 0%,
         rgba(0, 0, 0, 0.85) 100%
       );
-      max-height: none;
+      height: 88.75vh;
     }
     &-title {
       width: 100%;
@@ -85,6 +85,7 @@
     &-content {
       position: relative;
       padding: 50px 0 0 0;
+      margin-top: 0;
     }
     &-list {
       gap: 14px;

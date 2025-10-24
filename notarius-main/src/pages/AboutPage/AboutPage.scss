@@ -3,6 +3,12 @@ h2 {
   margin: 0;
 }
 
+@media (min-width: 375px) {
+  .about-page-breadcrumbs {
+    padding-top: 101px;
+  }
+}
+
 .about-page {
   @media (min-width: 375px) {
     .btn-secondary {
@@ -32,8 +38,8 @@ h2 {
   @media (min-width: 375px) {
     .about-block {
       height: 100vh;
-      max-height: 600px;
-      background-position: 70% 0%;
+      max-height: 544px;
+      background-position: 75% 0;
 
       &-content {
         padding: 100px 0 0 0;
@@ -47,11 +53,9 @@ h2 {
 
   @media (min-width: 768px) {
     .about-block {
-      background-image: url("../../assets/media/NadiiaHeroImgAbout-min.webp");
-      background-position: 50% 20%;
-      height: 110vh;
-      max-height: none;
+      background-image: url("../../assets/media/NadiiaHeroImgAbout-min.png");
 
+      max-height: 757px;
       &-content {
         .breadcrumbs {
           padding-bottom: 170px;
@@ -66,19 +70,19 @@ h2 {
 
   @media (min-width: 1024px) {
     .about-block {
-      max-height: 960px;
+      max-height: 757px;
 
       &-title {
         margin: 24px 0 32px 0;
       }
       &-content {
-        padding: 50px 0 0 0;
+        padding: 49px 0 0 0;
         .breadcrumbs {
           padding-bottom: 0;
         }
       }
       &-text-content {
-        margin-top: 200px; /* отступ от breadcrumbs для экранов 1200+ */
+        margin-top: 134px; /* отступ от breadcrumbs для экранов 1200+ */
       }
     }
 

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "./MainVideo.scss";
 import videoAny from "@media/video_test.mp4"; // fallback
 import { API_BASE_URL } from "@/config/api.js";
+import ScrollDownButton from "@components/ScrollDownButton/ScrollDownButton";
 
 const MainVideo = () => {
   const [isMediaLoaded, setIsMediaLoaded] = useState(false);
@@ -124,6 +125,7 @@ const MainVideo = () => {
               Будь ласка, завантажте відео або зображення в адмін-панелі
             </p>
           </div>
+          <ScrollDownButton />
         </div>
       </div>
     );
@@ -157,6 +159,7 @@ const MainVideo = () => {
               aria-label="Фонове зображення головного екрану"
             />
           )}
+          <ScrollDownButton />
         </>
       ) : (
         <div className="main-video-placeholder">

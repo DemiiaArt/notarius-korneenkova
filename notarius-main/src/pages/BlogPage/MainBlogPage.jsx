@@ -119,8 +119,10 @@ const MainBlogPage = ({ heroBlogImgClass = "heroBlogImgClass" }) => {
               heroImageUrl ? { backgroundImage: `url(${heroImageUrl})` } : {}
             }
           >
-            <div className="container hero-container">
-              <Breadcrumbs />
+            <div className="container">
+              <div className="hero-breadcrums">
+                <Breadcrumbs />
+              </div>
               <h1
                 className={`fw-bold uppercase ${isPC ? "fs-p--40px" : "fs-p--24px"} c1`}
               >

@@ -109,7 +109,7 @@ const Footer = () => {
               <p
                 className={`footer-social-media-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
               >
-                Ми в соцмережах
+                {t("socials")}
               </p>
               {contacts.facebook_url && (
                 <a
@@ -154,7 +154,7 @@ const Footer = () => {
               <p
                 className={`footer-social-media-title c1 lh-100 ${isPC ? "fs-p--24px fw-semi-bold" : "fs-p--14px fw-medium"}`}
               >
-                Пишіть нам
+                {t("writeUs")}
               </p>
               {contacts.whatsapp_phone && (
                 <a

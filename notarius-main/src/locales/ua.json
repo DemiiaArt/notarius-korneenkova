@@ -331,7 +331,13 @@
     "LeadsButton": {
       "freeConsultation": "Безкоштовна консультація"
     },
+    "ScrollDownButton": {
+      "text": "давайте знайомитися",
+      "ariaLabel": "Перейти до розділу 'Про нас'"
+    },
     "Footer": {
+      "socials": "Ми в соцмережах",
+      "writeUs": "Пишіть нам",
       "contacts": "Контакти",
       "navigation": "Навігація",
       "help": "Допомога",
@@ -368,7 +374,8 @@
         "found": "Знайдено",
         "article": "статтю",
         "articles": "статті",
-        "articlesMany": "статей"
+        "articlesMany": "статей",
+        "similarArticles": "Схожі статті"
       },
       "NotFoundPage": {
         "error": "Помилка",
