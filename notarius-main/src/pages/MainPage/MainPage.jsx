@@ -10,7 +10,7 @@ import ReviewForm from "@components/ReviewForm/ReviewForm";
 import VideoBlock from "@components/VideoBock/VideoBlock";
 import ServicesAccordion from "@components/ServicesAccordion/ServicesAccordion";
 import Form from "@components/Form/Form";
-
+import AboutTextBlock from "@components/AboutTextBlock/AboutTextBlock";
 import "./MainPage.scss";
 const MainPage = ({ lang }) => {
   // SEO параметры для главной страницы
@@ -34,6 +34,7 @@ const MainPage = ({ lang }) => {
       <VideoBlock pageType="mainPage" />
       <ServicesAccordion />
       <Form />
+      <AboutTextBlock /> 
     </>
   );
 };
